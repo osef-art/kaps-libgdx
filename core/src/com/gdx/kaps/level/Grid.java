@@ -6,7 +6,6 @@ import com.gdx.kaps.ShapeRendererAdaptor;
 import com.gdx.kaps.level.caps.Caps;
 import com.gdx.kaps.level.caps.Gelule;
 import com.gdx.kaps.level.caps.GridObject;
-import com.gdx.kaps.level.caps.Position;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -80,7 +79,7 @@ public class Grid implements Iterable<Grid.Column>, Renderable {
         if (!obj.isLinked()) {
             throw new IllegalStateException(obj + " is not even linked.");
         }
-        return get(obj.x(), obj.y()).orElse(obj);
+        return get(obj.linkedX(), obj.linkedY()).orElse(obj);
     }
 
     private Optional<GridObject> get(int x, int y) {
@@ -107,18 +106,17 @@ public class Grid implements Iterable<Grid.Column>, Renderable {
         getLinked(obj).unlink();
         pop(obj.x(), obj.y());
     }
+
     private void pop(int x, int y) {
         set(x, y, null);
     }
 
-    private void accept(Caps caps) {
-        requireNonNull(caps);
-        set(caps.x(), caps.y(), (caps));
-    }
-
     void accept(Gelule gelule) {
+        // IMPL: directly accept gelule ? since it's a grid obj
         requireNonNull(gelule);
-        gelule.forEach(this::accept);
+        var linked = gelule.linked(this);
+        set(gelule.x(), gelule.y(), gelule);
+        set(linked.x(), linked.y(), linked);
     }
 
     public void dropAll() {
@@ -235,6 +233,14 @@ public class Grid implements Iterable<Grid.Column>, Renderable {
                 );
             }
         }
-        forEach(c -> c.forEach(opt -> opt.ifPresent(GridObject::render)));
+        // IMPL: draw grid objects depending on their position in grid and not their own position..
+        //forEach(c -> c.forEach(opt -> opt.ifPresent(GridObject::render)));
+        for (int x = 0; x < width(); x++) {
+            for (int y = 0; y < height(); y++) {
+                int finalX = x;
+                int finalY = y;
+                get(x, y).ifPresent(obj -> obj.render(finalX, finalY));
+            }
+        }
     }
 }
