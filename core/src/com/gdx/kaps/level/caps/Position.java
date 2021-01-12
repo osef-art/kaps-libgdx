@@ -1,6 +1,6 @@
 package com.gdx.kaps.level.caps;
 
-public class Position {
+class Position {
     private int x, y;
 
     public Position(int x, int y) {
