@@ -11,7 +11,7 @@ import static com.gdx.kaps.MainScreen.batch;
 import static com.gdx.kaps.MainScreen.dim;
 
 public class Caps implements GridObject, Renderable {
-    private final Position position;
+    private final Position position;  // IMPL: must be updated if set in grid
     private final Color color;
     private Sprite sprite;
     private Look look;
@@ -50,12 +50,30 @@ public class Caps implements GridObject, Renderable {
         return color;
     }
 
-    /**
-     * @return the supposed position of the caps it's linked to.
-     * returns its own position if unlinked.
-     */
-    public Position linkedPosition() {
-        return position.shifted(look.opposite().vector());
+    @Override
+    public GridObject linked(Grid grid) {
+        return grid.getLinked(this);
+    }
+    @Override
+    public int linkedX() {
+        return position.shifted(look.opposite().vector()).x();
+    }
+    @Override
+    public int linkedY() {
+        return position.shifted(look.opposite().vector()).y();
+    }
+
+    @Override
+    public void render(int x, int y) {
+        batch.begin();
+        batch.draw(
+          sprite,
+          dim.boardMargin + x * dim.tile.height,
+          dim.topTile(y),
+          dim.tile.width,
+          dim.tile.height
+        );
+        batch.end();
     }
 
     // predicates
@@ -97,10 +115,13 @@ public class Caps implements GridObject, Renderable {
         updateTexture();
     }
 
+    @Override
     public boolean dip(Grid grid) {
+        if (isLinked()) return false;
         return move(Look.DOWN, grid);
     }
 
+    @Override
     public boolean isLinked() {
         return look != Look.NONE;
     }
@@ -116,7 +137,7 @@ public class Caps implements GridObject, Renderable {
         updateTexture();
     }
 
-    private Caps copy() {
+    public Caps copy() {
         return new Caps(this);
     }
 
@@ -125,11 +146,6 @@ public class Caps implements GridObject, Renderable {
         var copy = copy();
         copy.position.add(look.vector());
         return copy;
-    }
-
-    @Override
-    public boolean canDip(Grid grid) {
-        return copy().dip(grid);
     }
 
     void updateTexture() {
@@ -144,18 +160,6 @@ public class Caps implements GridObject, Renderable {
 
     @Override
     public void render() {
-        batch.begin();
-        batch.draw(
-          sprite,
-          dim.boardMargin + position.x() * dim.tile.height,
-          dim.topTile(position.y()),
-          dim.tile.width,
-          dim.tile.height
-        );
-        batch.end();
-    }
-
-    Position position() {
-        return position;
+        render(position.x(), position.y());
     }
 }

@@ -108,6 +108,21 @@ public class Gelule implements GridObject, Renderable, Iterable<Caps> {
     }
 
     @Override
+    public int linkedX() {
+        return linked.x();
+    }
+
+    @Override
+    public int linkedY() {
+        return linked.y();
+    }
+
+    @Override
+    public void render(int x, int y) {
+        main.render(x, y);
+    }
+
+    @Override
     public int x() {
         return main.x();
     }
@@ -125,11 +140,6 @@ public class Gelule implements GridObject, Renderable, Iterable<Caps> {
     @Override
     public boolean isLinked() {
         return true;
-    }
-
-    @Override
-    public boolean canDip(Grid grid) {
-        return copy().dip(grid);
     }
 
     private void updateLinked() {
@@ -170,5 +180,10 @@ public class Gelule implements GridObject, Renderable, Iterable<Caps> {
     public void render() {
         main.render();
         linked.render();
+    }
+
+    @Override
+    public GridObject linked(Grid grid) {
+        return linked;
     }
 }
