@@ -91,6 +91,7 @@ public class Caps implements GridObject, Renderable {
         updateTexture();
     }
 
+    @Override
     public void unlink() {
         look = Look.NONE;
         updateTexture();
@@ -126,6 +127,11 @@ public class Caps implements GridObject, Renderable {
         return copy;
     }
 
+    @Override
+    public boolean canDip(Grid grid) {
+        return copy().dip(grid);
+    }
+
     void updateTexture() {
         sprite = new Sprite(new Texture("img/" + color.id() + "/caps/" + look + ".png"));
         sprite.flip(false, true);
@@ -147,5 +153,9 @@ public class Caps implements GridObject, Renderable {
           dim.tile.height
         );
         batch.end();
+    }
+
+    Position position() {
+        return position;
     }
 }

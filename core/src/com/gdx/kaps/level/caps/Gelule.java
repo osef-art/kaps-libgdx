@@ -18,6 +18,7 @@ public class Gelule implements GridObject, Renderable, Iterable<Caps> {
     }
 
     public Gelule(Grid grid, Set<Color> colors) {
+        Objects.requireNonNull(grid);
         int x = grid.width() /2 -1;
         int y = grid.height() -1;
         main = new Caps(x, y, Look.LEFT, Color.random(colors));
@@ -98,6 +99,42 @@ public class Gelule implements GridObject, Renderable, Iterable<Caps> {
         if (!linked.isAtValidEmplacement(grid)) {
             move(main.look(), grid);
         }
+    }
+
+    @Override
+    public void unlink() {
+        main.unlink();
+        linked.unlink();
+    }
+
+    @Override
+    public int x() {
+        return main.x();
+    }
+
+    @Override
+    public int y() {
+        return main.y();
+    }
+
+    @Override
+    public Color color() {
+        return main.color();
+    }
+
+    @Override
+    public Position linkedPosition() {
+        return linked.position();
+    }
+
+    @Override
+    public boolean isLinked() {
+        return true;
+    }
+
+    @Override
+    public boolean canDip(Grid grid) {
+        return copy().dip(grid);
     }
 
     private void updateLinked() {

@@ -5,6 +5,7 @@ import com.gdx.kaps.Renderable;
 import com.gdx.kaps.ShapeRendererAdaptor;
 import com.gdx.kaps.level.caps.Caps;
 import com.gdx.kaps.level.caps.Gelule;
+import com.gdx.kaps.level.caps.GridObject;
 import com.gdx.kaps.level.caps.Position;
 
 import java.util.*;
@@ -18,15 +19,16 @@ public class Grid implements Iterable<Grid.Column>, Renderable {
     private final static int MIN_MATCH_RANGE = 4;
     // IMPL: put in level ? since it's a level rule
     // TODO: find a way better name
-    static class Column implements Iterable<Optional<Caps>> {
-        private final Caps[] tiles;
+    static class Column implements Iterable<Optional<GridObject>> {
+        // IMPL: stocks grid objects instead of caps.
+        private final GridObject[] tiles;
 
         Column(int size) {
-            tiles = new Caps[size];
+            tiles = new GridObject[size];
         }
 
         @Override
-        public Iterator<Optional<Caps>> iterator() {
+        public Iterator<Optional<GridObject>> iterator() {
             return new Iterator<>() {
                 private int index;
 
@@ -36,7 +38,7 @@ public class Grid implements Iterable<Grid.Column>, Renderable {
                 }
 
                 @Override
-                public Optional<Caps> next() {
+                public Optional<GridObject> next() {
                     if (!hasNext()) {
                         throw new NoSuchElementException();
                     }
@@ -68,11 +70,12 @@ public class Grid implements Iterable<Grid.Column>, Renderable {
         return columns[0].tiles.length;
     }
 
-    private Optional<Caps> get(Position position) {
+    private Optional<GridObject> get(Position position) {
+        // TODO: always given 'linked pos'. new method name ?
         return get(position.x(), position.y());
     }
 
-    private Optional<Caps> get(int x, int y) {
+    private Optional<GridObject> get(int x, int y) {
         if (!isInGrid(x, y)) return Optional.empty();
         return Optional.ofNullable(columns[x].tiles[y]);
     }
@@ -88,13 +91,13 @@ public class Grid implements Iterable<Grid.Column>, Renderable {
     }
 
     // operations
-    private void set(int x, int y, Caps caps) {
+    private void set(int x, int y, GridObject caps) {
         columns[x].tiles[y] = caps;
     }
 
-    private void pop(Caps caps) {
-        get(caps.linkedPosition()).ifPresent(Caps::unlink);
-        pop(caps.x(), caps.y());
+    private void pop(GridObject obj) {
+        get(obj.linkedPosition()).ifPresent(GridObject::unlink);
+        pop(obj.x(), obj.y());
     }
     private void pop(int x, int y) {
         set(x, y, null);
@@ -116,51 +119,47 @@ public class Grid implements Iterable<Grid.Column>, Renderable {
 
         while (canDrop[0]) {
             canDrop[0] = false;
-            // TODO: drop all caps and save a boolean
-            //  telling if more caps can drop.
-            // IMPL: find a cleaner way to do it
-            for (var col : this) {
-                for (var opt : col) {
-                    opt.ifPresent(caps -> {
-                        if (caps.isLinked()) {
-                            // TODO : drop gelule -> drop(caps, linked)
-                            // IMPL: "linked" field in Caps that indicates Caps linked to.
-                            //  gelule -> supp, operations on this && this.linked
-                        } else {
-                            canDrop[0] |= dip(caps);
-                        }
-                    });
-                }
-            }
+            forEach(
+              col -> col.forEach(
+                opt -> opt.ifPresent(obj -> canDrop[0] |= dip(obj))
+              )
+            );
         }
     }
 
     // TODO: doc that explicits importance of dipping caps + change position in array
-
     /**
-     * Dips the provided caps and updates its position into the grid if needed
-     * @param caps the caps to dip
-     * @return true if the caps was dipped, false if its positon is unchanged
+     * Dips the provided obj and updates its position into the grid if needed
+     * @param obj the grid object to dip
+     * @return true if the obj was dipped, false if its positon is unchanged
      */
-    private boolean dip(Caps caps) {
-        if (caps.dip(this)) {
-            set(caps.x(), caps.y(), caps);
-            pop(caps.x(), caps.y() + 1);
+    private boolean dip(GridObject obj) {
+        requireNonNull(obj);
+        if (obj.isLinked()) {
+            if (obj.canDip(this) && requireNonNull(get(obj.linkedPosition()).orElse(null)).canDip(this)) {
+                obj.dip(this);
+                get(obj.linkedPosition()).ifPresent(o -> o.dip(this));
+                return true;
+            }
+            return false;
+        }
+        else if (obj.dip(this)) {
+            set(obj.x(), obj.y(), obj);
+            pop(obj.x(), obj.y() + 1);
             return true;
         }
         return false;
     }
 
-
     boolean deleteMatches() {
-        var toDelete = new HashSet<Caps>();
-        forEach(c -> c.forEach(opt -> opt.ifPresent(caps -> {
+        var toDelete = new HashSet<GridObject>();
+        forEach(c -> c.forEach(opt -> opt.ifPresent(obj -> {
             var leftCaps = IntStream.range(0, MIN_MATCH_RANGE)
-              .mapToObj(n -> get(caps.x() - n, caps.y()))
+              .mapToObj(n -> get(obj.x() - n, obj.y()))
               .collect(Collectors.toList());
 
             var bottomCaps = IntStream.range(0, MIN_MATCH_RANGE)
-              .mapToObj(n -> get(caps.x(), caps.y() - n))
+              .mapToObj(n -> get(obj.x(), obj.y() - n))
               .collect(Collectors.toList());
 
             toDelete.addAll(matchingCapsFrom(leftCaps));
@@ -177,9 +176,9 @@ public class Grid implements Iterable<Grid.Column>, Renderable {
      * @return a {@link Collection} of the caps to delete.
      * The collection is empty if the caps don't match.
      */
-    private List<Caps> matchingCapsFrom(List<Optional<Caps>> match) {
+    private List<GridObject> matchingCapsFrom(List<Optional<GridObject>> match) {
         var color = requireNonNull(match).stream()
-                      .map(opt -> opt.map(Caps::color).orElse(null))
+                      .map(opt -> opt.map(GridObject::color).orElse(null))
                       .filter(Objects::nonNull)
                       .collect(Collectors.toList());
 
@@ -227,6 +226,6 @@ public class Grid implements Iterable<Grid.Column>, Renderable {
                 );
             }
         }
-        forEach(c -> c.forEach(opt -> opt.ifPresent(Caps::render)));
+        forEach(c -> c.forEach(opt -> opt.ifPresent(GridObject::render)));
     }
 }
