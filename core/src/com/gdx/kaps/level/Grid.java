@@ -70,9 +70,17 @@ public class Grid implements Iterable<Grid.Column>, Renderable {
         return columns[0].tiles.length;
     }
 
-    private Optional<GridObject> get(Position position) {
+    /**
+     * @param obj the object from which we need the linked object
+     * @return the grid object to which is linked {@code obj}.
+     */
+    public GridObject getLinked(GridObject obj) {
         // TODO: always given 'linked pos'. new method name ?
-        return get(position.x(), position.y());
+        requireNonNull(obj);
+        if (!obj.isLinked()) {
+            throw new IllegalStateException(obj + " is not even linked.");
+        }
+        return get(obj.x(), obj.y()).orElse(obj);
     }
 
     private Optional<GridObject> get(int x, int y) {
@@ -96,7 +104,7 @@ public class Grid implements Iterable<Grid.Column>, Renderable {
     }
 
     private void pop(GridObject obj) {
-        get(obj.linkedPosition()).ifPresent(GridObject::unlink);
+        getLinked(obj).unlink();
         pop(obj.x(), obj.y());
     }
     private void pop(int x, int y) {
@@ -177,12 +185,13 @@ public class Grid implements Iterable<Grid.Column>, Renderable {
      * The collection is empty if the caps don't match.
      */
     private List<GridObject> matchingCapsFrom(List<Optional<GridObject>> match) {
-        var color = requireNonNull(match).stream()
+        // IMPL: reduce list into a boolean telling if colors are 4 and of the same color
+        var colors = requireNonNull(match).stream()
                       .map(opt -> opt.map(GridObject::color).orElse(null))
                       .filter(Objects::nonNull)
                       .collect(Collectors.toList());
 
-        if (color.size() >= MIN_MATCH_RANGE && color.stream().allMatch(color.get(0)::equals)) {
+        if (colors.size() >= MIN_MATCH_RANGE && colors.stream().allMatch(colors.get(0)::equals)) {
             return match.stream()
               .map(Optional::get)
               .collect(Collectors.toList());
