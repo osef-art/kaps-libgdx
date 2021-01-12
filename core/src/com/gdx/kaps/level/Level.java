@@ -47,7 +47,7 @@ public class Level implements Renderable {
     private void acceptGelule() {
         grid.accept(gelule);
         gelule = null;
-        if (grid.deleteMatches()) {
+        while (grid.deleteMatches()) {
             grid.dropAll();
         }
         spawnNewGelule();
