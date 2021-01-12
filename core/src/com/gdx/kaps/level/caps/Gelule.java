@@ -123,11 +123,6 @@ public class Gelule implements GridObject, Renderable, Iterable<Caps> {
     }
 
     @Override
-    public Position linkedPosition() {
-        return linked.position();
-    }
-
-    @Override
     public boolean isLinked() {
         return true;
     }

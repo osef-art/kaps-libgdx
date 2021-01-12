@@ -7,9 +7,7 @@ import com.gdx.kaps.level.Grid;
 public interface GridObject extends Renderable {
     int x();
     int y();
-
     Color color();
-    Position linkedPosition();
 
     boolean isLinked();
     boolean canDip(Grid grid);
