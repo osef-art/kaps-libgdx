@@ -102,9 +102,11 @@ public class Gelule implements GridObject, Renderable, Iterable<Caps> {
     }
 
     @Override
-    public void unlink() {
-        main.unlink();
-        linked.unlink();
+    public void unlink(Grid grid) {
+        main.unlink(grid);
+        linked.unlink(grid);
+        grid.set(main);
+        grid.set(linked);
     }
 
     @Override

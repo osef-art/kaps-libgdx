@@ -98,12 +98,16 @@ public class Grid implements Iterable<Grid.Column>, Renderable {
     }
 
     // operations
+    public void set(GridObject obj) {
+        set(obj.x(), obj.y(), obj);
+    }
+
     private void set(int x, int y, GridObject caps) {
         columns[x].tiles[y] = caps;
     }
 
     private void pop(GridObject obj) {
-        getLinked(obj).unlink();
+        if (obj.isLinked()) obj.linked(this).unlink(this);
         pop(obj.x(), obj.y());
     }
 
@@ -115,8 +119,8 @@ public class Grid implements Iterable<Grid.Column>, Renderable {
         // IMPL: directly accept gelule ? since it's a grid obj
         requireNonNull(gelule);
         var linked = gelule.linked(this);
-        set(gelule.x(), gelule.y(), gelule);
-        set(linked.x(), linked.y(), linked);
+        set(gelule);
+        set(linked);
     }
 
     public void dropAll() {
@@ -140,17 +144,10 @@ public class Grid implements Iterable<Grid.Column>, Renderable {
      * @return true if the obj was dipped, false if its positon is unchanged
      */
     private boolean dip(GridObject obj) {
+        // FIXME: vertical gelules don't dip
         requireNonNull(obj);
-        if (obj.isLinked()) {
-            if (obj.canDip(this) && requireNonNull(get(obj.linkedPosition()).orElse(null)).canDip(this)) {
-                obj.dip(this);
-                get(obj.linkedPosition()).ifPresent(o -> o.dip(this));
-                return true;
-            }
-            return false;
-        }
-        else if (obj.dip(this)) {
-            set(obj.x(), obj.y(), obj);
+        if (obj.dip(this)) {
+            set(obj);
             pop(obj.x(), obj.y() + 1);
             return true;
         }
@@ -233,8 +230,6 @@ public class Grid implements Iterable<Grid.Column>, Renderable {
                 );
             }
         }
-        // IMPL: draw grid objects depending on their position in grid and not their own position..
-        //forEach(c -> c.forEach(opt -> opt.ifPresent(GridObject::render)));
         for (int x = 0; x < width(); x++) {
             for (int y = 0; y < height(); y++) {
                 int finalX = x;

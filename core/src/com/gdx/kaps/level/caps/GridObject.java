@@ -3,7 +3,6 @@ package com.gdx.kaps.level.caps;
 import com.gdx.kaps.Renderable;
 import com.gdx.kaps.level.Grid;
 
-// TODO: find a better name >.<
 public interface GridObject extends Renderable {
     int x();
     int y();
@@ -18,7 +17,7 @@ public interface GridObject extends Renderable {
 
     boolean dip(Grid grid);
     void flip(Grid grid);
-    void unlink();
+    void unlink(Grid grid);
 
     int linkedX();
     int linkedY();

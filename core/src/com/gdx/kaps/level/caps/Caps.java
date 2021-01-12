@@ -110,7 +110,7 @@ public class Caps implements GridObject, Renderable {
     }
 
     @Override
-    public void unlink() {
+    public void unlink(Grid grid) {
         look = Look.NONE;
         updateTexture();
     }
@@ -128,9 +128,6 @@ public class Caps implements GridObject, Renderable {
 
     void linkTo(Caps caps) {
         Objects.requireNonNull(caps);
-        if (look == Look.NONE) {
-            throw new IllegalStateException("Unlinked caps can't have a linked");
-        }
         look = caps.look.opposite();
         position.set(caps.position);
         position.add(caps.look.opposite().vector());
