@@ -8,9 +8,10 @@ public interface GridObject extends Renderable {
     int x();
     int y();
     Color color();
+    GridObject linked(Grid grid);
 
     boolean isLinked();
-    boolean canDip(Grid grid);
+
     boolean isInGrid(Grid grid);
     boolean collidesPile(Grid grid);
     boolean isAtValidEmplacement(Grid grid);
@@ -18,4 +19,9 @@ public interface GridObject extends Renderable {
     boolean dip(Grid grid);
     void flip(Grid grid);
     void unlink();
+
+    int linkedX();
+    int linkedY();
+
+    void render(int x, int y);
 }
