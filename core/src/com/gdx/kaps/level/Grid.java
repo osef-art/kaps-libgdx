@@ -3,7 +3,6 @@ package com.gdx.kaps.level;
 import com.badlogic.gdx.graphics.Color;
 import com.gdx.kaps.Renderable;
 import com.gdx.kaps.ShapeRendererAdaptor;
-import com.gdx.kaps.level.caps.Caps;
 import com.gdx.kaps.level.caps.Gelule;
 import com.gdx.kaps.level.caps.GridObject;
 
@@ -15,11 +14,7 @@ import static com.gdx.kaps.MainScreen.dim;
 import static java.util.Objects.requireNonNull;
 
 public class Grid implements Iterable<Grid.Column>, Renderable {
-    private final static int MIN_MATCH_RANGE = 4;
-    // IMPL: put in level ? since it's a level rule
-    // TODO: find a way better name
     static class Column implements Iterable<Optional<GridObject>> {
-        // IMPL: stocks grid objects instead of caps.
         private final GridObject[] tiles;
 
         Column(int size) {
@@ -47,6 +42,8 @@ public class Grid implements Iterable<Grid.Column>, Renderable {
         }
     }
     private final ShapeRendererAdaptor sra = new ShapeRendererAdaptor();
+    // IMPL: put in level ? since it's a level rule
+    // TODO: find a way better name
     private final Column[] columns;
 
     Grid(int width, int height) {
@@ -55,6 +52,7 @@ public class Grid implements Iterable<Grid.Column>, Renderable {
         }
 
         columns = new Column[width];
+
         for (int i = 0; i < width; i++) {
             columns[i] = new Column(height);
         }
@@ -70,11 +68,11 @@ public class Grid implements Iterable<Grid.Column>, Renderable {
     }
 
     /**
-     * @param obj the object from which we need the linked object
+     * @param obj the object from which we need the linked object. Must be linked.
      * @return the grid object to which is linked {@code obj}.
+     * @throws IllegalStateException if {@code obj} is not linked.
      */
     public GridObject getLinked(GridObject obj) {
-        // TODO: always given 'linked pos'. new method name ?
         requireNonNull(obj);
         if (!obj.isLinked()) {
             throw new IllegalStateException(obj + " is not even linked.");
@@ -107,7 +105,7 @@ public class Grid implements Iterable<Grid.Column>, Renderable {
     }
 
     private void pop(GridObject obj) {
-        if (obj.isLinked()) obj.linked(this).unlink(this);
+        if (obj.isLinked()) obj.linked().unlink();
         pop(obj.x(), obj.y());
     }
 
@@ -116,9 +114,8 @@ public class Grid implements Iterable<Grid.Column>, Renderable {
     }
 
     void accept(Gelule gelule) {
-        // IMPL: directly accept gelule ? since it's a grid obj
         requireNonNull(gelule);
-        var linked = gelule.linked(this);
+        var linked = gelule.linked();
         set(gelule);
         set(linked);
     }
@@ -137,16 +134,17 @@ public class Grid implements Iterable<Grid.Column>, Renderable {
         }
     }
 
-    // TODO: doc that explicits importance of dipping caps + change position in array
     /**
      * Dips the provided obj and updates its position into the grid if needed
      * @param obj the grid object to dip
      * @return true if the obj was dipped, false if its positon is unchanged
      */
+    // IMPL: when a grid object is moved, its position should be
+    //  updated depending of its grid position
     private boolean dip(GridObject obj) {
         // FIXME: vertical gelules don't dip
         requireNonNull(obj);
-        if (obj.dip(this)) {
+        if (obj.dip()) {
             set(obj);
             pop(obj.x(), obj.y() + 1);
             return true;
@@ -154,14 +152,18 @@ public class Grid implements Iterable<Grid.Column>, Renderable {
         return false;
     }
 
+    /**
+     * Deletes all matches of {@code MIN_MATCH_RANGE} grid objects of same color in a row.
+     * @return true if matches were deleted, false if not.
+     */
     boolean deleteMatches() {
         var toDelete = new HashSet<GridObject>();
         forEach(c -> c.forEach(opt -> opt.ifPresent(obj -> {
-            var leftCaps = IntStream.range(0, MIN_MATCH_RANGE)
+            var leftCaps = IntStream.range(0, Level.MIN_MATCH_RANGE)
               .mapToObj(n -> get(obj.x() - n, obj.y()))
               .collect(Collectors.toList());
 
-            var bottomCaps = IntStream.range(0, MIN_MATCH_RANGE)
+            var bottomCaps = IntStream.range(0, Level.MIN_MATCH_RANGE)
               .mapToObj(n -> get(obj.x(), obj.y() - n))
               .collect(Collectors.toList());
 
@@ -186,7 +188,7 @@ public class Grid implements Iterable<Grid.Column>, Renderable {
                       .filter(Objects::nonNull)
                       .collect(Collectors.toList());
 
-        if (colors.size() >= MIN_MATCH_RANGE && colors.stream().allMatch(colors.get(0)::equals)) {
+        if (colors.size() >= Level.MIN_MATCH_RANGE && colors.stream().allMatch(colors.get(0)::equals)) {
             return match.stream()
               .map(Optional::get)
               .collect(Collectors.toList());

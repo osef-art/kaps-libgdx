@@ -13,6 +13,7 @@ import java.util.stream.Stream;
 public class Level implements Renderable {
     // INFO: temporary renderer
     private final Set<Color> colors;
+    final static int MIN_MATCH_RANGE = 4;
     private final Grid grid;
     private Gelule gelule;
 
@@ -23,18 +24,27 @@ public class Level implements Renderable {
           Stream.concat(
             sidekicks.stream().map(Sidekick::color),
             Stream.of(Color.randomBlank())
-          ).collect(Collectors.toSet());
+          ).collect(Collectors.toUnmodifiableSet());
 
         grid = new Grid(width, height);
         spawnNewGelule();
     }
 
+    // getters
+    public Grid grid() {
+        return grid;
+    }
+
+    public Set<Color> colors() {
+        return colors;
+    }
+
     private void spawnNewGelule() {
         if (gelule != null) return;
-        gelule = new Gelule(grid, colors);
+        gelule = new Gelule(this);
         // TODO: display gelule when game over. maybe in main loop ?
 
-        if (!gelule.isAtValidEmplacement(grid)) {
+        if (!gelule.isAtValidEmplacement()) {
             try {
                 Thread.sleep(2000);
             } catch (InterruptedException e) {
@@ -55,23 +65,23 @@ public class Level implements Renderable {
 
     // control
     public void moveGeluleLeft() {
-        gelule.moveLeft(grid);
+        gelule.moveLeft();
     }
 
     public void moveGeluleRight() {
-        gelule.moveRight(grid);
+        gelule.moveRight();
     }
 
     public void dipGelule() {
-        if (!gelule.dip(grid)) acceptGelule();
+        if (!gelule.dip()) acceptGelule();
     }
 
     public void flipGelule() {
-        gelule.flip(grid);
+        gelule.flip();
     }
 
     public void dropGelule() {
-        while (gelule.dip(grid));
+        while (gelule.dip());
         acceptGelule();
     }
 

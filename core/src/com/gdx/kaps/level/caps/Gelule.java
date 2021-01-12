@@ -2,27 +2,31 @@ package com.gdx.kaps.level.caps;
 
 import com.gdx.kaps.Renderable;
 import com.gdx.kaps.level.Grid;
+import com.gdx.kaps.level.Level;
 
 import java.util.*;
 
 public class Gelule implements GridObject, Renderable, Iterable<Caps> {
+    private final Grid grid;
     private final Caps main;
     private final Caps linked;
     // IMPL: give them the level so they know where they are ?
     //  communication w/ grid + more
 
-    private Gelule(Gelule gelule, Look look) {
-        Objects.requireNonNull(gelule);
-        main = new Caps(gelule.main).shifted(look);
-        linked = new Caps(gelule.linked).shifted(look);
-    }
-
-    public Gelule(Grid grid, Set<Color> colors) {
-        Objects.requireNonNull(grid);
+    public Gelule(Level lvl) {
+        Objects.requireNonNull(lvl);
+        grid = lvl.grid();
         int x = grid.width() /2 -1;
         int y = grid.height() -1;
-        main = new Caps(x, y, Look.LEFT, Color.random(colors));
-        linked = new Caps(x+1, y, Look.RIGHT, Color.random(colors));
+        main = new Caps(x, y, Look.LEFT, lvl);
+        linked = new Caps(x+1, y, Look.RIGHT, lvl);
+    }
+
+    private Gelule(Gelule gelule, Look look) {
+        Objects.requireNonNull(gelule);
+        grid = gelule.grid;
+        main = new Caps(gelule.main).shifted(look);
+        linked = new Caps(gelule.linked).shifted(look);
     }
 
     // getters
@@ -40,71 +44,70 @@ public class Gelule implements GridObject, Renderable, Iterable<Caps> {
 
     /**
      * tries flipping the gelule and evaluates its position.
-     * @param grid the grid in which our gelule evolves
      * @return true if the flipped gelule stands in a valid position, false if not.
      */
-    private boolean canFlip(Grid grid) {
-        main.flip(grid);
+    private boolean canFlip() {
+        main.flip();
         updateLinked();
 
-        if (!linked.isAtValidEmplacement(grid)) {
-            return shifted(main.look()).isAtValidEmplacement(grid);
+        if (!linked.isAtValidEmplacement()) {
+            return shifted(main.look()).isAtValidEmplacement();
         }
         return true;
     }
 
     // predicates
     @Override
-    public boolean isAtValidEmplacement(Grid grid) {
-        return isInGrid(grid) && !collidesPile(grid);
+    public boolean isAtValidEmplacement() {
+        return isInGrid() && !collidesPile();
     }
 
     @Override
-    public boolean isInGrid(Grid grid) {
-        return main.isInGrid(grid) && linked.isInGrid(grid);
+    public boolean isInGrid() {
+        return main.isInGrid() && linked.isInGrid();
     }
 
     @Override
-    public boolean collidesPile(Grid grid) {
-        return main.collidesPile(grid) || linked.collidesPile(grid);
+    public boolean collidesPile() {
+        return main.collidesPile() || linked.collidesPile();
     }
 
     // movement
-    private boolean move(Look look, Grid grid) {
-        if (!shifted(look).isAtValidEmplacement(grid)) return false;
-        main.move(look, grid);
+    private boolean move(Look look) {
+        if (!shifted(look).isAtValidEmplacement()) return false;
+        main.move(look);
         updateLinked();
         return true;
     }
 
-    public void moveLeft(Grid grid) {
-        move(Look.LEFT, grid);
+    public void moveLeft() {
+        move(Look.LEFT);
     }
 
-    public void moveRight(Grid grid) {
-        move(Look.RIGHT, grid);
+    public void moveRight() {
+        move(Look.RIGHT);
     }
 
-    public boolean dip(Grid grid) {
-        return move(Look.DOWN, grid);
+    public boolean dip() {
+        return move(Look.DOWN);
     }
 
-    public void flip(Grid grid) {
-        if (!copy().canFlip(grid)) return;
-        // INFO: prevent flip if a caps bothers
-        main.flip(grid);
+    public void flip() {
+        if (!copy().canFlip()) return;
+        // TODO: prevent flip if a caps bothers
+        main.flip();
         updateLinked();
 
         // TODO: a 'helpFlip' method that replaces flipped thing
-        if (!linked.isAtValidEmplacement(grid)) {
-            move(main.look(), grid);
+        if (!linked.isAtValidEmplacement()) {
+            move(main.look());
         }
     }
 
     @Override
-    public void unlink(Grid grid) {
-        main.unlink(grid);
-        linked.unlink(grid);
+    public void unlink() {
+        main.unlink();
+        linked.unlink();
         grid.set(main);
         grid.set(linked);
     }
@@ -185,7 +188,7 @@ public class Gelule implements GridObject, Renderable, Iterable<Caps> {
     }
 
     @Override
-    public GridObject linked(Grid grid) {
+    public GridObject linked() {
         return linked;
     }
 }

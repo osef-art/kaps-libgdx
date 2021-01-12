@@ -4,23 +4,26 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.gdx.kaps.Renderable;
 import com.gdx.kaps.level.Grid;
+import com.gdx.kaps.level.Level;
 
 import java.util.Objects;
 
 import static com.gdx.kaps.MainScreen.batch;
 import static com.gdx.kaps.MainScreen.dim;
 
-public class Caps implements GridObject, Renderable {
+class Caps implements GridObject, Renderable {
     private final Position position;  // IMPL: must be updated if set in grid
     private final Color color;
+    private final Grid grid;
     private Sprite sprite;
     private Look look;
 
-    public Caps(int x, int y, Look look, Color color) {
+    public Caps(int x, int y, Look look, Level lvl) {
         Objects.requireNonNull(look);
-        Objects.requireNonNull(color);
+        Objects.requireNonNull(lvl);
         this.look = look;
-        this.color = color;
+        grid = lvl.grid();
+        this.color = Color.random(lvl.colors());
         position = new Position(x, y);
         updateTexture();
     }
@@ -28,8 +31,9 @@ public class Caps implements GridObject, Renderable {
     public Caps(Caps caps) {
         Objects.requireNonNull(caps);
         position = caps.position.shifted(0, 0);
-        color = caps.color;
         sprite = caps.sprite;
+        color = caps.color;
+        grid = caps.grid;
         look = caps.look;
     }
 
@@ -51,7 +55,7 @@ public class Caps implements GridObject, Renderable {
     }
 
     @Override
-    public GridObject linked(Grid grid) {
+    public GridObject linked() {
         return grid.getLinked(this);
     }
     @Override
@@ -78,25 +82,23 @@ public class Caps implements GridObject, Renderable {
 
     // predicates
     @Override
-    public boolean isInGrid(Grid grid) {
-        Objects.requireNonNull(grid);
+    public boolean isInGrid() {
         return grid.isInGrid(position.x(), position.y());
     }
 
     @Override
-    public boolean collidesPile(Grid grid) {
-        Objects.requireNonNull(grid);
+    public boolean collidesPile() {
         return grid.collidesPile(position.x(), position.y());
     }
 
     @Override
-    public boolean isAtValidEmplacement(Grid grid) {
-        return isInGrid(grid) && !collidesPile(grid);
+    public boolean isAtValidEmplacement() {
+        return isInGrid() && !collidesPile();
     }
 
     // movement
-    boolean move(Look look, Grid grid) {
-        if (shifted(look).isAtValidEmplacement(grid)) {
+    boolean move(Look look) {
+        if (shifted(look).isAtValidEmplacement()) {
             position.add(look.vector());
             return true;
         }
@@ -104,21 +106,21 @@ public class Caps implements GridObject, Renderable {
     }
 
     @Override
-    public void flip(Grid grid) {
+    public void flip() {
         look = look.flipped();
         updateTexture();
     }
 
     @Override
-    public void unlink(Grid grid) {
+    public void unlink() {
         look = Look.NONE;
         updateTexture();
     }
 
     @Override
-    public boolean dip(Grid grid) {
+    public boolean dip() {
         if (isLinked()) return false;
-        return move(Look.DOWN, grid);
+        return move(Look.DOWN);
     }
 
     @Override
