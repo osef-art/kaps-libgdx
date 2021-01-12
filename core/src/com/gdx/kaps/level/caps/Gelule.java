@@ -1,17 +1,16 @@
 package com.gdx.kaps.level.caps;
 
-import com.gdx.kaps.Renderable;
 import com.gdx.kaps.level.Grid;
 import com.gdx.kaps.level.Level;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.Objects;
 
-public class Gelule implements GridObject, Renderable, Iterable<Caps> {
+public class Gelule implements GridObject, Iterable<Caps> {
     private final Grid grid;
     private final Caps main;
     private final Caps linked;
-    // IMPL: give them the level so they know where they are ?
-    //  communication w/ grid + more
 
     public Gelule(Level lvl) {
         Objects.requireNonNull(lvl);
@@ -30,6 +29,27 @@ public class Gelule implements GridObject, Renderable, Iterable<Caps> {
     }
 
     // getters
+
+    @Override
+    public int x() {
+        return main.x();
+    }
+
+    @Override
+    public int y() {
+        return main.y();
+    }
+
+    @Override
+    public int linkedX() {
+        return linked.x();
+    }
+
+    @Override
+    public int linkedY() {
+        return linked.y();
+    }
+
     private Gelule copy() {
         return new Gelule(this, Look.NONE);
     }
@@ -40,6 +60,23 @@ public class Gelule implements GridObject, Renderable, Iterable<Caps> {
      */
     private Gelule shifted(Look look) {
         return new Gelule(this, look);
+    }
+
+    @Override
+    public GridObject linked() {
+        return linked;
+    }
+
+    @Override
+    public Color color() {
+        return main.color();
+    }
+
+    // predicates
+
+    @Override
+    public boolean isAtValidEmplacement() {
+        return isInGrid() && !collidesPile();
     }
 
     /**
@@ -56,12 +93,6 @@ public class Gelule implements GridObject, Renderable, Iterable<Caps> {
         return true;
     }
 
-    // predicates
-    @Override
-    public boolean isAtValidEmplacement() {
-        return isInGrid() && !collidesPile();
-    }
-
     @Override
     public boolean isInGrid() {
         return main.isInGrid() && linked.isInGrid();
@@ -72,7 +103,13 @@ public class Gelule implements GridObject, Renderable, Iterable<Caps> {
         return main.collidesPile() || linked.collidesPile();
     }
 
+    @Override
+    public boolean isLinked() {
+        return true;
+    }
+
     // movement
+
     private boolean move(Look look) {
         if (!shifted(look).isAtValidEmplacement()) return false;
         main.move(look);
@@ -88,10 +125,12 @@ public class Gelule implements GridObject, Renderable, Iterable<Caps> {
         move(Look.RIGHT);
     }
 
+    @Override
     public boolean dip() {
         return move(Look.DOWN);
     }
 
+    @Override
     public void flip() {
         if (!copy().canFlip()) return;
         // TODO: prevent flip if a caps bothers
@@ -112,44 +151,10 @@ public class Gelule implements GridObject, Renderable, Iterable<Caps> {
         grid.set(linked);
     }
 
-    @Override
-    public int linkedX() {
-        return linked.x();
-    }
-
-    @Override
-    public int linkedY() {
-        return linked.y();
-    }
-
-    @Override
-    public void render(int x, int y) {
-        main.render(x, y);
-    }
-
-    @Override
-    public int x() {
-        return main.x();
-    }
-
-    @Override
-    public int y() {
-        return main.y();
-    }
-
-    @Override
-    public Color color() {
-        return main.color();
-    }
-
-    @Override
-    public boolean isLinked() {
-        return true;
-    }
-
     private void updateLinked() {
         linked.linkTo(main);
     }
+
 
     @Override
     public Iterator<Caps> iterator() {
@@ -188,7 +193,8 @@ public class Gelule implements GridObject, Renderable, Iterable<Caps> {
     }
 
     @Override
-    public GridObject linked() {
-        return linked;
+    public void render(int x, int y) {
+        main.render(x, y);
     }
+
 }

@@ -2,7 +2,6 @@ package com.gdx.kaps.level.caps;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.gdx.kaps.Renderable;
 import com.gdx.kaps.level.Grid;
 import com.gdx.kaps.level.Level;
 
@@ -11,8 +10,8 @@ import java.util.Objects;
 import static com.gdx.kaps.MainScreen.batch;
 import static com.gdx.kaps.MainScreen.dim;
 
-class Caps implements GridObject, Renderable {
-    private final Position position;  // IMPL: must be updated if set in grid
+class Caps implements GridObject {
+    private final Position position;
     private final Color color;
     private final Grid grid;
     private Sprite sprite;
@@ -38,18 +37,32 @@ class Caps implements GridObject, Renderable {
     }
 
     // getters
+
+    @Override
     public int x() {
         return position.x();
     }
 
+    @Override
     public int y() {
         return position.y();
+    }
+
+    @Override
+    public int linkedX() {
+        return position.shifted(look.opposite().vector()).x();
+    }
+
+    @Override
+    public int linkedY() {
+        return position.shifted(look.opposite().vector()).y();
     }
 
     public Look look() {
         return look;
     }
 
+    @Override
     public Color color() {
         return color;
     }
@@ -58,29 +71,25 @@ class Caps implements GridObject, Renderable {
     public GridObject linked() {
         return grid.getLinked(this);
     }
-    @Override
-    public int linkedX() {
-        return position.shifted(look.opposite().vector()).x();
-    }
-    @Override
-    public int linkedY() {
-        return position.shifted(look.opposite().vector()).y();
+
+    public Caps copy() {
+        return new Caps(this);
     }
 
-    @Override
-    public void render(int x, int y) {
-        batch.begin();
-        batch.draw(
-          sprite,
-          dim.boardMargin + x * dim.tile.height,
-          dim.topTile(y),
-          dim.tile.width,
-          dim.tile.height
-        );
-        batch.end();
+    Caps shifted(Look look) {
+        Objects.requireNonNull(look);
+        var copy = copy();
+        copy.position.add(look.vector());
+        return copy;
     }
 
     // predicates
+
+    @Override
+    public boolean isLinked() {
+        return look != Look.NONE;
+    }
+
     @Override
     public boolean isInGrid() {
         return grid.isInGrid(position.x(), position.y());
@@ -97,6 +106,7 @@ class Caps implements GridObject, Renderable {
     }
 
     // movement
+
     boolean move(Look look) {
         if (shifted(look).isAtValidEmplacement()) {
             position.add(look.vector());
@@ -123,28 +133,12 @@ class Caps implements GridObject, Renderable {
         return move(Look.DOWN);
     }
 
-    @Override
-    public boolean isLinked() {
-        return look != Look.NONE;
-    }
-
     void linkTo(Caps caps) {
         Objects.requireNonNull(caps);
         look = caps.look.opposite();
         position.set(caps.position);
         position.add(caps.look.opposite().vector());
         updateTexture();
-    }
-
-    public Caps copy() {
-        return new Caps(this);
-    }
-
-    Caps shifted(Look look) {
-        Objects.requireNonNull(look);
-        var copy = copy();
-        copy.position.add(look.vector());
-        return copy;
     }
 
     void updateTexture() {
@@ -160,5 +154,18 @@ class Caps implements GridObject, Renderable {
     @Override
     public void render() {
         render(position.x(), position.y());
+    }
+
+    @Override
+    public void render(int x, int y) {
+        batch.begin();
+        batch.draw(
+          sprite,
+          dim.boardMargin + x * dim.tile.height,
+          dim.topTile(y),
+          dim.tile.width,
+          dim.tile.height
+        );
+        batch.end();
     }
 }

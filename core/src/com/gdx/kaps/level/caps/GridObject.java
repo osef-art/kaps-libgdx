@@ -5,21 +5,19 @@ import com.gdx.kaps.Renderable;
 public interface GridObject extends Renderable {
     int x();
     int y();
+    int linkedX();
+    int linkedY();
     Color color();
     GridObject linked();
 
     boolean isLinked();
-
     boolean isInGrid();
     boolean collidesPile();
     boolean isAtValidEmplacement();
 
-    boolean dip();
     void flip();
     void unlink();
-
-    int linkedX();
-    int linkedY();
+    boolean dip();
 
     void render(int x, int y);
 }

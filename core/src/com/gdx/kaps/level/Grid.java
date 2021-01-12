@@ -42,8 +42,6 @@ public class Grid implements Iterable<Grid.Column>, Renderable {
         }
     }
     private final ShapeRendererAdaptor sra = new ShapeRendererAdaptor();
-    // IMPL: put in level ? since it's a level rule
-    // TODO: find a way better name
     private final Column[] columns;
 
     Grid(int width, int height) {
@@ -59,6 +57,7 @@ public class Grid implements Iterable<Grid.Column>, Renderable {
     }
 
     // getters
+
     public int width() {
         return columns.length;
     }
@@ -86,6 +85,7 @@ public class Grid implements Iterable<Grid.Column>, Renderable {
     }
 
     // predicates
+
     public boolean isInGrid(int x, int y) {
         return 0 <= x && x < width() &&
                  0 <= y && y < height();
@@ -95,7 +95,8 @@ public class Grid implements Iterable<Grid.Column>, Renderable {
         return get(x, y).isPresent();
     }
 
-    // operations
+    // transactions
+
     public void set(GridObject obj) {
         set(obj.x(), obj.y(), obj);
     }
@@ -111,27 +112,6 @@ public class Grid implements Iterable<Grid.Column>, Renderable {
 
     private void pop(int x, int y) {
         set(x, y, null);
-    }
-
-    void accept(Gelule gelule) {
-        requireNonNull(gelule);
-        var linked = gelule.linked();
-        set(gelule);
-        set(linked);
-    }
-
-    public void dropAll() {
-        // ugly, but required to be used in lambdas.
-        final boolean[] canDrop = {true};
-
-        while (canDrop[0]) {
-            canDrop[0] = false;
-            forEach(
-              col -> col.forEach(
-                opt -> opt.ifPresent(obj -> canDrop[0] |= dip(obj))
-              )
-            );
-        }
     }
 
     /**
@@ -150,6 +130,29 @@ public class Grid implements Iterable<Grid.Column>, Renderable {
             return true;
         }
         return false;
+    }
+
+    void accept(Gelule gelule) {
+        requireNonNull(gelule);
+        var linked = gelule.linked();
+        set(gelule);
+        set(linked);
+    }
+
+    // full grid operations
+
+    public void dropAll() {
+        // ugly, but required to be used in lambdas.
+        final boolean[] canDrop = {true};
+
+        while (canDrop[0]) {
+            canDrop[0] = false;
+            forEach(
+              col -> col.forEach(
+                opt -> opt.ifPresent(obj -> canDrop[0] |= dip(obj))
+              )
+            );
+        }
     }
 
     /**

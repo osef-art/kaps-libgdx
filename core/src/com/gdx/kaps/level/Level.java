@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 public class Level implements Renderable {
     // INFO: temporary renderer
     private final Set<Color> colors;
-    final static int MIN_MATCH_RANGE = 4;
+    final static int MIN_MATCH_RANGE = 4;    // TODO: find a way better name
     private final Grid grid;
     private Gelule gelule;
 
