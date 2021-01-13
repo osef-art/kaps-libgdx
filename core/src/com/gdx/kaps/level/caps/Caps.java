@@ -11,6 +11,7 @@ import static com.gdx.kaps.MainScreen.batch;
 import static com.gdx.kaps.MainScreen.dim;
 
 class Caps implements GridObject {
+    private final Sprite mark = new Sprite(new Texture("img/9/caps/pop_0.png"));
     private final Position position;
     private final Color color;
     private final Grid grid;
@@ -135,9 +136,11 @@ class Caps implements GridObject {
 
     void linkTo(Caps caps) {
         Objects.requireNonNull(caps);
+        if (caps.look == Look.NONE) {
+            throw new IllegalStateException("Can't link a caps to an unlinked caps.");
+        }
         look = caps.look.opposite();
-        position.set(caps.position);
-        position.add(caps.look.opposite().vector());
+        position.set(caps.linkedX(), caps.linkedY());
         updateTexture();
     }
 
@@ -158,6 +161,10 @@ class Caps implements GridObject {
 
     @Override
     public void render(int x, int y) {
+        render(x, y, false);
+    }
+
+    public void render(int x, int y, boolean main) {
         batch.begin();
         batch.draw(
           sprite,
@@ -166,6 +173,15 @@ class Caps implements GridObject {
           dim.tile.width,
           dim.tile.height
         );
+        if (main) {
+            batch.draw(
+              mark,
+              dim.boardMargin + x * dim.tile.height + dim.tile.width / 4,
+              dim.topTile(y) + dim.tile.height / 4,
+              dim.tile.width / 2,
+              dim.tile.height / 2
+            );
+        }
         batch.end();
     }
 }

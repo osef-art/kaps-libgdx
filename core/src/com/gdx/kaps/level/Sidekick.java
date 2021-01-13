@@ -6,17 +6,17 @@ import java.util.Set;
 
 public enum Sidekick {
     // TODO: add powers
-    SEAN        (Color.TYPE_1), // INFO: Hits a tile then its neighbors
-    ZYRAME      (Color.TYPE_2), // INFO: Hits 2 random germs
-    RED         (Color.TYPE_3), // INFO: Slices a.random column
-    MIMAPS      (Color.TYPE_4), // INFO: Hits 3 random.tiles
-    PAINT       (Color.TYPE_5), // INFO: Paints 5 tiles in mate's color
-    XERETH      (Color.TYPE_6), // INFO: Slices two.diagonals
-    SIDEKICK_7  (Color.TYPE_7), // INFO:
-    JIM         (Color.TYPE_10), // INFO: Slices a.random line
-    COLOR       (Color.TYPE_11), // INFO: Generates a.single-colored gelule
-    SIDEKICK_12 (Color.TYPE_12), // INFO:
-    SIDEKICK_13 (Color.TYPE_13), // INFO:
+    SEAN        (Color.COLOR_1), // INFO: Hits a tile then its neighbors
+    ZYRAME      (Color.COLOR_2), // INFO: Hits 2 random germs
+    RED         (Color.COLOR_3), // INFO: Slices a.random column
+    MIMAPS      (Color.COLOR_4), // INFO: Hits 3 random.tiles
+    PAINT       (Color.COLOR_5), // INFO: Paints 5 tiles in mate's color
+    XERETH      (Color.COLOR_6), // INFO: Slices two.diagonals
+    SIDEKICK_7  (Color.COLOR_7), // INFO:
+    JIM         (Color.COLOR_10), // INFO: Slices a.random line
+    COLOR       (Color.COLOR_11), // INFO: Generates a.single-colored gelule
+    SIDEKICK_12 (Color.COLOR_12), // INFO:
+    SIDEKICK_13 (Color.COLOR_13), // INFO:
     // TODO: sidekick that generates a single Caps ?
     ;
 

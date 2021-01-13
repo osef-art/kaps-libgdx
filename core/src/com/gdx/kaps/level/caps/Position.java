@@ -21,13 +21,17 @@ class Position {
         this.y += y;
     }
 
-    public void set(Position pos) {
-        x = pos.x;
-        y = pos.y;
-    }
-
     public void add(Position vector) {
         add(vector.x, vector.y);
+    }
+
+    public void set(Position pos) {
+        set(pos.x, pos.y);
+    }
+
+    public void set(int x, int y) {
+        this.x = x;
+        this.y = y;
     }
 
     public Position shifted(int x, int y) {

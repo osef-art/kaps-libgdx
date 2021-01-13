@@ -86,7 +86,7 @@ public class Level implements Renderable {
     }
 
     public void update() {
-        //TODO: drop gelule every x seconds
+        // TODO: drop gelule every x seconds
     }
 
     @Override

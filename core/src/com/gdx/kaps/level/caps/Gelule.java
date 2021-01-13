@@ -194,7 +194,6 @@ public class Gelule implements GridObject, Iterable<Caps> {
 
     @Override
     public void render(int x, int y) {
-        main.render(x, y);
+        main.render(x, y, true);
     }
-
 }

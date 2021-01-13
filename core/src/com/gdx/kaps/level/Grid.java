@@ -122,11 +122,18 @@ public class Grid implements Iterable<Grid.Column>, Renderable {
     // IMPL: when a grid object is moved, its position should be
     //  updated depending of its grid position
     private boolean dip(GridObject obj) {
-        // FIXME: vertical gelules don't dip
+        // FIXME: vertical gelules STILL don't dip
+        //  tip: ensure that when a caps is dipped, its array position changes
+        //  also: vertical can't have valid emplacement since their preview overrides previous...
         requireNonNull(obj);
+        // IMPL: ....
+        var linked = Optional.ofNullable(obj.isLinked() ? getLinked(obj) : null);
+
         if (obj.dip()) {
             set(obj);
             pop(obj.x(), obj.y() + 1);
+            linked.ifPresent(this::set);
+            linked.ifPresent(l -> pop(l.x(), l.y()+1));
             return true;
         }
         return false;

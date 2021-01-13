@@ -6,19 +6,19 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public enum Color {
-    TYPE_1  (new java.awt.Color(110, 80,  235)),
-    TYPE_2  (new java.awt.Color(90,  190, 235)),
-    TYPE_3  (new java.awt.Color(220, 60,  40)),
-    TYPE_4  (new java.awt.Color(180, 235, 60)),
-    TYPE_5  (new java.awt.Color(50,  235, 215)),
-    TYPE_6  (new java.awt.Color(215, 50,  100)),
-    TYPE_7  (new java.awt.Color(220, 235, 160)),
-    TYPE_8  (new java.awt.Color(40,  50,  60)),
-    TYPE_9  (new java.awt.Color(180, 200, 220)),
-    TYPE_10 (new java.awt.Color(100, 110, 170)),
-    TYPE_11 (new java.awt.Color(50,  180, 180)),
-    TYPE_12 (new java.awt.Color(235, 150, 130)),
-    TYPE_13 (new java.awt.Color(70,  50,  130));
+    COLOR_1  (new java.awt.Color(110, 80,  235)),
+    COLOR_2  (new java.awt.Color(90,  190, 235)),
+    COLOR_3  (new java.awt.Color(220, 60,  40)),
+    COLOR_4  (new java.awt.Color(180, 235, 60)),
+    COLOR_5  (new java.awt.Color(50,  235, 215)),
+    COLOR_6  (new java.awt.Color(215, 50,  100)),
+    COLOR_7  (new java.awt.Color(220, 235, 160)),
+    COLOR_8  (new java.awt.Color(40,  50,  60)),
+    COLOR_9  (new java.awt.Color(180, 200, 220)),
+    COLOR_10 (new java.awt.Color(100, 110, 170)),
+    COLOR_11 (new java.awt.Color(50,  180, 180)),
+    COLOR_12 (new java.awt.Color(235, 150, 130)),
+    COLOR_13 (new java.awt.Color(70,  50,  130));
 
     private final java.awt.Color color;
 
