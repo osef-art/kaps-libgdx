@@ -109,13 +109,31 @@ public class Grid implements Iterable<Grid.Column>, Renderable {
         columns[x].tiles[y] = caps;
     }
 
+    /**
+     * Pops a grid object depending on its inner indexes.
+     * @param obj the grid object to pop.
+     */
     private void pop(GridObject obj) {
         if (obj.isLinked()) obj.linked().unlink();
-        pop(obj.x(), obj.y());
+        remove(obj.x(), obj.y());
     }
 
-    private void pop(int x, int y) {
+    /**
+     * Sets the grid element at coordinates (x, y) to null, no matter what it is.
+     * @param x the row number
+     * @param y the column number
+     */
+    private void remove(int x, int y) {
         set(x, y, null);
+    }
+
+    /**
+     * Removes a gelule from the grid, meaning both parts of it.
+     * @param gelule the gelule to remove from grid
+     */
+    private void remove(Gelule gelule) {
+        remove(gelule.x(), gelule.y());
+        remove(gelule.linked().x(), gelule.linked().y());
     }
 
     /**
@@ -135,9 +153,9 @@ public class Grid implements Iterable<Grid.Column>, Renderable {
 
         if (obj.dip()) {
             set(obj);
-            pop(obj.x(), obj.y() + 1);
+            remove(obj.x(), obj.y() + 1);
             linked.ifPresent(this::set);
-            linked.ifPresent(l -> pop(l.x(), l.y()+1));
+            linked.ifPresent(l -> remove(l.x(), l.y()+1));
             return true;
         }
         return false;
