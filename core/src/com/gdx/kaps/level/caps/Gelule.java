@@ -79,6 +79,17 @@ public class Gelule implements GridObject, Iterable<Caps> {
         return isInGrid() && !collidesPile();
     }
 
+    private boolean isAtValidEmplacement(Look look) {
+        if (look == Look.DOWN) {
+            for (Caps caps : this) {
+                if (caps.look() == Look.DOWN) {
+                    return caps.shifted(Look.DOWN).isAtValidEmplacement();
+                }
+            }
+        }
+        return shifted(look).isAtValidEmplacement();
+    }
+
     /**
      * tries flipping the gelule and evaluates its position.
      * @return true if the flipped gelule stands in a valid position, false if not.
@@ -111,9 +122,10 @@ public class Gelule implements GridObject, Iterable<Caps> {
     // movement
 
     private boolean move(Look look) {
-        if (!shifted(look).isAtValidEmplacement()) return false;
+        if (!isAtValidEmplacement(look)) return false;
         main.move(look);
         updateLinked();
+        // TODO: if in grid, update position !
         return true;
     }
 
@@ -160,7 +172,7 @@ public class Gelule implements GridObject, Iterable<Caps> {
     public Iterator<Caps> iterator() {
         return new Iterator<>() {
             private final Caps[] both = new Caps[]{main, linked};
-            int index;
+            private int index;
 
             @Override
             public boolean hasNext() {
@@ -173,10 +185,6 @@ public class Gelule implements GridObject, Iterable<Caps> {
                     throw new NoSuchElementException();
                 }
                 return both[index++];
-            }
-
-            @Override
-            public void remove() {
             }
         };
     }
