@@ -99,6 +99,10 @@ public class Grid implements Iterable<Grid.Column>, Renderable {
 
     public void set(GridObject obj) {
         set(obj.x(), obj.y(), obj);
+        // IMPL: use polymorphism
+        if (obj instanceof Gelule) {
+            set(obj.linked());
+        }
     }
 
     private void set(int x, int y, GridObject caps) {
@@ -141,9 +145,7 @@ public class Grid implements Iterable<Grid.Column>, Renderable {
 
     void accept(Gelule gelule) {
         requireNonNull(gelule);
-        var linked = gelule.linked();
         set(gelule);
-        set(linked);
     }
 
     // full grid operations

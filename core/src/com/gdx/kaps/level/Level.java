@@ -23,7 +23,8 @@ public class Level implements Renderable {
         colors =
           Stream.concat(
             sidekicks.stream().map(Sidekick::color),
-            Stream.of(Color.randomBlank())
+            Stream.of(Color.COLOR_8)
+            // TODO: put when tests are done: Stream.of(Color.randomBlank())
           ).collect(Collectors.toUnmodifiableSet());
 
         grid = new Grid(width, height);
