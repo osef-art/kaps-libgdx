@@ -2,22 +2,21 @@ package com.gdx.kaps.level.caps;
 
 import com.gdx.kaps.Renderable;
 
+import java.util.Optional;
+
 public interface GridObject extends Renderable {
     int x();
     int y();
-    int linkedX();
-    int linkedY();
     Color color();
-    GridObject linked();
+    Optional<GridObject> linked();
 
-    boolean isLinked();
     boolean isInGrid();
     boolean collidesPile();
     boolean isAtValidEmplacement();
 
-    void flip();
-    void unlink();
-    boolean dip();
+    boolean dipIfPossible();
 
     void render(int x, int y);
+
+    Caps unlinked();
 }

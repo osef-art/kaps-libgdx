@@ -15,9 +15,11 @@ import static java.util.Objects.requireNonNull;
 
 public class Grid implements Iterable<Grid.Column>, Renderable {
     static class Column implements Iterable<Optional<GridObject>> {
-        // IMPL: l'utilité de stocker des GridObjects si on doit quand même
-        //  gérer les linked Caps ???
-        //  trouver un moyen pour que Caps = unlinked et Gelule = 2 linked caps
+        // IMPL: OK OK OK. alors ce qu'on va faire:
+        //  Gelule -> 2 linkedCaps. liées entre elles.
+        //  accept(gelule) -> put linkedCaps dans la grid.
+        //  Linked caps = un seul caps, Gelule = les 2
+        //  si après ça tjrs des bugs -> abandon, concentre-toi
         private final GridObject[] tiles;
 
         Column(int size) {
@@ -69,20 +71,7 @@ public class Grid implements Iterable<Grid.Column>, Renderable {
         return columns[0].tiles.length;
     }
 
-    /**
-     * @param obj the object from which we need the linked object. Must be linked.
-     * @return the grid object to which is linked {@code obj}, else null.
-     * @throws IllegalStateException if {@code obj} is not linked.
-     */
-    public GridObject getLinked(GridObject obj) {
-        requireNonNull(obj);
-        if (!obj.isLinked()) {
-            throw new IllegalStateException(obj + " is not even linked.");
-        }
-        return get(obj.linkedX(), obj.linkedY()).orElse(null);
-    }
-
-    private Optional<GridObject> get(int x, int y) {
+    public Optional<GridObject> get(int x, int y) {
         if (!isInGrid(x, y)) return Optional.empty();
         return Optional.ofNullable(columns[x].tiles[y]);
     }
@@ -120,9 +109,9 @@ public class Grid implements Iterable<Grid.Column>, Renderable {
      * Removes a whole object from the grid, meaning both parts of it if there are two.
      * @param obj the object to remove from grid
      */
-    private void remove(Gelule gelule) {
-        remove(gelule.x(), gelule.y());
-        remove(gelule.linked().x(), gelule.linked().y());
+    private void remove(GridObject obj) {
+        remove(obj.x(), obj.y());
+        obj.linked().ifPresent(linked -> remove(linked.x(), linked.y()));
     }
 
     /**
@@ -130,8 +119,16 @@ public class Grid implements Iterable<Grid.Column>, Renderable {
      * @param obj the grid object to pop.
      */
     private void pop(GridObject obj) {
-        if (obj.isLinked()) obj.linked().unlink();
+        obj.linked().ifPresent(this::unlink);
         remove(obj.x(), obj.y());
+    }
+
+    /**
+     * Sets grid element located at (x, y) to an unlinked Caps.
+     * @param obj the element to unlink
+     */
+    private void unlink(GridObject obj) {
+        set(obj.x(), obj.y(), obj.unlinked());
     }
 
 
@@ -149,17 +146,14 @@ public class Grid implements Iterable<Grid.Column>, Renderable {
         requireNonNull(obj);
 
         remove(obj);
-        var couldDip = obj.dip();
-        System.out.println(obj +": dip");
+        var couldDip = obj.dipIfPossible();
         set(obj);
         return couldDip;
     }
 
     void accept(Gelule gelule) {
         requireNonNull(gelule);
-        set(gelule);
-        // IMPL:
-        set(gelule.linked());
+        gelule.forEach(this::set);
     }
 
     // full grid operations

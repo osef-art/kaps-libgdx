@@ -66,23 +66,23 @@ public class Level implements Renderable {
 
     // control
     public void moveGeluleLeft() {
-        gelule.moveLeft();
+        gelule.moveLeftIfPossible();
     }
 
     public void moveGeluleRight() {
-        gelule.moveRight();
+        gelule.moveRightIfPossible();
     }
 
     public void dipGelule() {
-        if (!gelule.dip()) acceptGelule();
+        if (!gelule.dipIfPossible()) acceptGelule();
     }
 
     public void flipGelule() {
-        gelule.flip();
+        gelule.flipIfPossible();
     }
 
     public void dropGelule() {
-        while (gelule.dip());
+        while (gelule.dipIfPossible());
         acceptGelule();
     }
 

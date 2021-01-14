@@ -8,9 +8,9 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 
 public class Gelule implements Iterable<LinkedCaps> {
-    private final Grid grid;
     private final LinkedCaps main;
     private final LinkedCaps linked;
+    private final Grid grid;
     // IMPL: replace all 'linked' by main.linked ?
 
     public Gelule(Level lvl) {
@@ -25,6 +25,7 @@ public class Gelule implements Iterable<LinkedCaps> {
 
     private Gelule(Gelule gelule, Look look) {
         Objects.requireNonNull(gelule);
+        Objects.requireNonNull(look);
         grid = gelule.grid;
         main = new LinkedCaps(gelule.main).shifted(look);
         linked = new LinkedCaps(gelule.linked).shifted(look);
