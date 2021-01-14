@@ -10,7 +10,7 @@ import static com.gdx.kaps.MainScreen.batch;
 import static com.gdx.kaps.MainScreen.dim;
 import static java.util.Objects.requireNonNull;
 
-class Caps implements GridObject {
+public class Caps implements GridObject {
     final Position position;
     private final Sprite sprite;
     private final Color color;
@@ -51,8 +51,7 @@ class Caps implements GridObject {
         return color;
     }
 
-    @Override
-    public Optional<GridObject> linked() {
+    public Optional<Caps> linked() {
         return Optional.empty();
     }
 
@@ -67,7 +66,6 @@ class Caps implements GridObject {
         return copy;
     }
 
-    @Override
     public Caps unlinked() {
         return this;
     }
@@ -105,7 +103,6 @@ class Caps implements GridObject {
         return true;
     }
 
-    @Override
     public boolean dipIfPossible() {
         return moveIfPossible(Look.DOWN);
     }

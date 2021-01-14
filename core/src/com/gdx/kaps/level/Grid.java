@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.gdx.kaps.Renderable;
 import com.gdx.kaps.ShapeRendererAdaptor;
 import com.gdx.kaps.level.caps.Gelule;
-import com.gdx.kaps.level.caps.GridObject;
+import com.gdx.kaps.level.caps.Caps;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -14,20 +14,20 @@ import static com.gdx.kaps.MainScreen.dim;
 import static java.util.Objects.requireNonNull;
 
 public class Grid implements Iterable<Grid.Column>, Renderable {
-    static class Column implements Iterable<Optional<GridObject>> {
+    static class Column implements Iterable<Optional<Caps>> {
         // IMPL: OK OK OK. alors ce qu'on va faire:
         //  Gelule -> 2 linkedCaps. liées entre elles.
         //  accept(gelule) -> put linkedCaps dans la grid.
         //  Linked caps = un seul caps, Gelule = les 2
         //  si après ça tjrs des bugs -> abandon, concentre-toi
-        private final GridObject[] tiles;
+        private final Caps[] tiles;
 
         Column(int size) {
-            tiles = new GridObject[size];
+            tiles = new Caps[size];
         }
 
         @Override
-        public Iterator<Optional<GridObject>> iterator() {
+        public Iterator<Optional<Caps>> iterator() {
             return new Iterator<>() {
                 private int index;
 
@@ -37,7 +37,7 @@ public class Grid implements Iterable<Grid.Column>, Renderable {
                 }
 
                 @Override
-                public Optional<GridObject> next() {
+                public Optional<Caps> next() {
                     if (!hasNext()) {
                         throw new NoSuchElementException();
                     }
@@ -71,7 +71,7 @@ public class Grid implements Iterable<Grid.Column>, Renderable {
         return columns[0].tiles.length;
     }
 
-    public Optional<GridObject> get(int x, int y) {
+    public Optional<Caps> get(int x, int y) {
         if (!isInGrid(x, y)) return Optional.empty();
         return Optional.ofNullable(columns[x].tiles[y]);
     }
@@ -89,11 +89,11 @@ public class Grid implements Iterable<Grid.Column>, Renderable {
 
     // transactions
 
-    public void set(GridObject obj) {
+    public void set(Caps obj) {
         set(obj.x(), obj.y(), obj);
     }
 
-    private void set(int x, int y, GridObject caps) {
+    private void set(int x, int y, Caps caps) {
         columns[x].tiles[y] = caps;
     }
     /**
@@ -109,7 +109,7 @@ public class Grid implements Iterable<Grid.Column>, Renderable {
      * Removes a whole object from the grid, meaning both parts of it if there are two.
      * @param obj the object to remove from grid
      */
-    private void remove(GridObject obj) {
+    private void remove(Caps obj) {
         remove(obj.x(), obj.y());
         obj.linked().ifPresent(linked -> remove(linked.x(), linked.y()));
     }
@@ -118,7 +118,7 @@ public class Grid implements Iterable<Grid.Column>, Renderable {
      * Pops a grid object depending on its inner indexes.
      * @param obj the grid object to pop.
      */
-    private void pop(GridObject obj) {
+    private void pop(Caps obj) {
         obj.linked().ifPresent(this::unlink);
         remove(obj.x(), obj.y());
     }
@@ -127,7 +127,7 @@ public class Grid implements Iterable<Grid.Column>, Renderable {
      * Sets grid element located at (x, y) to an unlinked Caps.
      * @param obj the element to unlink
      */
-    private void unlink(GridObject obj) {
+    private void unlink(Caps obj) {
         set(obj.x(), obj.y(), obj.unlinked());
     }
 
@@ -139,7 +139,7 @@ public class Grid implements Iterable<Grid.Column>, Renderable {
      */
     // IMPL: when a grid object is moved, its position should be
     //  updated depending of its grid position
-    private boolean dip(GridObject obj) {
+    private boolean dip(Caps obj) {
         // FIXME: vertical gelules STILL don't dip
         //  tip: ensure that when a caps is dipped, its array position changes
         //  also: vertical can't have valid emplacement since their preview overrides previous...
@@ -177,7 +177,7 @@ public class Grid implements Iterable<Grid.Column>, Renderable {
      * @return true if matches were deleted, false if not.
      */
     boolean deleteMatches() {
-        var toDelete = new HashSet<GridObject>();
+        var toDelete = new HashSet<Caps>();
         forEach(c -> c.forEach(opt -> opt.ifPresent(obj -> {
             var leftCaps = IntStream.range(0, Level.MIN_MATCH_RANGE)
               .mapToObj(n -> get(obj.x() - n, obj.y()))
@@ -201,10 +201,10 @@ public class Grid implements Iterable<Grid.Column>, Renderable {
      * @return a {@link Collection} of the caps to delete.
      * The collection is empty if the caps don't match.
      */
-    private List<GridObject> matchingCapsFrom(List<Optional<GridObject>> match) {
+    private List<Caps> matchingCapsFrom(List<Optional<Caps>> match) {
         // IMPL: reduce list into a boolean telling if colors are 4 and of the same color
         var colors = requireNonNull(match).stream()
-                      .map(opt -> opt.map(GridObject::color).orElse(null))
+                      .map(opt -> opt.map(Caps::color).orElse(null))
                       .filter(Objects::nonNull)
                       .collect(Collectors.toList());
 

@@ -44,7 +44,7 @@ public class LinkedCaps extends Caps {
     // getters
 
     @Override
-    public Optional<GridObject> linked() {
+    public Optional<Caps> linked() {
         return grid.get(linked.x(), linked.y());
     }
 
