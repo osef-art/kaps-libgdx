@@ -120,6 +120,7 @@ public class Grid implements Renderable {
 
     private void dip(Caps caps) {
         doOnCapsAndLinkedIfExists(caps, c -> {
+            remove(c.x(), c.y());
             c.dipIfPossible();
             set(c);
         });
@@ -130,14 +131,7 @@ public class Grid implements Renderable {
      * @param caps the grid caps to dip
      * @return true if the caps was dipped, false if its positon is unchanged
      */
-    // IMPL: when a grid caps is moved, its position should be
-    //  updated depending of its grid position
     private boolean dipIfPossible(Caps caps) {
-        // FIXME: gros bordel >.<
-        // IMPL: chosen strategy:
-        //  remove caps from grid (but not deleting it)
-        //  make it dip depending on the grid pile
-        //  re-put it in the grid (success or not)
         requireNonNull(caps);
 
         remove(caps);
@@ -161,7 +155,7 @@ public class Grid implements Renderable {
 
         do {
             canDrop = everyCapsInGrid()
-                        .map(obj -> false/*this::dipIfPossible*/)
+                        .map(this::dipIfPossible)
                         .reduce((bool, bool2) -> bool || bool2)
                         .orElse(false);
         } while (canDrop);
@@ -172,7 +166,6 @@ public class Grid implements Renderable {
      * @return true if matches were deleted, false if not.
      */
     boolean deleteMatches() {
-        // TODO: huh ?? doesn't delete all matches :/
         var toDelete = new HashSet<Caps>();
         everyCapsInGrid().forEach(caps -> {
             if (caps.x() >= Level.MIN_MATCH_RANGE - 1) {
