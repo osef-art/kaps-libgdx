@@ -137,15 +137,14 @@ public class Grid implements Renderable {
     // full grid operations
 
     public void dropAll() {
-        // ugly, but required to be used in lambdas.
-        final boolean[] canDrop = {true};
+        boolean canDrop;
 
-        while (canDrop[0]) {
-            canDrop[0] = false;
-            everyCapsInGrid().forEach(
-               obj -> {} /*canDrop[0] |= dipIfPossible(obj)*/
-            );
-        }
+        do {
+            canDrop = everyCapsInGrid()
+                        .map(this::dipIfPossible)
+                        .reduce((bool, bool2) -> bool || bool2)
+                        .orElse(false);
+        } while (canDrop);
     }
 
     /**
