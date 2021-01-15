@@ -7,6 +7,7 @@ import com.gdx.kaps.level.caps.Caps;
 import com.gdx.kaps.level.caps.Gelule;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -64,11 +65,23 @@ public class Grid implements Renderable {
         return get(x, y).isPresent();
     }
 
+    private boolean canDip(Caps caps) {
+        boolean canDip = caps.canDip();
+        canDip &= caps.linked().map(Caps::canDip).orElse(true);
+        return canDip;
+    }
+
     // transactions
 
-    private void set(Caps obj) {
-        set(obj.x(), obj.y(), obj);
-        obj.linked().ifPresent(linked -> set(linked.x(), linked.y(), linked));
+    private void doOnCapsAndLinkedIfExist(Caps caps, Consumer<Caps> action) {
+        action.accept(caps);
+        caps.linked().ifPresent(action);
+    }
+
+    private void set(Caps caps) {
+        doOnCapsAndLinkedIfExist(caps, c -> set(c.x(), c.y(), c));
+//        set(caps.x(), caps.y(), caps);
+//        caps.linked().ifPresent(linked -> set(linked.x(), linked.y(), linked));
     }
 
     private void set(int x, int y, Caps caps) {
@@ -84,52 +97,72 @@ public class Grid implements Renderable {
     }
 
     /**
-     * Removes a whole object from the grid, meaning both parts of it if there are two.
-     * @param obj the object to remove from grid
+     * Removes a whole caps from the grid, meaning both parts of it if there are two.
+     * @param caps the caps to remove from grid
      */
-    private void remove(Caps obj) {
-        remove(obj.x(), obj.y());
-        obj.linked().ifPresent(linked -> remove(linked.x(), linked.y()));
+    private void remove(Caps caps) {
+        doOnCapsAndLinkedIfExist(caps, c -> remove(c.x(), c.y()));
+
+//        remove(caps.x(), caps.y());
+//        caps.linked().ifPresent(linked -> {
+//            remove(linked.x(), linked.y());
+//            System.out.println(caps + "+" + linked);
+//        } );
     }
 
     /**
-     * Pops a grid object depending on its inner indexes.
-     * @param obj the grid object to pop.
+     * Pops a grid caps depending on its inner indexes.
+     * @param caps the grid caps to pop.
      */
-    private void pop(Caps obj) {
-        obj.linked().ifPresent(this::unlink);
-        remove(obj.x(), obj.y());
+    private void pop(Caps caps) {
+        caps.linked().ifPresent(this::unlink);
+        remove(caps.x(), caps.y());
     }
 
     /**
      * Sets grid element located at (x, y) to an unlinked Caps.
-     * @param obj the element to unlink
+     * @param caps the element to unlink
      */
-    private void unlink(Caps obj) {
-        set(obj.x(), obj.y(), obj.unlinked());
+    private void unlink(Caps caps) {
+        set(caps.x(), caps.y(), caps.unlinked());
     }
 
+    private void dip(Caps caps) {
+        doOnCapsAndLinkedIfExist(caps, c -> {
+            c.dipIfPossible();
+            set(c);
+        });
+
+//        caps.dipIfPossible();
+//        set(caps);
+//        caps.linked().ifPresent(linked -> {
+//            linked.dipIfPossible();
+//            set(linked);
+//        });
+    }
 
     /**
-     * Dips the provided obj and updates its position into the grid if needed
-     * @param obj the grid object to dip
-     * @return true if the obj was dipped, false if its positon is unchanged
+     * Dips the provided caps and updates its position into the grid if needed
+     * @param caps the grid caps to dip
+     * @return true if the caps was dipped, false if its positon is unchanged
      */
-    // IMPL: when a grid object is moved, its position should be
+    // IMPL: when a grid caps is moved, its position should be
     //  updated depending of its grid position
-    private boolean dipIfPossible(Caps obj) {
+    private boolean dipIfPossible(Caps caps) {
         // FIXME: gros bordel >.<
         // IMPL: chosen strategy:
-        //  remove object from grid (but not deleting it)
+        //  remove caps from grid (but not deleting it)
         //  make it dip depending on the grid pile
         //  re-put it in the grid (success or not)
-        requireNonNull(obj);
+        requireNonNull(caps);
 
-        remove(obj);
-        var couldDip = obj.dipIfPossible();
-        if (couldDip) System.out.println(obj);
-        set(obj);
-        return couldDip;
+        remove(caps);
+        if (!canDip(caps)) {
+            set(caps);
+            return false;
+        }
+        dip(caps);
+        return true;
     }
 
     void accept(Gelule gelule) {
@@ -151,14 +184,15 @@ public class Grid implements Renderable {
     }
 
     /**
-     * Deletes all matches of {@code MIN_MATCH_RANGE} grid objects of same color in a row.
+     * Deletes all matches of {@code MIN_MATCH_RANGE} grid caps of same color in a row.
      * @return true if matches were deleted, false if not.
      */
     boolean deleteMatches() {
+        // TODO: huh ?? does'nt delete all matches :/
         var toDelete = new HashSet<Caps>();
-        everyCapsInGrid().forEach(obj -> {
-            toDelete.addAll(matchingCapsFrom(n -> get(obj.x() - n, obj.y())));
-            toDelete.addAll(matchingCapsFrom(n -> get(obj.x(), obj.y() - n)));
+        everyCapsInGrid().forEach(caps -> {
+            toDelete.addAll(matchingCapsFrom(n -> get(caps.x() - n, caps.y())));
+            toDelete.addAll(matchingCapsFrom(n -> get(caps.x(), caps.y() - n)));
         });
         toDelete.forEach(this::pop);
         return !toDelete.isEmpty();
@@ -214,7 +248,7 @@ public class Grid implements Renderable {
             for (int y = 0; y < height(); y++) {
                 int finalX = x;
                 int finalY = y;
-                get(x, y).ifPresent(obj -> obj.render(finalX, finalY));
+                get(x, y).ifPresent(caps -> caps.render(finalX, finalY));
             }
         }
     }

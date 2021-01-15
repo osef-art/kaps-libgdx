@@ -102,6 +102,9 @@ public class Caps implements GridObject {
         move(look);
         return true;
     }
+    public boolean canDip() {
+        return canMove(Look.DOWN);
+    }
 
     public boolean dipIfPossible() {
         return moveIfPossible(Look.DOWN);
@@ -131,4 +134,5 @@ public class Caps implements GridObject {
         );
         batch.end();
     }
+
 }

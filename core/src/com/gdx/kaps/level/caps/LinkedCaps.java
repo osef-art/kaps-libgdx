@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.gdx.kaps.level.Grid;
 import com.gdx.kaps.level.Level;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import static com.gdx.kaps.MainScreen.batch;
@@ -45,7 +46,7 @@ public class LinkedCaps extends Caps {
 
     @Override
     public Optional<Caps> linked() {
-        return grid.get(linked.x(), linked.y());
+        return Optional.ofNullable(linked);
     }
 
     @Override
