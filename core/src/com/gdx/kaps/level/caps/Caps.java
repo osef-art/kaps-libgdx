@@ -55,11 +55,11 @@ public class Caps implements GridObject {
         return Optional.empty();
     }
 
-    public Caps copy() {
+    private Caps copy() {
         return new Caps(this);
     }
 
-    Caps shifted(Look look) {
+    private Caps shifted(Look look) {
         requireNonNull(look);
         var copy = copy();
         copy.position.add(look.vector());
@@ -97,7 +97,7 @@ public class Caps implements GridObject {
         position.add(look.vector());
     }
 
-    boolean moveIfPossible(Look look) {
+    private boolean moveIfPossible(Look look) {
         if (!canMove(look)) return false;
         move(look);
         return true;

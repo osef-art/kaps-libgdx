@@ -3,6 +3,7 @@ package com.gdx.kaps.level.caps;
 import com.gdx.kaps.Renderable;
 
 public interface GridObject extends Renderable {
+    // TODO: Caps interface that extends GridObject. Linked and UnlinkedCaps extend Caps
     int x();
     int y();
     Color color();

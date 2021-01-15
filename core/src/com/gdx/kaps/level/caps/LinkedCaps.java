@@ -53,7 +53,7 @@ public class LinkedCaps extends Caps {
         return new Caps(x(), y(), color(), grid);
     }
 
-    public LinkedCaps copy() {
+    LinkedCaps copy() {
         return new LinkedCaps(this);
     }
 
@@ -70,7 +70,7 @@ public class LinkedCaps extends Caps {
 
     // movement
 
-    public void flip() {
+    void flip() {
         look = look.flipped();
         updateTexture();
     }
@@ -82,14 +82,14 @@ public class LinkedCaps extends Caps {
         sprite.flip(false, true);
     }
 
-    public void updateLinked() {
+    void updateLinked() {
         linked.look = look.opposite();
         linked.position.set(position);
         linked.position.add(linked.look.vector());
         linked.updateTexture();
     }
 
-    public void linkTo(LinkedCaps caps) {
+    void linkTo(LinkedCaps caps) {
         this.linked = caps;
         caps.linked = this;
         updateLinked();

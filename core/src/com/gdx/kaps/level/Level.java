@@ -47,7 +47,7 @@ public class Level implements Renderable {
 
         if (!gelule.isAtValidEmplacement()) {
             try {
-                Thread.sleep(2000);
+                Thread.sleep(1500);
             } catch (InterruptedException e) {
                 throw new AssertionError(e);
             }

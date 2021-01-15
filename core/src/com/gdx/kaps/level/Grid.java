@@ -65,8 +65,9 @@ public class Grid implements Renderable {
 
     // transactions
 
-    public void set(Caps obj) {
+    private void set(Caps obj) {
         set(obj.x(), obj.y(), obj);
+        obj.linked().ifPresent(linked -> set(linked.x(), linked.y(), linked));
     }
 
     private void set(int x, int y, Caps caps) {
@@ -125,6 +126,7 @@ public class Grid implements Renderable {
 
         remove(obj);
         var couldDip = obj.dipIfPossible();
+        if (couldDip) System.out.println(obj);
         set(obj);
         return couldDip;
     }
@@ -136,7 +138,7 @@ public class Grid implements Renderable {
 
     // full grid operations
 
-    public void dropAll() {
+    void dropAll() {
         boolean canDrop;
 
         do {
