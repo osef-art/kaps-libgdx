@@ -50,7 +50,6 @@ public class Grid implements Renderable {
     }
 
     public Optional<Caps> get(int x, int y) {
-        if (!isInGrid(x, y)) return Optional.empty();
         return Optional.ofNullable(columns[x].tiles[y]);
     }
 
@@ -73,15 +72,13 @@ public class Grid implements Renderable {
 
     // transactions
 
-    private void doOnCapsAndLinkedIfExist(Caps caps, Consumer<Caps> action) {
+    private void doOnCapsAndLinkedIfExists(Caps caps, Consumer<Caps> action) {
         action.accept(caps);
         caps.linked().ifPresent(action);
     }
 
     private void set(Caps caps) {
-        doOnCapsAndLinkedIfExist(caps, c -> set(c.x(), c.y(), c));
-//        set(caps.x(), caps.y(), caps);
-//        caps.linked().ifPresent(linked -> set(linked.x(), linked.y(), linked));
+        doOnCapsAndLinkedIfExists(caps, c -> set(c.x(), c.y(), c));
     }
 
     private void set(int x, int y, Caps caps) {
@@ -101,13 +98,7 @@ public class Grid implements Renderable {
      * @param caps the caps to remove from grid
      */
     private void remove(Caps caps) {
-        doOnCapsAndLinkedIfExist(caps, c -> remove(c.x(), c.y()));
-
-//        remove(caps.x(), caps.y());
-//        caps.linked().ifPresent(linked -> {
-//            remove(linked.x(), linked.y());
-//            System.out.println(caps + "+" + linked);
-//        } );
+        doOnCapsAndLinkedIfExists(caps, c -> remove(c.x(), c.y()));
     }
 
     /**
@@ -115,7 +106,7 @@ public class Grid implements Renderable {
      * @param caps the grid caps to pop.
      */
     private void pop(Caps caps) {
-        caps.linked().ifPresent(this::unlink);
+        get(caps.x(), caps.y()).flatMap(Caps::linked).ifPresent(this::unlink);
         remove(caps.x(), caps.y());
     }
 
@@ -128,17 +119,10 @@ public class Grid implements Renderable {
     }
 
     private void dip(Caps caps) {
-        doOnCapsAndLinkedIfExist(caps, c -> {
+        doOnCapsAndLinkedIfExists(caps, c -> {
             c.dipIfPossible();
             set(c);
         });
-
-//        caps.dipIfPossible();
-//        set(caps);
-//        caps.linked().ifPresent(linked -> {
-//            linked.dipIfPossible();
-//            set(linked);
-//        });
     }
 
     /**
@@ -177,7 +161,7 @@ public class Grid implements Renderable {
 
         do {
             canDrop = everyCapsInGrid()
-                        .map(this::dipIfPossible)
+                        .map(obj -> false/*this::dipIfPossible*/)
                         .reduce((bool, bool2) -> bool || bool2)
                         .orElse(false);
         } while (canDrop);
@@ -188,11 +172,15 @@ public class Grid implements Renderable {
      * @return true if matches were deleted, false if not.
      */
     boolean deleteMatches() {
-        // TODO: huh ?? does'nt delete all matches :/
+        // TODO: huh ?? doesn't delete all matches :/
         var toDelete = new HashSet<Caps>();
         everyCapsInGrid().forEach(caps -> {
-            toDelete.addAll(matchingCapsFrom(n -> get(caps.x() - n, caps.y())));
-            toDelete.addAll(matchingCapsFrom(n -> get(caps.x(), caps.y() - n)));
+            if (caps.x() >= Level.MIN_MATCH_RANGE - 1) {
+                toDelete.addAll(matchingCapsFrom(n -> get(caps.x() - n, caps.y())));
+            }
+            if (caps.y() >= Level.MIN_MATCH_RANGE - 1) {
+                toDelete.addAll(matchingCapsFrom(n -> get(caps.x(), caps.y() - n)));
+            }
         });
         toDelete.forEach(this::pop);
         return !toDelete.isEmpty();

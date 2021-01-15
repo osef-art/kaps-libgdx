@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.gdx.kaps.level.Grid;
 import com.gdx.kaps.level.Level;
 
-import java.util.Objects;
 import java.util.Optional;
 
 import static com.gdx.kaps.MainScreen.batch;
