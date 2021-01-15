@@ -14,11 +14,11 @@ import java.util.Set;
 public class MainScreen extends ApplicationAdapter {
 	private static final int GRID_WIDTH=6, GRID_HEIGHT=13;
 	private InputHandler controller;
+	private Level level;
 
 	public static OrthographicCamera camera;
 	public static SpriteBatch batch;
 	public static Dimensions dim;
-	public static Level level;
 
 	@Override
 	public void create () {
@@ -31,7 +31,7 @@ public class MainScreen extends ApplicationAdapter {
 		dim = new Dimensions(GRID_WIDTH, GRID_HEIGHT, Gdx.graphics.getWidth(), Gdx.graphics.getWidth());
 		level = new Level(GRID_WIDTH, GRID_HEIGHT, Set.of(Sidekick.ZYRAME, Sidekick.SEAN));
 
-		controller = new InputHandler();
+		controller = new InputHandler(level);
 		Gdx.input.setInputProcessor(controller);
 	}
 

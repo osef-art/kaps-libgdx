@@ -3,6 +3,7 @@ package com.gdx.kaps.level;
 import com.gdx.kaps.Renderable;
 import com.gdx.kaps.level.caps.Color;
 import com.gdx.kaps.level.caps.Gelule;
+import com.gdx.kaps.time.Timer;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -12,8 +13,10 @@ import java.util.stream.Stream;
 
 public class Level implements Renderable {
     // INFO: temporary renderer
-    private final Set<Color> colors;
     final static int MIN_MATCH_RANGE = 4;    // TODO: find a way better name
+    private int UPDATE_SPEED = 1_000_000_000;
+    private final Timer updateTimer;
+    private final Set<Color> colors;
     private final Grid grid;
     private Gelule gelule;
 
@@ -23,10 +26,10 @@ public class Level implements Renderable {
         colors =
           Stream.concat(
             sidekicks.stream().map(Sidekick::color),
-            Stream.of(Color.COLOR_8)
-            // TODO: put when tests are done: Stream.of(Color.randomBlank())
+            Stream.of(Color.randomBlank())
           ).collect(Collectors.toUnmodifiableSet());
 
+        updateTimer = new Timer(UPDATE_SPEED);
         grid = new Grid(width, height);
         spawnNewGelule();
     }
@@ -61,6 +64,8 @@ public class Level implements Renderable {
         while (grid.deleteMatches()) {
             grid.dropAll();
         }
+        UPDATE_SPEED -= 100;
+        updateTimer.updateLimit(UPDATE_SPEED);
         spawnNewGelule();
     }
 
@@ -87,7 +92,7 @@ public class Level implements Renderable {
     }
 
     public void update() {
-        // TODO: drop gelule every x seconds
+        if (updateTimer.resetIfExceeds()) dipGelule();
     }
 
     @Override

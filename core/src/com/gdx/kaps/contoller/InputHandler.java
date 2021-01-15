@@ -1,48 +1,27 @@
 package com.gdx.kaps.contoller;
 
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.utils.TimeUtils;
-import com.gdx.kaps.MainScreen;
 import com.gdx.kaps.level.Level;
+import com.gdx.kaps.time.Timer;
 
 import java.util.HashMap;
 import java.util.stream.IntStream;
 
 public class InputHandler implements InputProcessor {
-    static class Chrono {
-        private long start;
-
-        public Chrono() {
-            reset();
-        }
-
-        public boolean exceeds(double value) {
-            return value() > value;
-        }
-
-        public double value() {
-            return TimeUtils.nanoTime() - start;
-        }
-
-        public void reset() {
-            start = TimeUtils.nanoTime();
-        }
-    }
-
     private final HashMap<Integer, Boolean> pressed = new HashMap<>();
     private final static double UPDATE_SPEED = 75_000_000;
-    private final Chrono chrono = new Chrono();
+    private final Timer moveSpeed = new Timer(UPDATE_SPEED);
     private final Level level;
 
-    public InputHandler() {
-        level = MainScreen.level;
+    public InputHandler(Level lvl) {
+        level = lvl;
         IntStream.range(0, 100)
           .forEach(n -> pressed.put(n, false));
     }
 
     @Override
     public boolean keyDown (int keycode) {
-        chrono.reset();
+        moveSpeed.reset();
         pressed.put(keycode, true);
 
         // SINGLE SHOT
@@ -95,8 +74,7 @@ public class InputHandler implements InputProcessor {
     }
 
     public void update() {
-        if (chrono.exceeds(UPDATE_SPEED)) {
-            chrono.reset();
+        if (moveSpeed.resetIfExceeds()) {
             // CONTINUOUS INPUT
             if (pressed.get(21)) level.moveGeluleLeft();
             if (pressed.get(22)) level.moveGeluleRight();
