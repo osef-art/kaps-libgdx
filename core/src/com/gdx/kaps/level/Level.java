@@ -22,7 +22,7 @@ public class Level implements Renderable {
 
     public Level(int width, int height, Set<Sidekick> sidekicks) {
         Objects.requireNonNull(sidekicks);
-        // TODO: handle all sidekicks (when they have powers) (strategy)
+
         colors =
           Stream.concat(
             sidekicks.stream().map(Sidekick::color),
@@ -61,11 +61,9 @@ public class Level implements Renderable {
     private void acceptGelule() {
         grid.accept(gelule);
         gelule = null;
-        while (grid.deleteMatches()) {
-            grid.dropAll();
-        }
-        UPDATE_SPEED -= 100;
-        updateTimer.updateLimit(UPDATE_SPEED);
+
+        updateGrid();
+        speedUp();
         spawnNewGelule();
     }
 
@@ -93,6 +91,17 @@ public class Level implements Renderable {
 
     public void update() {
         if (updateTimer.resetIfExceeds()) dipGelule();
+    }
+
+    private void speedUp() {
+        UPDATE_SPEED -= 100;
+        updateTimer.updateLimit(UPDATE_SPEED);
+    }
+
+    private void updateGrid() {
+        while (grid.deleteMatches()) {
+            grid.dropAll();
+        }
     }
 
     @Override

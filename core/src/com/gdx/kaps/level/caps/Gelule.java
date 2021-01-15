@@ -100,7 +100,6 @@ public class Gelule implements Iterable<LinkedCaps> {
     private boolean moveIfPossible(Look look) {
         if (!canMove(look)) return false;
         move(look);
-        // TODO: if in grid, update position !
         return true;
     }
 

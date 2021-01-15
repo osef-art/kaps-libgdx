@@ -12,12 +12,11 @@ import static com.gdx.kaps.MainScreen.dim;
 import static java.util.Objects.requireNonNull;
 
 public class LinkedCaps extends Caps {
-    private final Sprite mark = new Sprite(new Texture("img/9/caps/pop_0.png"));
-    private Sprite sprite;
     private LinkedCaps linked;
+    private Sprite sprite;
     private Look look;
 
-    public LinkedCaps(int x, int y, Look look, Level lvl) {
+    LinkedCaps(int x, int y, Look look, Level lvl) {
         this(x, y, look, Color.random(requireNonNull(lvl).colors()), lvl.grid());
     }
 
@@ -28,7 +27,7 @@ public class LinkedCaps extends Caps {
         updateTexture();
     }
 
-    public LinkedCaps(LinkedCaps caps) {
+    LinkedCaps(LinkedCaps caps) {
         super(caps);
         linked = new LinkedCaps(
           caps.linked.x(),
@@ -45,7 +44,7 @@ public class LinkedCaps extends Caps {
 
     @Override
     public Optional<Caps> linked() {
-        return Optional.ofNullable(linked);
+        return Optional.of(requireNonNull(linked));
     }
 
     @Override
@@ -83,6 +82,7 @@ public class LinkedCaps extends Caps {
     }
 
     void updateLinked() {
+        requireNonNull(linked);
         linked.look = look.opposite();
         linked.position.set(position);
         linked.position.add(linked.look.vector());
@@ -95,7 +95,6 @@ public class LinkedCaps extends Caps {
         updateLinked();
     }
 
-
     @Override
     public void render() {
         render(position.x(), position.y());
@@ -103,10 +102,6 @@ public class LinkedCaps extends Caps {
 
     @Override
     public void render(int x, int y) {
-        render(x, y, false);
-    }
-
-    public void render(int x, int y, boolean main) {
         batch.begin();
         batch.draw(
           sprite,
@@ -115,15 +110,6 @@ public class LinkedCaps extends Caps {
           dim.tile.width,
           dim.tile.height
         );
-        if (main) {
-            batch.draw(
-              mark,
-              dim.boardMargin + x * dim.tile.height + dim.tile.width / 4,
-              dim.topTile(y) + dim.tile.height / 4,
-              dim.tile.width / 2,
-              dim.tile.height / 2
-            );
-        }
         batch.end();
     }
 }
