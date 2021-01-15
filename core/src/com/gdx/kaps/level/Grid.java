@@ -3,10 +3,11 @@ package com.gdx.kaps.level;
 import com.badlogic.gdx.graphics.Color;
 import com.gdx.kaps.Renderable;
 import com.gdx.kaps.ShapeRendererAdaptor;
-import com.gdx.kaps.level.caps.Gelule;
 import com.gdx.kaps.level.caps.Caps;
+import com.gdx.kaps.level.caps.Gelule;
 
 import java.util.*;
+import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -156,16 +157,8 @@ public class Grid implements Renderable {
     boolean deleteMatches() {
         var toDelete = new HashSet<Caps>();
         everyCapsInGrid().forEach(obj -> {
-            var leftCaps = IntStream.range(0, Level.MIN_MATCH_RANGE)
-                             .mapToObj(n -> get(obj.x() - n, obj.y()))
-                             .collect(Collectors.toList());
-
-            var bottomCaps = IntStream.range(0, Level.MIN_MATCH_RANGE)
-                               .mapToObj(n -> get(obj.x(), obj.y() - n))
-                               .collect(Collectors.toList());
-
-            toDelete.addAll(matchingCapsFrom(leftCaps));
-            toDelete.addAll(matchingCapsFrom(bottomCaps));
+            toDelete.addAll(matchingCapsFrom(n -> get(obj.x() - n, obj.y())));
+            toDelete.addAll(matchingCapsFrom(n -> get(obj.x(), obj.y() - n)));
         });
         toDelete.forEach(this::pop);
         return !toDelete.isEmpty();
@@ -174,21 +167,23 @@ public class Grid implements Renderable {
     /**
      * Takes a list of {@link Optional} caps, checks if they are all there and of the same color.
      * If yes, adds them to {@code toDelete}.
-     * @param match the list of caps to check
      * @return a {@link Collection} of the caps to delete.
      * The collection is empty if the caps don't match.
      */
-    private List<Caps> matchingCapsFrom(List<Optional<Caps>> match) {
+    private List<Caps> matchingCapsFrom(IntFunction<Optional<Caps>> collector) {
+        // TODO: clean this method. a lot
         // IMPL: reduce list into a boolean telling if colors are 4 and of the same color
-        var colors = requireNonNull(match).stream()
+        var colors = IntStream.range(0, Level.MIN_MATCH_RANGE)
+                       .mapToObj(collector)
                       .map(opt -> opt.map(Caps::color).orElse(null))
                       .filter(Objects::nonNull)
                       .collect(Collectors.toList());
 
         if (colors.size() >= Level.MIN_MATCH_RANGE && colors.stream().allMatch(colors.get(0)::equals)) {
-            return match.stream()
-              .map(Optional::get)
-              .collect(Collectors.toList());
+            return IntStream.range(0, Level.MIN_MATCH_RANGE)
+                     .mapToObj(collector)
+                     .map(Optional::get)
+                     .collect(Collectors.toList());
         }
         return new ArrayList<>();
     }
