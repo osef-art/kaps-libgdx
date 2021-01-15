@@ -9,41 +9,17 @@ import com.gdx.kaps.level.caps.Caps;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import static com.gdx.kaps.MainScreen.dim;
 import static java.util.Objects.requireNonNull;
 
-public class Grid implements Iterable<Grid.Column>, Renderable {
-    static class Column implements Iterable<Optional<Caps>> {
-        // IMPL: OK OK OK. alors ce qu'on va faire:
-        //  Gelule -> 2 linkedCaps. liées entre elles.
-        //  accept(gelule) -> put linkedCaps dans la grid.
-        //  Linked caps = un seul caps, Gelule = les 2
-        //  si après ça tjrs des bugs -> abandon, concentre-toi
+public class Grid implements Renderable {
+    static class Column {
         private final Caps[] tiles;
 
         Column(int size) {
             tiles = new Caps[size];
-        }
-
-        @Override
-        public Iterator<Optional<Caps>> iterator() {
-            return new Iterator<>() {
-                private int index;
-
-                @Override
-                public boolean hasNext() {
-                    return index < tiles.length;
-                }
-
-                @Override
-                public Optional<Caps> next() {
-                    if (!hasNext()) {
-                        throw new NoSuchElementException();
-                    }
-                    return Optional.ofNullable(tiles[index++]);
-                }
-            };
         }
     }
     private final ShapeRendererAdaptor sra = new ShapeRendererAdaptor();
@@ -139,10 +115,12 @@ public class Grid implements Iterable<Grid.Column>, Renderable {
      */
     // IMPL: when a grid object is moved, its position should be
     //  updated depending of its grid position
-    private boolean dip(Caps obj) {
-        // FIXME: vertical gelules STILL don't dip
-        //  tip: ensure that when a caps is dipped, its array position changes
-        //  also: vertical can't have valid emplacement since their preview overrides previous...
+    private boolean dipIfPossible(Caps obj) {
+        // FIXME: gros bordel >.<
+        // IMPL: chosen strategy:
+        //  remove object from grid (but not deleting it)
+        //  make it dip depending on the grid pile
+        //  re-put it in the grid (success or not)
         requireNonNull(obj);
 
         remove(obj);
@@ -164,10 +142,8 @@ public class Grid implements Iterable<Grid.Column>, Renderable {
 
         while (canDrop[0]) {
             canDrop[0] = false;
-            forEach(
-              col -> col.forEach(
-                opt -> opt.ifPresent(obj -> canDrop[0] |= dip(obj))
-              )
+            everyCapsInGrid().forEach(
+               obj -> {} /*canDrop[0] |= dipIfPossible(obj)*/
             );
         }
     }
@@ -178,18 +154,18 @@ public class Grid implements Iterable<Grid.Column>, Renderable {
      */
     boolean deleteMatches() {
         var toDelete = new HashSet<Caps>();
-        forEach(c -> c.forEach(opt -> opt.ifPresent(obj -> {
+        everyCapsInGrid().forEach(obj -> {
             var leftCaps = IntStream.range(0, Level.MIN_MATCH_RANGE)
-              .mapToObj(n -> get(obj.x() - n, obj.y()))
-              .collect(Collectors.toList());
+                             .mapToObj(n -> get(obj.x() - n, obj.y()))
+                             .collect(Collectors.toList());
 
             var bottomCaps = IntStream.range(0, Level.MIN_MATCH_RANGE)
-              .mapToObj(n -> get(obj.x(), obj.y() - n))
-              .collect(Collectors.toList());
+                               .mapToObj(n -> get(obj.x(), obj.y() - n))
+                               .collect(Collectors.toList());
 
             toDelete.addAll(matchingCapsFrom(leftCaps));
             toDelete.addAll(matchingCapsFrom(bottomCaps));
-        })));
+        });
         toDelete.forEach(this::pop);
         return !toDelete.isEmpty();
     }
@@ -216,24 +192,10 @@ public class Grid implements Iterable<Grid.Column>, Renderable {
         return new ArrayList<>();
     }
 
-    @Override
-    public Iterator<Column> iterator() {
-        return new Iterator<>() {
-            private int index;
-
-            @Override
-            public boolean hasNext() {
-                return index < columns.length;
-            }
-
-            @Override
-            public Column next() {
-                if (!hasNext()) {
-                    throw new NoSuchElementException();
-                }
-                return (columns[index++]);
-            }
-        };
+    private Stream<Caps> everyCapsInGrid() {
+        return Arrays.stream(columns)
+          .flatMap(col -> Arrays.stream(col.tiles))
+          .filter(Objects::nonNull);
     }
 
     @Override
