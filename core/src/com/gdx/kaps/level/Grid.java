@@ -41,29 +41,57 @@ public class Grid implements Renderable {
 
     // getters
 
+    /**
+     * @return the grid width.
+     */
     public int width() {
         return columns.length;
     }
 
+    /**
+     * @return the grid height.
+     */
     public int height() {
         return columns[0].tiles.length;
     }
 
+    /**
+     * @return an {@link Optional<Caps>} containing the element occupying the position (x, y).
+     * The optional is empty if there's no element.
+     */
     public Optional<Caps> get(int x, int y) {
         return Optional.ofNullable(columns[x].tiles[y]);
     }
 
     // predicates
 
+    /**
+     * @return true if the position (x, y) is accessible in the grid,
+     * false if it exceeds dimensions.
+     * @param x the column number
+     * @param y the row number
+     */
     public boolean isInGrid(int x, int y) {
         return 0 <= x && x < width() &&
                  0 <= y && y < height();
     }
 
+    /**
+     * @return true if an element is already set in the grid at position (x, y),
+     * false if not.
+     * @param x the column number
+     * @param y the row number
+     */
     public boolean collidesPile(int x, int y) {
         return get(x, y).isPresent();
     }
 
+    /**
+     * @return true if a caps can dip, meaning the caps and its hypothetical linked caps have
+     * a free tile below them (at their y index minus 1 in the grid).
+     * Returns false if not.
+     * @param caps the caps to check
+     */
     private boolean canDip(Caps caps) {
         boolean canDip = caps.canDip();
         canDip &= caps.linked().map(Caps::canDip).orElse(true);
@@ -72,18 +100,34 @@ public class Grid implements Renderable {
 
     // transactions
 
+    /**
+     * Applies an operation on a caps, and on its linked caps if it has one.
+     * @param caps the caps on which apply th operation
+     * @param action the operation, a {@link Consumer<Caps>}
+     */
     private void doOnCapsAndLinkedIfExists(Caps caps, Consumer<Caps> action) {
         action.accept(caps);
         caps.linked().ifPresent(action);
     }
 
+    /**
+     * Sets the caps in the grid. Its position depends on the caps position.
+     * @param caps the caps to put into the grid
+     */
     private void set(Caps caps) {
         doOnCapsAndLinkedIfExists(caps, c -> set(c.x(), c.y(), c));
     }
 
+    /**
+     * Sets in the gris the object {@code caps} at position (x, y)
+     * @param x the column number
+     * @param y the row number
+     * @param caps the caps to set
+     */
     private void set(int x, int y, Caps caps) {
         columns[x].tiles[y] = caps;
     }
+
     /**
      * Sets the grid element at coordinates (x, y) to null, no matter what it is.
      * @param x the row number
@@ -102,8 +146,8 @@ public class Grid implements Renderable {
     }
 
     /**
-     * Pops a grid caps depending on its inner indexes.
-     * @param caps the grid caps to pop.
+     * Pops a caps depending on its inner indexes.
+     * @param caps the caps to pop.
      */
     private void pop(Caps caps) {
         get(caps.x(), caps.y()).flatMap(Caps::linked).ifPresent(this::unlink);
@@ -118,6 +162,10 @@ public class Grid implements Renderable {
         set(caps.x(), caps.y(), caps.unlinked());
     }
 
+    /**
+     * Dips a caps from the grid by translating it to an index below.
+     * @param caps the caps to dip
+     */
     private void dip(Caps caps) {
         doOnCapsAndLinkedIfExists(caps, c -> {
             remove(c.x(), c.y());
@@ -128,7 +176,7 @@ public class Grid implements Renderable {
 
     /**
      * Dips the provided caps and updates its position into the grid if needed
-     * @param caps the grid caps to dip
+     * @param caps the caps to dip
      * @return true if the caps was dipped, false if its positon is unchanged
      */
     private boolean dipIfPossible(Caps caps) {
@@ -143,6 +191,10 @@ public class Grid implements Renderable {
         return true;
     }
 
+    /**
+     * Sets the content of a gelule into the grid using its indexes
+     * @param gelule the gelule to add to the grid
+     */
     void accept(Gelule gelule) {
         requireNonNull(gelule);
         gelule.forEach(this::set);
@@ -150,6 +202,9 @@ public class Grid implements Renderable {
 
     // full grid operations
 
+    /**
+     * Applies gravity on every caps and dips them all until there is no more caps to dip.
+     */
     void dropAll() {
         boolean canDrop;
 
@@ -162,7 +217,7 @@ public class Grid implements Renderable {
     }
 
     /**
-     * Deletes all matches of {@code MIN_MATCH_RANGE} grid caps of same color in a row.
+     * Deletes all matches of {@code MIN_MATCH_RANGE} caps of same color in a row.
      * @return true if matches were deleted, false if not.
      */
     boolean deleteMatches() {
@@ -186,23 +241,25 @@ public class Grid implements Renderable {
      * The collection is empty if the caps don't match.
      */
     private List<Caps> matchingCapsFrom(IntFunction<Optional<Caps>> collector) {
-        // TODO: clean this method. a lot
-        // IMPL: reduce list into a boolean telling if colors are 4 and of the same color
+        // IMPL: cleaner way to do this ?
         var colors = IntStream.range(0, Level.MIN_MATCH_RANGE)
                        .mapToObj(collector)
                       .map(opt -> opt.map(Caps::color).orElse(null))
                       .filter(Objects::nonNull)
-                      .collect(Collectors.toList());
+                      .collect(Collectors.toUnmodifiableList());
 
         if (colors.size() >= Level.MIN_MATCH_RANGE && colors.stream().allMatch(colors.get(0)::equals)) {
             return IntStream.range(0, Level.MIN_MATCH_RANGE)
                      .mapToObj(collector)
                      .map(Optional::get)
-                     .collect(Collectors.toList());
+                     .collect(Collectors.toUnmodifiableList());
         }
         return new ArrayList<>();
     }
 
+    /**
+     * @return a flatmap collecting every caps of each {@link Column} of the grid.
+     */
     private Stream<Caps> everyCapsInGrid() {
         return Arrays.stream(columns)
           .flatMap(col -> Arrays.stream(col.tiles))
@@ -213,7 +270,7 @@ public class Grid implements Renderable {
     public void render() {
         for (int x = 0; x < width(); x++) {
             for (int y = 0; y < height(); y++) {
-                float shift = (x + y) %2 == 0 ? 0.025f : 0;
+                float shift = (x + y) %2 == 0 ? 0.0175f : 0;
                 Color color = new Color(0.45f + shift, 0.5f + shift, 0.6f + shift, 1);
 
                 sra.drawRect(
