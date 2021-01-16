@@ -12,6 +12,7 @@ import com.gdx.kaps.level.Sidekick;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Random;
 
 public class MainScreen extends ApplicationAdapter {
 	private InputHandler controller;
@@ -33,7 +34,7 @@ public class MainScreen extends ApplicationAdapter {
 
 		// TODO: handle all sidekicks (when they have powers) (strategy)
 		level = new Level(
-			Path.of("levels/level0"),
+			Path.of("levels/level" + new Random().nextInt(5)),
 			new HashSet<>(Arrays.asList(Sidekick.ZYRAME, Sidekick.SEAN))
 		);
 		dim = new Dimensions(level, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());

@@ -38,7 +38,8 @@ public class Position {
         return new Position(this.x + x, this.y + y);
     }
 
-    public Position shifted(Position vector) {
-        return shifted(vector.x, vector.y);
+    @Override
+    public String toString() {
+        return "(" + x + ", " + y + ")";
     }
 }

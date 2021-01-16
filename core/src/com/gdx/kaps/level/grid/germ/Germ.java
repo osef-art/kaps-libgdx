@@ -59,7 +59,7 @@ public abstract class Germ implements GridObject {
 
     @Override
     public int y() {
-        return position.x();
+        return position.y();
     }
 
     @Override
@@ -83,7 +83,17 @@ public abstract class Germ implements GridObject {
     }
 
     @Override
-    public void dipIfPossible(Grid gris) {
+    public boolean isGerm() {
+        return true;
+    }
+
+    @Override
+    public void dipIfPossible(Grid grid) {
+    }
+
+    @Override
+    public String toString() {
+        return "{" + x() + ',' + y() + '}';
     }
 
     @Override

@@ -5,8 +5,6 @@ import com.gdx.kaps.Renderable;
 import java.util.Optional;
 
 public interface GridObject extends Renderable {
-    // TODO: Caps interface that extends GridObject.
-    //  Linked and UnlinkedCaps extend Caps
     int x();
     int y();
     Color color();
@@ -14,11 +12,12 @@ public interface GridObject extends Renderable {
     Optional<GridObject> linked();
     GridObject unlinked();
 
+    boolean isGerm();
     boolean canDip(Grid grid);
     void dipIfPossible(Grid grid);
 
+    void render(int x, int y);
     default void render() {
         render(x(), y());
     }
-    void render(int x, int y);
 }

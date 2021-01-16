@@ -93,6 +93,12 @@ public class Grid implements Renderable {
         return Optional.ofNullable(columns[x].tiles[y]);
     }
 
+    public int remainingGerms() {
+        return (int) everyObjectInGrid()
+          .filter(GridObject::isGerm)
+          .count();
+    }
+
     // predicates
 
     /**

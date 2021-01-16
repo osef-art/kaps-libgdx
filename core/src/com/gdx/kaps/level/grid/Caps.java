@@ -69,11 +69,18 @@ public class Caps implements GridObject {
 
     // predicates
 
+    @Override
+    public boolean isGerm() {
+        return false;
+    }
+
     public boolean isInGrid(Grid grid) {
+        requireNonNull(grid);
         return grid.isInGrid(position.x(), position.y());
     }
 
     public boolean collidesPile(Grid grid) {
+        requireNonNull(grid);
         return grid.collidesPile(position.x(), position.y());
     }
 

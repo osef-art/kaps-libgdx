@@ -66,7 +66,6 @@ public class Level implements Renderable {
         if (gelule != null) return;
         gelule = new Gelule(this);
         // TODO: display gelule when game over. maybe in main loop ?
-
         checkGameOver();
     }
 
@@ -115,7 +114,7 @@ public class Level implements Renderable {
     }
 
     private void checkGameOver() {
-        if (!gelule.isAtValidEmplacement(grid)) {
+        if (!gelule.isAtValidEmplacement(grid) || grid.remainingGerms() <= 0) {
             try {
                 Thread.sleep(1500);
             } catch (InterruptedException e) {
