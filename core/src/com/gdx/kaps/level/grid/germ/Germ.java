@@ -3,6 +3,7 @@ package com.gdx.kaps.level.grid.germ;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.gdx.kaps.level.grid.Color;
+import com.gdx.kaps.level.grid.Grid;
 import com.gdx.kaps.level.grid.GridObject;
 import com.gdx.kaps.level.grid.Position;
 
@@ -77,12 +78,12 @@ public abstract class Germ implements GridObject {
     }
 
     @Override
-    public boolean canDip() {
+    public boolean canDip(Grid grid) {
         return false;
     }
 
     @Override
-    public void dipIfPossible() {
+    public void dipIfPossible(Grid gris) {
     }
 
     @Override

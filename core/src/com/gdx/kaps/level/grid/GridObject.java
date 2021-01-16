@@ -14,8 +14,8 @@ public interface GridObject extends Renderable {
     Optional<GridObject> linked();
     GridObject unlinked();
 
-    boolean canDip();
-    void dipIfPossible();
+    boolean canDip(Grid grid);
+    void dipIfPossible(Grid grid);
 
     default void render() {
         render(x(), y());

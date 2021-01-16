@@ -14,7 +14,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 public class MainScreen extends ApplicationAdapter {
-	static int GRID_WIDTH, GRID_HEIGHT;
 	private InputHandler controller;
 	private Level level;
 
@@ -37,10 +36,7 @@ public class MainScreen extends ApplicationAdapter {
 			Path.of("levels/level0"),
 			new HashSet<>(Arrays.asList(Sidekick.ZYRAME, Sidekick.SEAN))
 		);
-
-		GRID_WIDTH = level.grid().width();
-		GRID_HEIGHT = level.grid().height();
-		dim = new Dimensions(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		dim = new Dimensions(level, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
 		controller = new InputHandler(level);
 		Gdx.input.setInputProcessor(controller);

@@ -9,13 +9,11 @@ import java.util.Objects;
 public class Gelule implements Iterable<LinkedCaps> {
     private final LinkedCaps main;
     private final LinkedCaps linked;
-    private final Grid grid;
 
     public Gelule(Level lvl) {
         Objects.requireNonNull(lvl);
-        grid = lvl.grid();
-        int x = grid.width() /2 -1;
-        int y = grid.height() -1;
+        int x = lvl.gridWidth() /2 -1;
+        int y = lvl.gridHeight() -1;
         main = new LinkedCaps(x, y, Look.LEFT, lvl);
         linked = new LinkedCaps(x+1, y, Look.RIGHT, lvl);
         linked.linkTo(main);
@@ -24,7 +22,6 @@ public class Gelule implements Iterable<LinkedCaps> {
     private Gelule(Gelule gelule, Look look) {
         Objects.requireNonNull(gelule);
         Objects.requireNonNull(look);
-        grid = gelule.grid;
         main = new LinkedCaps(gelule.main).shifted(look);
         linked = new LinkedCaps(gelule.linked).shifted(look);
     }
@@ -53,34 +50,34 @@ public class Gelule implements Iterable<LinkedCaps> {
 
     // predicates
 
-    public boolean isAtValidEmplacement() {
-        return isInGrid() && !collidesPile();
+    public boolean isAtValidEmplacement(Grid grid) {
+        return isInGrid(grid) && !collidesPile(grid);
     }
 
-    public boolean isInGrid() {
-        return main.isInGrid() && linked.isInGrid();
+    public boolean isInGrid(Grid grid) {
+        return main.isInGrid(grid) && linked.isInGrid(grid);
     }
 
-    public boolean collidesPile() {
-        return main.collidesPile() || linked.collidesPile();
+    public boolean collidesPile(Grid grid) {
+        return main.collidesPile(grid) || linked.collidesPile(grid);
     }
 
     /**
      * tries flipping the gelule and evaluates its position.
      * @return true if the flipped gelule stands in a valid position, false if not.
      */
-    private boolean canFlip() {
+    private boolean canFlip(Grid grid) {
         var copy = copy();
         copy.flip();
 
-        if (!copy.linked.isAtValidEmplacement()) {
-            return copy.shifted(copy.main.look()).isAtValidEmplacement();
+        if (!copy.linked.isAtValidEmplacement(grid)) {
+            return copy.shifted(copy.main.look()).isAtValidEmplacement(grid);
         }
         return true;
     }
 
-    private boolean canMove(Look look) {
-        return shifted(look).isAtValidEmplacement();
+    private boolean canMove(Look look, Grid grid) {
+        return shifted(look).isAtValidEmplacement(grid);
     }
 
     // movement
@@ -95,31 +92,31 @@ public class Gelule implements Iterable<LinkedCaps> {
         updateLinked();
     }
 
-    private boolean moveIfPossible(Look look) {
-        if (!canMove(look)) return false;
+    private boolean moveIfPossible(Look look, Grid grid) {
+        if (!canMove(look, grid)) return false;
         move(look);
         return true;
     }
 
-    public void moveLeftIfPossible() {
-        moveIfPossible(Look.LEFT);
+    public void moveLeftIfPossible(Grid grid) {
+        moveIfPossible(Look.LEFT, grid);
     }
 
-    public void moveRightIfPossible() {
-        moveIfPossible(Look.RIGHT);
+    public void moveRightIfPossible(Grid grid) {
+        moveIfPossible(Look.RIGHT, grid);
     }
 
-    public boolean dipIfPossible() {
-        return moveIfPossible(Look.DOWN);
+    public boolean dipIfPossible(Grid grid) {
+        return moveIfPossible(Look.DOWN, grid);
     }
 
-    public void flipIfPossible() {
-        if (!canFlip()) return;
+    public void flipIfPossible(Grid grid) {
+        if (!canFlip(grid)) return;
         // TODO: prevent flip if a caps bothers
         flip();
 
         // TODO: a 'helpFlip' method that replaces flipped thing
-        if (!linked.isAtValidEmplacement()) {
+        if (!linked.isAtValidEmplacement(grid)) {
             move(main.look());
         }
     }

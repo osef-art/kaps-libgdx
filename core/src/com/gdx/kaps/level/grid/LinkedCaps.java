@@ -16,11 +16,11 @@ public class LinkedCaps extends Caps {
     private Look look;
 
     LinkedCaps(int x, int y, Look look, Level lvl) {
-        this(x, y, look, Color.random(requireNonNull(lvl).colors()), lvl.grid());
+        this(x, y, look, Color.random(requireNonNull(lvl).colors()));
     }
 
-    LinkedCaps(int x, int y, Look look, Color color, Grid grid) {
-        super(x, y, color, grid);
+    LinkedCaps(int x, int y, Look look, Color color) {
+        super(x, y, color);
         requireNonNull(look);
         this.look = look;
         updateTexture();
@@ -32,8 +32,7 @@ public class LinkedCaps extends Caps {
           caps.linked.x(),
           caps.linked.y(),
           caps.linked.look,
-          caps.linked.color(),
-          caps.linked.grid
+          caps.linked.color()
         );
         look = caps.look;
         sprite = caps.sprite;
@@ -48,7 +47,7 @@ public class LinkedCaps extends Caps {
 
     @Override
     public Caps unlinked() {
-        return new Caps(x(), y(), color(), grid);
+        return new Caps(x(), y(), color());
     }
 
     LinkedCaps copy() {

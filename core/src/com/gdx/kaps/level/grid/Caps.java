@@ -13,12 +13,9 @@ public class Caps implements GridObject {
     private final Sprite sprite;
     private final Color color;
     final Position position;
-    final Grid grid;
 
-    Caps(int x, int y, Color color, Grid grid) {
+    Caps(int x, int y, Color color) {
         requireNonNull(color);
-        requireNonNull(grid);
-        this.grid = grid;
         this.color = color;
         position = new Position(x, y);
         sprite = new Sprite(new Texture("img/" + color.id() + "/caps/" + Look.NONE + ".png"));
@@ -30,7 +27,6 @@ public class Caps implements GridObject {
         position = caps.position.shifted(0, 0);
         sprite = caps.sprite;
         color = caps.color;
-        grid = caps.grid;
     }
 
     // getters
@@ -73,20 +69,20 @@ public class Caps implements GridObject {
 
     // predicates
 
-    public boolean isInGrid() {
+    public boolean isInGrid(Grid grid) {
         return grid.isInGrid(position.x(), position.y());
     }
 
-    public boolean collidesPile() {
+    public boolean collidesPile(Grid grid) {
         return grid.collidesPile(position.x(), position.y());
     }
 
-    public boolean isAtValidEmplacement() {
-        return isInGrid() && !collidesPile();
+    public boolean isAtValidEmplacement(Grid grid) {
+        return isInGrid(grid) && !collidesPile(grid);
     }
 
-    private boolean canMove(Look look) {
-        return shifted(look).isAtValidEmplacement();
+    private boolean canMove(Look look, Grid grid) {
+        return shifted(look).isAtValidEmplacement(grid);
     }
 
     // movement
@@ -95,19 +91,19 @@ public class Caps implements GridObject {
         position.add(look.vector());
     }
 
-    private void moveIfPossible(Look look) {
-        if (!canMove(look)) return;
+    private void moveIfPossible(Look look, Grid grid) {
+        if (!canMove(look, grid)) return;
         move(look);
     }
 
     @Override
-    public boolean canDip() {
-        return canMove(Look.DOWN);
+    public boolean canDip(Grid grid) {
+        return canMove(Look.DOWN, grid);
     }
 
     @Override
-    public void dipIfPossible() {
-        moveIfPossible(Look.DOWN);
+    public void dipIfPossible(Grid grid) {
+        moveIfPossible(Look.DOWN, grid);
     }
 
     // update

@@ -1,10 +1,12 @@
 package com.gdx.kaps;
 
 import com.badlogic.gdx.math.Rectangle;
+import com.gdx.kaps.level.Level;
 
 import static com.gdx.kaps.MainScreen.dim;
 
 public class Dimensions {
+    private static int GRID_HEIGHT;
     public final float sidePadding;
     public final float gridMargin;
     public final float boxPadding;
@@ -19,14 +21,15 @@ public class Dimensions {
     public final Rectangle nextGelule;
     public final Rectangle holdGelule;
 
-    public Dimensions(int windowWidth, int windowHeight) {
+    public Dimensions(Level level, int windowWidth, int windowHeight) {
         window = new Rectangle(0, 0, windowWidth, windowHeight);
         gridMargin = window.width / 20;
+        GRID_HEIGHT = level.gridHeight();
 
         gridPanel = new Rectangle(0, 0, window.width*2/3, window.height);
         grid = new Rectangle(gridMargin, gridMargin, gridPanel.width - 2 * gridMargin, window.height);
-        tile = new Rectangle(gridMargin, gridMargin, grid.width / MainScreen.GRID_WIDTH, grid.width / MainScreen.GRID_WIDTH);
-        grid.height = tile.height * MainScreen.GRID_HEIGHT;
+        tile = new Rectangle(gridMargin, gridMargin, grid.width / level.gridWidth(), grid.width / level.gridWidth());
+        grid.height = tile.height * GRID_HEIGHT;
         gridPanel.height = grid.height + 2* gridMargin;
 
         sidePanel = new Rectangle(gridPanel.width, 0, window.width - gridPanel.width, gridPanel.height);
@@ -51,6 +54,6 @@ public class Dimensions {
     }
 
     public float topTile(int y) {
-        return dim.gridMargin + ((MainScreen.GRID_HEIGHT -1) - y) * dim.tile.width;
+        return dim.gridMargin + ((GRID_HEIGHT -1) - y) * dim.tile.width;
     }
 }

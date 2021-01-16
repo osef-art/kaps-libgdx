@@ -123,8 +123,8 @@ public class Grid implements Renderable {
      * @param obj the obj to check
      */
     private boolean canDip(GridObject obj) {
-        boolean canDip = obj.canDip();
-        canDip &= obj.linked().map(GridObject::canDip).orElse(true);
+        boolean canDip = obj.canDip(this);
+        canDip &= obj.linked().map(o -> o.canDip(this)).orElse(true);
         return canDip;
     }
 
@@ -199,7 +199,7 @@ public class Grid implements Renderable {
     private void dip(GridObject obj) {
         doOnGridObjectAndLinkedIfExists(obj, c -> {
             remove(c.x(), c.y());
-            c.dipIfPossible();
+            c.dipIfPossible(this);
             set(c);
         });
     }

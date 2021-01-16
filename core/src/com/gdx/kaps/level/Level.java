@@ -49,8 +49,13 @@ public class Level implements Renderable {
     }
 
     // getters
-    public Grid grid() {
-        return grid;
+
+    public int gridWidth() {
+        return grid.width();
+    }
+
+    public int gridHeight() {
+        return grid.height();
     }
 
     public Set<com.gdx.kaps.level.grid.Color> colors() {
@@ -75,24 +80,25 @@ public class Level implements Renderable {
     }
 
     // control
+
     public void moveGeluleLeft() {
-        gelule.moveLeftIfPossible();
+        gelule.moveLeftIfPossible(grid);
     }
 
     public void moveGeluleRight() {
-        gelule.moveRightIfPossible();
+        gelule.moveRightIfPossible(grid);
     }
 
     public void dipGelule() {
-        if (!gelule.dipIfPossible()) acceptGelule();
+        if (!gelule.dipIfPossible(grid)) acceptGelule();
     }
 
     public void flipGelule() {
-        gelule.flipIfPossible();
+        gelule.flipIfPossible(grid);
     }
 
     public void dropGelule() {
-        while (gelule.dipIfPossible());
+        while (gelule.dipIfPossible(grid));
         acceptGelule();
     }
 
@@ -109,7 +115,7 @@ public class Level implements Renderable {
     }
 
     private void checkGameOver() {
-        if (!gelule.isAtValidEmplacement()) {
+        if (!gelule.isAtValidEmplacement(grid)) {
             try {
                 Thread.sleep(1500);
             } catch (InterruptedException e) {
