@@ -42,7 +42,7 @@ public class LinkedCaps extends Caps {
     // getters
 
     @Override
-    public Optional<Caps> linked() {
+    public Optional<GridObject> linked() {
         return Optional.of(requireNonNull(linked));
     }
 
@@ -92,11 +92,6 @@ public class LinkedCaps extends Caps {
         this.linked = caps;
         caps.linked = this;
         updateLinked();
-    }
-
-    @Override
-    public void render() {
-        render(position.x(), position.y());
     }
 
     @Override

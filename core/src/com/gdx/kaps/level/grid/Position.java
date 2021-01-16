@@ -1,6 +1,6 @@
 package com.gdx.kaps.level.grid;
 
-class Position {
+public class Position {
     private int x, y;
 
     public Position(int x, int y) {

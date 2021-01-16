@@ -10,9 +10,9 @@ import static com.gdx.kaps.MainScreen.dim;
 import static java.util.Objects.requireNonNull;
 
 public class Caps implements GridObject {
-    final Position position;
     private final Sprite sprite;
     private final Color color;
+    final Position position;
     final Grid grid;
 
     Caps(int x, int y, Color color, Grid grid) {
@@ -35,19 +35,23 @@ public class Caps implements GridObject {
 
     // getters
 
+    @Override
     public int x() {
         return position.x();
     }
 
+    @Override
     public int y() {
         return position.y();
     }
 
+    @Override
     public Color color() {
         return color;
     }
 
-    public Optional<Caps> linked() {
+    @Override
+    public Optional<GridObject> linked() {
         return Optional.empty();
     }
 
@@ -62,6 +66,7 @@ public class Caps implements GridObject {
         return copy;
     }
 
+    @Override
     public Caps unlinked() {
         return this;
     }
@@ -90,17 +95,19 @@ public class Caps implements GridObject {
         position.add(look.vector());
     }
 
-    private boolean moveIfPossible(Look look) {
-        if (!canMove(look)) return false;
+    private void moveIfPossible(Look look) {
+        if (!canMove(look)) return;
         move(look);
-        return true;
     }
+
+    @Override
     public boolean canDip() {
         return canMove(Look.DOWN);
     }
 
-    public boolean dipIfPossible() {
-        return moveIfPossible(Look.DOWN);
+    @Override
+    public void dipIfPossible() {
+        moveIfPossible(Look.DOWN);
     }
 
     // update
@@ -109,10 +116,7 @@ public class Caps implements GridObject {
         return "(" + position.x() + "," + position.y() + ")";
     }
 
-    public void render() {
-        render(position.x(), position.y());
-    }
-
+    @Override
     public void render(int x, int y) {
         batch.begin();
         batch.draw(
@@ -124,5 +128,4 @@ public class Caps implements GridObject {
         );
         batch.end();
     }
-
 }

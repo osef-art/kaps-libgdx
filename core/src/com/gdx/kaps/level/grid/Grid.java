@@ -17,9 +17,9 @@ import static java.util.Objects.requireNonNull;
 
 public class Grid implements Renderable {
     static class Column {
-        private final Caps[] tiles;
+        private final GridObject[] tiles;
         Column(int size) {
-            tiles = new Caps[size];
+            tiles = new GridObject[size];
         }
     }
     private final Column[] columns;
@@ -53,10 +53,10 @@ public class Grid implements Renderable {
     }
 
     /**
-     * @return an {@link Optional<Caps>} containing the element occupying the position (x, y).
+     * @return an {@link Optional<GridObject>} containing the element occupying the position (x, y).
      * The optional is empty if there's no element.
      */
-    public Optional<Caps> get(int x, int y) {
+    public Optional<GridObject> get(int x, int y) {
         return Optional.ofNullable(columns[x].tiles[y]);
     }
 
@@ -84,45 +84,45 @@ public class Grid implements Renderable {
     }
 
     /**
-     * @return true if a caps can dip, meaning the caps and its hypothetical linked caps have
+     * @return true if a obj can dip, meaning the obj and its hypothetical linked obj have
      * a free tile below them (at their y index minus 1 in the grid).
      * Returns false if not.
-     * @param caps the caps to check
+     * @param obj the obj to check
      */
-    private boolean canDip(Caps caps) {
-        boolean canDip = caps.canDip();
-        canDip &= caps.linked().map(Caps::canDip).orElse(true);
+    private boolean canDip(GridObject obj) {
+        boolean canDip = obj.canDip();
+        canDip &= obj.linked().map(GridObject::canDip).orElse(true);
         return canDip;
     }
 
     // transactions
 
     /**
-     * Applies an operation on a caps, and on its linked caps if it has one.
-     * @param caps the caps on which apply th operation
-     * @param action the operation, a {@link Consumer<Caps>}
+     * Applies an operation on a obj, and on its linked obj if it has one.
+     * @param obj the obj on which apply th operation
+     * @param action the operation, a {@link Consumer<GridObject>}
      */
-    private void doOnCapsAndLinkedIfExists(Caps caps, Consumer<Caps> action) {
-        action.accept(caps);
-        caps.linked().ifPresent(action);
+    private void doOnGridObjectAndLinkedIfExists(GridObject obj, Consumer<GridObject> action) {
+        action.accept(obj);
+        obj.linked().ifPresent(action);
     }
 
     /**
-     * Sets the caps in the grid. Its position depends on the caps position.
-     * @param caps the caps to put into the grid
+     * Sets the obj in the grid. Its position depends on the obj position.
+     * @param obj the obj to put into the grid
      */
-    private void set(Caps caps) {
-        doOnCapsAndLinkedIfExists(caps, c -> set(c.x(), c.y(), c));
+    private void set(GridObject obj) {
+        doOnGridObjectAndLinkedIfExists(obj, c -> set(c.x(), c.y(), c));
     }
 
     /**
-     * Sets in the gris the object {@code caps} at position (x, y)
+     * Sets in the gris the object {@code obj} at position (x, y)
      * @param x the column number
      * @param y the row number
-     * @param caps the caps to set
+     * @param obj the obj to set
      */
-    private void set(int x, int y, Caps caps) {
-        columns[x].tiles[y] = caps;
+    private void set(int x, int y, GridObject obj) {
+        columns[x].tiles[y] = obj;
     }
 
     /**
@@ -135,36 +135,36 @@ public class Grid implements Renderable {
     }
 
     /**
-     * Removes a whole caps from the grid, meaning both parts of it if there are two.
-     * @param caps the caps to remove from grid
+     * Removes a whole obj from the grid, meaning both parts of it if there are two.
+     * @param obj the obj to remove from grid
      */
-    private void remove(Caps caps) {
-        doOnCapsAndLinkedIfExists(caps, c -> remove(c.x(), c.y()));
+    private void remove(GridObject obj) {
+        doOnGridObjectAndLinkedIfExists(obj, c -> remove(c.x(), c.y()));
     }
 
     /**
-     * Pops a caps depending on its inner indexes.
-     * @param caps the caps to pop.
+     * Pops a obj depending on its inner indexes.
+     * @param obj the obj to pop.
      */
-    private void pop(Caps caps) {
-        get(caps.x(), caps.y()).flatMap(Caps::linked).ifPresent(this::unlink);
-        remove(caps.x(), caps.y());
+    private void pop(GridObject obj) {
+        get(obj.x(), obj.y()).flatMap(GridObject::linked).ifPresent(this::unlink);
+        remove(obj.x(), obj.y());
     }
 
     /**
-     * Sets grid element located at (x, y) to an unlinked Caps.
-     * @param caps the element to unlink
+     * Sets grid element located at (x, y) to an unlinked GridObject.
+     * @param obj the element to unlink
      */
-    private void unlink(Caps caps) {
-        set(caps.x(), caps.y(), caps.unlinked());
+    private void unlink(GridObject obj) {
+        set(obj.x(), obj.y(), obj.unlinked());
     }
 
     /**
-     * Dips a caps from the grid by translating it to an index below.
-     * @param caps the caps to dip
+     * Dips a obj from the grid by translating it to an index below.
+     * @param obj the obj to dip
      */
-    private void dip(Caps caps) {
-        doOnCapsAndLinkedIfExists(caps, c -> {
+    private void dip(GridObject obj) {
+        doOnGridObjectAndLinkedIfExists(obj, c -> {
             remove(c.x(), c.y());
             c.dipIfPossible();
             set(c);
@@ -172,19 +172,19 @@ public class Grid implements Renderable {
     }
 
     /**
-     * Dips the provided caps and updates its position into the grid if needed
-     * @param caps the caps to dip
-     * @return true if the caps was dipped, false if its positon is unchanged
+     * Dips the provided obj and updates its position into the grid if needed
+     * @param obj the obj to dip
+     * @return true if the obj was dipped, false if its positon is unchanged
      */
-    private boolean dipIfPossible(Caps caps) {
-        requireNonNull(caps);
+    private boolean dipIfPossible(GridObject obj) {
+        requireNonNull(obj);
 
-        remove(caps);
-        if (!canDip(caps)) {
-            set(caps);
+        remove(obj);
+        if (!canDip(obj)) {
+            set(obj);
             return false;
         }
-        dip(caps);
+        dip(obj);
         return true;
     }
 
@@ -200,31 +200,31 @@ public class Grid implements Renderable {
     // full grid operations
 
     /**
-     * Applies gravity on every caps and dips them all until there is no more caps to dip.
+     * Applies gravity on every obj and dips them all until there is no more obj to dip.
      */
     public void dropAll() {
-        boolean canDrop;
-
-        do {
-            canDrop = everyCapsInGrid()
-                        .map(this::dipIfPossible)
-                        .reduce((bool, bool2) -> bool || bool2)
-                        .orElse(false);
-        } while (canDrop);
+        // TODO: drop only linked obj. unlinked will be controllable
+        //  until they hit the floor/another obj. Also, drop unlinked below falling linked.
+        while (
+          everyObjectInGrid()
+            .map(this::dipIfPossible)
+            .reduce((bool, bool2) -> bool || bool2)
+            .orElse(false)
+        );
     }
 
     /**
-     * Deletes all matches of {@code MIN_MATCH_RANGE} caps of same color in a row.
+     * Deletes all matches of {@code MIN_MATCH_RANGE} obj of same color in a row.
      * @return true if matches were deleted, false if not.
      */
     public boolean deleteMatches() {
-        var toDelete = new HashSet<Caps>();
-        everyCapsInGrid().forEach(caps -> {
-            if (caps.x() >= Level.MIN_MATCH_RANGE - 1) {
-                toDelete.addAll(matchingCapsFrom(n -> get(caps.x() - n, caps.y())));
+        var toDelete = new HashSet<GridObject>();
+        everyObjectInGrid().forEach(obj -> {
+            if (obj.x() >= Level.MIN_MATCH_RANGE - 1) {
+                toDelete.addAll(matchingGridObjectFrom(n -> get(obj.x() - n, obj.y())));
             }
-            if (caps.y() >= Level.MIN_MATCH_RANGE - 1) {
-                toDelete.addAll(matchingCapsFrom(n -> get(caps.x(), caps.y() - n)));
+            if (obj.y() >= Level.MIN_MATCH_RANGE - 1) {
+                toDelete.addAll(matchingGridObjectFrom(n -> get(obj.x(), obj.y() - n)));
             }
         });
         toDelete.forEach(this::pop);
@@ -232,16 +232,16 @@ public class Grid implements Renderable {
     }
 
     /**
-     * Takes a list of {@link Optional} caps, checks if they are all there and of the same color.
+     * Takes a list of {@link Optional} obj, checks if they are all there and of the same color.
      * If yes, adds them to {@code toDelete}.
-     * @return a {@link Collection} of the caps to delete.
-     * The collection is empty if the caps don't match.
+     * @return a {@link Collection} of the obj to delete.
+     * The collection is empty if the obj don't match.
      */
-    private List<Caps> matchingCapsFrom(IntFunction<Optional<Caps>> collector) {
+    private List<GridObject> matchingGridObjectFrom(IntFunction<Optional<GridObject>> collector) {
         // IMPL: cleaner way to do this ?
         var colors = IntStream.range(0, Level.MIN_MATCH_RANGE)
                        .mapToObj(collector)
-                      .map(opt -> opt.map(Caps::color).orElse(null))
+                      .map(opt -> opt.map(GridObject::color).orElse(null))
                       .filter(Objects::nonNull)
                       .collect(Collectors.toUnmodifiableList());
 
@@ -255,9 +255,9 @@ public class Grid implements Renderable {
     }
 
     /**
-     * @return a flatmap collecting every caps of each {@link Column} of the grid.
+     * @return a flatmap collecting every obj of each {@link Column} of the grid.
      */
-    private Stream<Caps> everyCapsInGrid() {
+    private Stream<GridObject> everyObjectInGrid() {
         return Arrays.stream(columns)
           .flatMap(col -> Arrays.stream(col.tiles))
           .filter(Objects::nonNull);
@@ -283,7 +283,7 @@ public class Grid implements Renderable {
             for (int y = 0; y < height(); y++) {
                 int finalX = x;
                 int finalY = y;
-                get(x, y).ifPresent(caps -> caps.render(finalX, finalY));
+                get(x, y).ifPresent(obj -> obj.render(finalX, finalY));
             }
         }
     }
