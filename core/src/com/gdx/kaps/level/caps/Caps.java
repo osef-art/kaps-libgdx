@@ -127,7 +127,7 @@ public class Caps implements GridObject {
         batch.begin();
         batch.draw(
           sprite,
-          dim.boardMargin + x * dim.tile.height,
+          dim.gridMargin + x * dim.tile.height,
           dim.topTile(y),
           dim.tile.width,
           dim.tile.height

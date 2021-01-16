@@ -1,7 +1,7 @@
 package com.gdx.kaps.level;
 
+import com.badlogic.gdx.graphics.Color;
 import com.gdx.kaps.Renderable;
-import com.gdx.kaps.level.caps.Color;
 import com.gdx.kaps.level.caps.Gelule;
 import com.gdx.kaps.time.Timer;
 
@@ -11,14 +11,21 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.gdx.kaps.MainScreen.dim;
+import static com.gdx.kaps.MainScreen.sra;
+
 public class Level implements Renderable {
     // INFO: temporary renderer
+    private int updateSpeed = 1_000_000_000;
     final static int MIN_MATCH_RANGE = 4;    // TODO: find a way better name
-    private int UPDATE_SPEED = 1_000_000_000;
     private final Timer updateTimer;
-    private final Set<Color> colors;
+    private final Set<com.gdx.kaps.level.caps.Color> colors;
+    // TODO: implement next & hold
+    private boolean canHold;
     private final Grid grid;
     private Gelule gelule;
+    private Gelule next;
+    private Gelule hold;
 
     public Level(int width, int height, Set<Sidekick> sidekicks) {
         Objects.requireNonNull(sidekicks);
@@ -26,10 +33,10 @@ public class Level implements Renderable {
         colors =
           Stream.concat(
             sidekicks.stream().map(Sidekick::color),
-            Stream.of(Color.randomBlank())
+            Stream.of(com.gdx.kaps.level.caps.Color.randomBlank())
           ).collect(Collectors.toUnmodifiableSet());
 
-        updateTimer = new Timer(UPDATE_SPEED);
+        updateTimer = new Timer(updateSpeed);
         grid = new Grid(width, height);
         spawnNewGelule();
     }
@@ -39,7 +46,7 @@ public class Level implements Renderable {
         return grid;
     }
 
-    public Set<Color> colors() {
+    public Set<com.gdx.kaps.level.caps.Color> colors() {
         return colors;
     }
 
@@ -94,8 +101,8 @@ public class Level implements Renderable {
     }
 
     private void speedUp() {
-        UPDATE_SPEED -= 100;
-        updateTimer.updateLimit(UPDATE_SPEED);
+        updateSpeed -= 100;
+        updateTimer.updateLimit(updateSpeed);
     }
 
     private void updateGrid() {
@@ -108,5 +115,39 @@ public class Level implements Renderable {
     public void render() {
         grid.render();
         Optional.ofNullable(gelule).ifPresent(Gelule::render);
+
+        sra.drawRect(
+          dim.gridMargin,
+          dim.gridMargin + dim.grid.height + 10,
+          dim.grid.width,
+          dim.gridMargin - 10,
+          new Color(0.5f, 0.5f, 0.65f, 1)
+        );
+        sra.drawRect(
+          dim.gridMargin,
+          dim.gridMargin + dim.grid.height + 10,
+          (float) (dim.grid.width * updateTimer.ratio()),
+          dim.gridMargin - 10,
+          new Color(0.6f, 0.6f, 0.75f, 1)
+        );
+
+        sra.drawRect(
+          dim.sidePanel,
+          new Color(0.5f, 0.55f, 0.65f, 1)
+        );
+
+        sra.drawRect(
+          dim.nextBox,
+          new Color(0.55f, 0.6f, 0.7f, 1)
+        );
+        sra.drawRect(
+          dim.holdBox,
+          new Color(0.55f, 0.6f, 0.7f, 1)
+        );
+
+        sra.drawRect(
+          dim.bottomPanel,
+          new Color(0.6f, 0.45f, 0.85f, 1)
+        );
     }
 }

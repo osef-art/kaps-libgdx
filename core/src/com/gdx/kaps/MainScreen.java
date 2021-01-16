@@ -13,11 +13,12 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 public class MainScreen extends ApplicationAdapter {
-	private static final int GRID_WIDTH = 6, GRID_HEIGHT = 13;
+	static final int GRID_WIDTH = 6, GRID_HEIGHT = 13;
 	private InputHandler controller;
 	private Level level;
 
 	public static OrthographicCamera camera;
+	public static ShapeRendererAdaptor sra;
 	public static SpriteBatch batch;
 	public static Dimensions dim;
 
@@ -28,8 +29,9 @@ public class MainScreen extends ApplicationAdapter {
 
 		batch = new SpriteBatch();
 		batch.setProjectionMatrix(camera.combined);
+		sra = new ShapeRendererAdaptor();
 
-		dim = new Dimensions(GRID_WIDTH, GRID_HEIGHT, Gdx.graphics.getWidth(), Gdx.graphics.getWidth());
+		dim = new Dimensions(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
 		// TODO: handle all sidekicks (when they have powers) (strategy)
 		level = new Level(GRID_WIDTH, GRID_HEIGHT, new HashSet<>(Arrays.asList(Sidekick.ZYRAME, Sidekick.SEAN)));

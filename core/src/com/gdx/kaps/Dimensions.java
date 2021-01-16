@@ -5,39 +5,36 @@ import com.badlogic.gdx.math.Rectangle;
 import static com.gdx.kaps.MainScreen.dim;
 
 public class Dimensions {
-    public final int boardWidth, boardHeight;
-    public final float boardMargin;
     public final float sidePadding;
+    public final float gridMargin;
     public final float boxPadding;
     public final Rectangle window;
-    public final Rectangle board;
+    public final Rectangle grid;
     public final Rectangle tile;
     public final Rectangle bottomPanel;
-    public final Rectangle boardPanel;
+    public final Rectangle gridPanel;
     public final Rectangle sidePanel;
     public final Rectangle nextBox;
     public final Rectangle holdBox;
     public final Rectangle nextGelule;
     public final Rectangle holdGelule;
 
-    public Dimensions(int boardWidth, int boardHeight, int windowWidth, int windowHeight) {
-        this.boardHeight = boardHeight;
-        this.boardWidth = boardWidth;
+    public Dimensions(int windowWidth, int windowHeight) {
         window = new Rectangle(0, 0, windowWidth, windowHeight);
-        boardMargin = window.width / 20;
+        gridMargin = window.width / 20;
 
-        boardPanel = new Rectangle(0, 0, window.width*2/3, window.height);
-        board = new Rectangle(boardMargin, boardMargin, boardPanel.width - 2 * boardMargin, window.height);
-        tile = new Rectangle(boardMargin, boardMargin, board.width / boardWidth, board.width / boardWidth);
-        board.height = tile.height * boardHeight;
-        boardPanel.height = board.height + 2*boardMargin;
+        gridPanel = new Rectangle(0, 0, window.width*2/3, window.height);
+        grid = new Rectangle(gridMargin, gridMargin, gridPanel.width - 2 * gridMargin, window.height);
+        tile = new Rectangle(gridMargin, gridMargin, grid.width / MainScreen.GRID_WIDTH, grid.width / MainScreen.GRID_WIDTH);
+        grid.height = tile.height * MainScreen.GRID_HEIGHT;
+        gridPanel.height = grid.height + 2* gridMargin;
 
-        sidePanel = new Rectangle(boardPanel.width, 0, window.width - boardPanel.width, boardPanel.height);
-        bottomPanel = new Rectangle(0, boardPanel.height, window.width, window.height - boardPanel.height);
+        sidePanel = new Rectangle(gridPanel.width, 0, window.width - gridPanel.width, gridPanel.height);
+        bottomPanel = new Rectangle(0, gridPanel.height + gridMargin, window.width, window.height - gridPanel.height - gridMargin);
         sidePadding = sidePanel.width / 10;
 
-        nextBox = new Rectangle(sidePanel.x + sidePadding, boardMargin, sidePanel.width - 2 * sidePadding, sidePanel.width - 2 * sidePadding);
-        holdBox = new Rectangle(sidePanel.x + sidePadding, boardMargin * 2 + nextBox.height, sidePanel.width - 2 * sidePadding, sidePanel.width - 2 * sidePadding);
+        nextBox = new Rectangle(sidePanel.x + sidePadding, gridMargin, sidePanel.width - 2 * sidePadding, sidePanel.width - 2 * sidePadding);
+        holdBox = new Rectangle(sidePanel.x + sidePadding, gridMargin * 4 + nextBox.height, sidePanel.width - 2 * sidePadding, sidePanel.width - 2 * sidePadding);
         boxPadding = nextBox.width / 10;
 
         nextGelule = new Rectangle(nextBox.x + boxPadding, nextBox.y + boxPadding, nextBox.width - 2 * boxPadding, (nextBox.width - 2 * boxPadding) / 2);
@@ -54,6 +51,6 @@ public class Dimensions {
     }
 
     public float topTile(int y) {
-        return dim.boardMargin + ((boardHeight-1) - y) * dim.tile.width;
+        return dim.gridMargin + ((MainScreen.GRID_HEIGHT -1) - y) * dim.tile.width;
     }
 }

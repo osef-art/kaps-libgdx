@@ -11,7 +11,6 @@ public class Gelule implements Iterable<LinkedCaps> {
     private final LinkedCaps main;
     private final LinkedCaps linked;
     private final Grid grid;
-    // IMPL: replace all 'linked' by main.linked ?
 
     public Gelule(Level lvl) {
         Objects.requireNonNull(lvl);

@@ -24,4 +24,8 @@ public class Timer {
     public void updateLimit(int newLimit) {
         limit = newLimit;
     }
+
+    public double ratio() {
+        return chrono.value() / limit;
+    }
 }

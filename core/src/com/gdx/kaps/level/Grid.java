@@ -2,7 +2,6 @@ package com.gdx.kaps.level;
 
 import com.badlogic.gdx.graphics.Color;
 import com.gdx.kaps.Renderable;
-import com.gdx.kaps.ShapeRendererAdaptor;
 import com.gdx.kaps.level.caps.Caps;
 import com.gdx.kaps.level.caps.Gelule;
 
@@ -14,6 +13,7 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static com.gdx.kaps.MainScreen.dim;
+import static com.gdx.kaps.MainScreen.sra;
 import static java.util.Objects.requireNonNull;
 
 public class Grid implements Renderable {
@@ -24,7 +24,6 @@ public class Grid implements Renderable {
             tiles = new Caps[size];
         }
     }
-    private final ShapeRendererAdaptor sra = new ShapeRendererAdaptor();
     private final Column[] columns;
 
     Grid(int width, int height) {
@@ -274,8 +273,8 @@ public class Grid implements Renderable {
                 Color color = new Color(0.45f + shift, 0.5f + shift, 0.6f + shift, 1);
 
                 sra.drawRect(
-                  dim.boardMargin + x * dim.tile.width,
-                  dim.boardMargin + y * dim.tile.height,
+                  dim.gridMargin + x * dim.tile.width,
+                  dim.gridMargin + y * dim.tile.height,
                   dim.tile.width,
                   dim.tile.height,
                   color
