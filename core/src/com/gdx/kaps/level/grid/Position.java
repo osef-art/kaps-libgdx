@@ -1,4 +1,4 @@
-package com.gdx.kaps.level.caps;
+package com.gdx.kaps.level.grid;
 
 class Position {
     private int x, y;

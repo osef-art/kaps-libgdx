@@ -2,7 +2,8 @@ package com.gdx.kaps.level;
 
 import com.badlogic.gdx.graphics.Color;
 import com.gdx.kaps.Renderable;
-import com.gdx.kaps.level.caps.Gelule;
+import com.gdx.kaps.level.grid.Gelule;
+import com.gdx.kaps.level.grid.Grid;
 import com.gdx.kaps.time.Timer;
 
 import java.util.Objects;
@@ -16,10 +17,10 @@ import static com.gdx.kaps.MainScreen.sra;
 
 public class Level implements Renderable {
     // INFO: temporary renderer
+    public final static int MIN_MATCH_RANGE = 4;    // TODO: find a way better name
     private int updateSpeed = 1_000_000_000;
-    final static int MIN_MATCH_RANGE = 4;    // TODO: find a way better name
     private final Timer updateTimer;
-    private final Set<com.gdx.kaps.level.caps.Color> colors;
+    private final Set<com.gdx.kaps.level.grid.Color> colors;
     // TODO: implement next & hold
     private boolean canHold;
     private final Grid grid;
@@ -33,7 +34,7 @@ public class Level implements Renderable {
         colors =
           Stream.concat(
             sidekicks.stream().map(Sidekick::color),
-            Stream.of(com.gdx.kaps.level.caps.Color.randomBlank())
+            Stream.of(com.gdx.kaps.level.grid.Color.randomBlank())
           ).collect(Collectors.toUnmodifiableSet());
 
         updateTimer = new Timer(updateSpeed);
@@ -46,7 +47,7 @@ public class Level implements Renderable {
         return grid;
     }
 
-    public Set<com.gdx.kaps.level.caps.Color> colors() {
+    public Set<com.gdx.kaps.level.grid.Color> colors() {
         return colors;
     }
 
@@ -103,6 +104,7 @@ public class Level implements Renderable {
     private void speedUp() {
         updateSpeed -= 100;
         updateTimer.updateLimit(updateSpeed);
+        updateTimer.reset();
     }
 
     private void updateGrid() {
@@ -115,6 +117,7 @@ public class Level implements Renderable {
     public void render() {
         grid.render();
         Optional.ofNullable(gelule).ifPresent(Gelule::render);
+        // TODO: render gelule preview
 
         sra.drawRect(
           dim.gridMargin,
@@ -133,16 +136,16 @@ public class Level implements Renderable {
 
         sra.drawRect(
           dim.sidePanel,
-          new Color(0.5f, 0.55f, 0.65f, 1)
+          new Color(0.4f, 0.45f, 0.55f, 1)
         );
 
         sra.drawRect(
           dim.nextBox,
-          new Color(0.55f, 0.6f, 0.7f, 1)
+          new Color(0.45f, 0.5f, 0.6f, 1)
         );
         sra.drawRect(
           dim.holdBox,
-          new Color(0.55f, 0.6f, 0.7f, 1)
+          new Color(0.45f, 0.5f, 0.6f, 1)
         );
 
         sra.drawRect(

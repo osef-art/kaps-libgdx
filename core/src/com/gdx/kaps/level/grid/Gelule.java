@@ -1,6 +1,5 @@
-package com.gdx.kaps.level.caps;
+package com.gdx.kaps.level.grid;
 
-import com.gdx.kaps.level.Grid;
 import com.gdx.kaps.level.Level;
 
 import java.util.Iterator;

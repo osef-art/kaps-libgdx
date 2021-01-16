@@ -1,4 +1,4 @@
-package com.gdx.kaps.level.caps;
+package com.gdx.kaps.level.grid;
 
 enum Look {
     LEFT("left", new Position(-1, 0)),

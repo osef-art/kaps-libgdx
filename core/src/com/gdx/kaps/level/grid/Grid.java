@@ -1,9 +1,8 @@
-package com.gdx.kaps.level;
+package com.gdx.kaps.level.grid;
 
 import com.badlogic.gdx.graphics.Color;
 import com.gdx.kaps.Renderable;
-import com.gdx.kaps.level.caps.Caps;
-import com.gdx.kaps.level.caps.Gelule;
+import com.gdx.kaps.level.Level;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -19,14 +18,13 @@ import static java.util.Objects.requireNonNull;
 public class Grid implements Renderable {
     static class Column {
         private final Caps[] tiles;
-
         Column(int size) {
             tiles = new Caps[size];
         }
     }
     private final Column[] columns;
 
-    Grid(int width, int height) {
+    public Grid(int width, int height) {
         if (width < 2 || height < 2) {
             throw new IllegalArgumentException("Invalid grid size: " + width + "x" + height);
         }
@@ -194,7 +192,7 @@ public class Grid implements Renderable {
      * Sets the content of a gelule into the grid using its indexes
      * @param gelule the gelule to add to the grid
      */
-    void accept(Gelule gelule) {
+    public void accept(Gelule gelule) {
         requireNonNull(gelule);
         gelule.forEach(this::set);
     }
@@ -204,7 +202,7 @@ public class Grid implements Renderable {
     /**
      * Applies gravity on every caps and dips them all until there is no more caps to dip.
      */
-    void dropAll() {
+    public void dropAll() {
         boolean canDrop;
 
         do {
@@ -219,7 +217,7 @@ public class Grid implements Renderable {
      * Deletes all matches of {@code MIN_MATCH_RANGE} caps of same color in a row.
      * @return true if matches were deleted, false if not.
      */
-    boolean deleteMatches() {
+    public boolean deleteMatches() {
         var toDelete = new HashSet<Caps>();
         everyCapsInGrid().forEach(caps -> {
             if (caps.x() >= Level.MIN_MATCH_RANGE - 1) {

@@ -1,8 +1,7 @@
-package com.gdx.kaps.level.caps;
+package com.gdx.kaps.level.grid;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.gdx.kaps.level.Grid;
 import com.gdx.kaps.level.Level;
 
 import java.util.Optional;

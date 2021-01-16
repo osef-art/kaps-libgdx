@@ -1,8 +1,7 @@
-package com.gdx.kaps.level.caps;
+package com.gdx.kaps.level.grid;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.gdx.kaps.level.Grid;
 
 import java.util.Optional;
 
@@ -36,17 +35,14 @@ public class Caps implements GridObject {
 
     // getters
 
-    @Override
     public int x() {
         return position.x();
     }
 
-    @Override
     public int y() {
         return position.y();
     }
 
-    @Override
     public Color color() {
         return color;
     }
@@ -72,17 +68,14 @@ public class Caps implements GridObject {
 
     // predicates
 
-    @Override
     public boolean isInGrid() {
         return grid.isInGrid(position.x(), position.y());
     }
 
-    @Override
     public boolean collidesPile() {
         return grid.collidesPile(position.x(), position.y());
     }
 
-    @Override
     public boolean isAtValidEmplacement() {
         return isInGrid() && !collidesPile();
     }
@@ -112,17 +105,14 @@ public class Caps implements GridObject {
 
     // update
 
-    @Override
     public String toString() {
         return "(" + position.x() + "," + position.y() + ")";
     }
 
-    @Override
     public void render() {
         render(position.x(), position.y());
     }
 
-    @Override
     public void render(int x, int y) {
         batch.begin();
         batch.draw(

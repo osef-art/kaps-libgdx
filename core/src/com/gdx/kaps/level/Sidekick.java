@@ -1,6 +1,6 @@
 package com.gdx.kaps.level;
 
-import com.gdx.kaps.level.caps.Color;
+import com.gdx.kaps.level.grid.Color;
 
 import java.util.Set;
 

@@ -45,9 +45,9 @@ public class MainScreen extends ApplicationAdapter {
 		Gdx.gl.glClearColor(0.8f, 0.85f, 0.9f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-		level.render();
-		level.update();
 		controller.update();
+		level.update();
+		level.render();
 	}
 	
 	@Override
