@@ -75,7 +75,7 @@ public class LinkedCaps extends Caps {
     // update
 
     private void updateTexture() {
-        sprite = new Sprite(new Texture("img/" + color().id() + "/caps/" + look + ".png"));
+        sprite = new Sprite(new Texture("android/assets/img/" + color().id() + "/caps/" + look + ".png"));
         sprite.flip(false, true);
     }
 

@@ -27,7 +27,7 @@ public abstract class Germ implements GridObject {
         requireNonNull(type);
 
         sprite = new Sprite(new Texture(
-          "img/" + color.id() +
+          "android/assets/img/" + color.id() +
             "/germs/" + type.type() + "/idle_0.png"
         ));
         sprite.flip(false, true);

@@ -34,7 +34,7 @@ public class MainScreen extends ApplicationAdapter {
 
 		// TODO: handle all sidekicks (when they have powers) (strategy)
 		level = new Level(
-			Path.of("levels/level" + new Random().nextInt(5)),
+			Path.of("android/assets/levels/level" + new Random().nextInt(5)),
 			new HashSet<>(Arrays.asList(Sidekick.ZYRAME, Sidekick.SEAN))
 		);
 		dim = new Dimensions(level, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -56,5 +56,6 @@ public class MainScreen extends ApplicationAdapter {
 	@Override
 	public void dispose () {
 		batch.dispose();
+		sra.dispose();
 	}
 }

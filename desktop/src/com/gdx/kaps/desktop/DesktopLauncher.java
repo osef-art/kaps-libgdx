@@ -12,7 +12,7 @@ public class DesktopLauncher {
 		config.width = 480;
 		config.height = 800;
 		config.pauseWhenBackground = true;
-		config.addIcon("img/icons/icon.png", Files.FileType.Classpath);
+		config.addIcon("android/assets/img/icons/icon.png", Files.FileType.Local);
 		new LwjglApplication(new MainScreen(), config);
 	}
 }

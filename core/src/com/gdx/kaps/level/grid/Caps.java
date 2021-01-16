@@ -18,7 +18,7 @@ public class Caps implements GridObject {
         requireNonNull(color);
         this.color = color;
         position = new Position(x, y);
-        sprite = new Sprite(new Texture("img/" + color.id() + "/caps/" + Look.NONE + ".png"));
+        sprite = new Sprite(new Texture("android/assets/img/" + color.id() + "/caps/" + Look.NONE + ".png"));
         sprite.flip(false, true);
     }
 
