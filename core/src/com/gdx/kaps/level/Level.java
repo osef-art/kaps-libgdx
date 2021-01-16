@@ -6,6 +6,8 @@ import com.gdx.kaps.level.grid.Gelule;
 import com.gdx.kaps.level.grid.Grid;
 import com.gdx.kaps.time.Timer;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -28,7 +30,7 @@ public class Level implements Renderable {
     private Gelule next;
     private Gelule hold;
 
-    public Level(int width, int height, Set<Sidekick> sidekicks) {
+    public Level(Path filePath, Set<Sidekick> sidekicks) {
         Objects.requireNonNull(sidekicks);
 
         colors =
@@ -37,8 +39,12 @@ public class Level implements Renderable {
             Stream.of(com.gdx.kaps.level.grid.Color.randomBlank())
           ).collect(Collectors.toUnmodifiableSet());
 
+        try {
+            grid = Grid.parseLevel(filePath, colors);
+        } catch (IOException e) {
+            throw new AssertionError("Error when parsing file " + filePath + ": " + e);
+        }
         updateTimer = new Timer(updateSpeed);
-        grid = new Grid(width, height);
         spawnNewGelule();
     }
 
@@ -56,14 +62,7 @@ public class Level implements Renderable {
         gelule = new Gelule(this);
         // TODO: display gelule when game over. maybe in main loop ?
 
-        if (!gelule.isAtValidEmplacement()) {
-            try {
-                Thread.sleep(1500);
-            } catch (InterruptedException e) {
-                throw new AssertionError(e);
-            }
-            System.exit(0);
-        }
+        checkGameOver();
     }
 
     private void acceptGelule() {
@@ -97,6 +96,8 @@ public class Level implements Renderable {
         acceptGelule();
     }
 
+    // update
+
     public void update() {
         if (updateTimer.resetIfExceeds()) dipGelule();
     }
@@ -105,6 +106,18 @@ public class Level implements Renderable {
         updateSpeed -= 100;
         updateTimer.updateLimit(updateSpeed);
         updateTimer.reset();
+    }
+
+    private void checkGameOver() {
+        if (!gelule.isAtValidEmplacement()) {
+            try {
+                Thread.sleep(1500);
+            } catch (InterruptedException e) {
+                throw new AssertionError(e);
+            }
+            System.out.println("GAME OVER");
+            System.exit(0);
+        }
     }
 
     private void updateGrid() {

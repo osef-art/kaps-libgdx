@@ -9,11 +9,12 @@ import com.gdx.kaps.contoller.InputHandler;
 import com.gdx.kaps.level.Level;
 import com.gdx.kaps.level.Sidekick;
 
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashSet;
 
 public class MainScreen extends ApplicationAdapter {
-	static final int GRID_WIDTH = 6, GRID_HEIGHT = 13;
+	static int GRID_WIDTH, GRID_HEIGHT;
 	private InputHandler controller;
 	private Level level;
 
@@ -31,10 +32,15 @@ public class MainScreen extends ApplicationAdapter {
 		batch.setProjectionMatrix(camera.combined);
 		sra = new ShapeRendererAdaptor();
 
-		dim = new Dimensions(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-
 		// TODO: handle all sidekicks (when they have powers) (strategy)
-		level = new Level(GRID_WIDTH, GRID_HEIGHT, new HashSet<>(Arrays.asList(Sidekick.ZYRAME, Sidekick.SEAN)));
+		level = new Level(
+			Path.of("levels/level0"),
+			new HashSet<>(Arrays.asList(Sidekick.ZYRAME, Sidekick.SEAN))
+		);
+
+		GRID_WIDTH = level.grid().width();
+		GRID_HEIGHT = level.grid().height();
+		dim = new Dimensions(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
 		controller = new InputHandler(level);
 		Gdx.input.setInputProcessor(controller);

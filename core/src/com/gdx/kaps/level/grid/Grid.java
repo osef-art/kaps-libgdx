@@ -3,7 +3,12 @@ package com.gdx.kaps.level.grid;
 import com.badlogic.gdx.graphics.Color;
 import com.gdx.kaps.Renderable;
 import com.gdx.kaps.level.Level;
+import com.gdx.kaps.level.grid.germ.Germ;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.IntFunction;
@@ -24,6 +29,8 @@ public class Grid implements Renderable {
     }
     private final Column[] columns;
 
+    // init
+
     public Grid(int width, int height) {
         if (width < 2 || height < 2) {
             throw new IllegalArgumentException("Invalid grid size: " + width + "x" + height);
@@ -34,6 +41,32 @@ public class Grid implements Renderable {
         for (int i = 0; i < width; i++) {
             columns[i] = new Column(height);
         }
+    }
+
+    public static Grid parseLevel(Path path, Set<com.gdx.kaps.level.grid.Color> colors) throws IOException {
+        BufferedReader reader = Files.newBufferedReader(path);
+        var charGrid = new ArrayList<List<Character>>();
+        String line;
+
+        while ((line = reader.readLine()) != null) {
+            charGrid.add(0,
+              Arrays.stream(line.split(""))
+                .map(sym -> sym.charAt(0))
+                .collect(Collectors.toList())
+            );
+        }
+
+        if (charGrid.size() == 0 || !(charGrid.stream().allMatch(l -> l.size() == charGrid.get(0).size())))
+            throw new IllegalStateException("Invalid file: " + path);
+
+        var grid = new Grid(charGrid.get(0).size(), charGrid.size());
+
+        for (int y = 0; y < charGrid.size(); y++) {
+            for (int x = 0; x < charGrid.get(y).size(); x++) {
+                grid.set(x, y, Germ.of(x, y, charGrid.get(y).get(x), colors));
+            }
+        }
+        return grid;
     }
 
     // getters

@@ -1,12 +1,13 @@
 package com.gdx.kaps.level.grid.germ;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.gdx.kaps.level.grid.Color;
-import com.gdx.kaps.level.grid.Grid;
 import com.gdx.kaps.level.grid.GridObject;
 import com.gdx.kaps.level.grid.Position;
 
 import java.util.Optional;
+import java.util.Set;
 
 import static com.gdx.kaps.MainScreen.batch;
 import static com.gdx.kaps.MainScreen.dim;
@@ -14,23 +15,40 @@ import static java.util.Objects.requireNonNull;
 
 public abstract class Germ implements GridObject {
     // TODO: abstract class for shared fiels ?
-    private int health;
-    private final int maxHP;
+    private final GermRecord type;
+    private final Sprite sprite;
     private final Color color;
-    private Sprite sprite;
     final Position position;
-    final Grid grid;
+    private int health;
 
-    Germ(int x, int y, Color color, int HP, Grid grid) {
+    Germ(int x, int y, Color color, GermRecord type) {
         requireNonNull(color);
-        requireNonNull(grid);
-        if (HP < 0) throw new IllegalArgumentException("Germ can't have a negative health (" + HP + ")");
+        requireNonNull(type);
 
+        sprite = new Sprite(new Texture(
+          "img/" + color.id() +
+            "/germs/" + type.type() + "/idle_0.png"
+        ));
+        sprite.flip(false, true);
         position = new Position(x, y);
+        health = type.maxHP();
         this.color = color;
-        this.grid = grid;
-        health = HP;
-        maxHP = HP;
+        this.type = type;
+    }
+
+    public static Germ of(int x, int y, char symbol, Set<Color> colors) {
+        Germ germ;
+        switch (symbol) {
+            case 'B':
+                germ = new BasicGerm(x, y, Color.random(colors));
+                break;
+            case '.':
+                germ = null;
+                break;
+            default:
+                throw new IllegalStateException("Couldn't resolve symbol: " + symbol);
+        }
+        return germ;
     }
 
     @Override
