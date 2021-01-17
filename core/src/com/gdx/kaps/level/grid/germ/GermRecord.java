@@ -1,7 +1,5 @@
 package com.gdx.kaps.level.grid.germ;
 
-import com.gdx.kaps.level.grid.GridObject;
-
 import java.util.Objects;
 
 public enum GermRecord { // IMPL: use a record if possible
@@ -21,10 +19,10 @@ public enum GermRecord { // IMPL: use a record if possible
         if (maxHP < 0) throw new IllegalArgumentException("Germ can't have a negative health (" + maxHP + ")");
         if (cooldown < 0) throw new IllegalArgumentException("Germ can't have a negative cooldown (" + cooldown + ")");
 
-        this.name = name;
-        this.symbol = symbol;
         this.cooldown = cooldown;
+        this.symbol = symbol;
         this.maxHP = maxHP;
+        this.name = name;
     }
 
     public String type() {
@@ -35,12 +33,7 @@ public enum GermRecord { // IMPL: use a record if possible
         return maxHP;
     }
 
-    public static Germ parseSymbol(char symbol) {
-        for (var type : values()) {
-            if (type.symbol == symbol) {
-
-            }
-        }
-        return null;
+    public int cooldown() {
+        return cooldown;
     }
 }

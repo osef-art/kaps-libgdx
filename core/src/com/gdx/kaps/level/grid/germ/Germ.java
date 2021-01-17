@@ -20,19 +20,28 @@ public abstract class Germ implements GridObject {
     private final Sprite sprite;
     private final Color color;
     final Position position;
+    private int cooldown;
     private int health;
+    private int maxHP;
 
     Germ(int x, int y, Color color, GermRecord type) {
+        this(x, y, color, type, type.maxHP());
+    }
+
+    Germ(int x, int y, Color color, GermRecord type, int health) {
         requireNonNull(color);
         requireNonNull(type);
 
         sprite = new Sprite(new Texture(
           "android/assets/img/" + color.id() +
-            "/germs/" + type.type() + "/idle_0.png"
+            "/germs/" + type.type() +
+            (type.maxHP() == 1 ? "" : health + 1) +
+            "/idle_0.png"
         ));
         sprite.flip(false, true);
         position = new Position(x, y);
-        health = type.maxHP();
+        this.cooldown = type.cooldown();
+        this.health = health;
         this.color = color;
         this.type = type;
     }
@@ -42,6 +51,24 @@ public abstract class Germ implements GridObject {
         switch (symbol) {
             case 'B':
                 germ = new BasicGerm(x, y, Color.random(colors));
+                break;
+            case 'W':
+                germ = new WallGerm(x, y, Color.random(colors), 1);
+                break;
+            case 'X':
+                germ = new WallGerm(x, y, Color.random(colors), 2);
+                break;
+            case 'Y':
+                germ = new WallGerm(x, y, Color.random(colors), 3);
+                break;
+            case 'Z':
+                germ = new WallGerm(x, y, Color.random(colors));
+                break;
+            case 'T':
+                germ = new ThornGerm(x, y, Color.random(colors));
+                break;
+            case 'V':
+                germ = new VirusGerm(x, y, Color.random(colors));
                 break;
             case '.':
                 germ = null;
