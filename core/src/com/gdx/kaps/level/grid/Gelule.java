@@ -1,5 +1,6 @@
 package com.gdx.kaps.level.grid;
 
+import com.badlogic.gdx.math.Rectangle;
 import com.gdx.kaps.level.Level;
 
 import java.util.Iterator;
@@ -7,8 +8,8 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 
 public class Gelule implements Iterable<LinkedCaps> {
-    private final LinkedCaps main;
     private final LinkedCaps linked;
+    private final LinkedCaps main;
 
     public Gelule(Level lvl) {
         Objects.requireNonNull(lvl);
@@ -24,6 +25,7 @@ public class Gelule implements Iterable<LinkedCaps> {
         Objects.requireNonNull(look);
         main = new LinkedCaps(gelule.main).shifted(look);
         linked = new LinkedCaps(gelule.linked).shifted(look);
+        linked.linkTo(main);
     }
 
     // getters
@@ -36,7 +38,7 @@ public class Gelule implements Iterable<LinkedCaps> {
         return main.y();
     }
 
-    private Gelule copy() {
+    public Gelule copy() {
         return new Gelule(this, Look.NONE);
     }
 
@@ -154,5 +156,10 @@ public class Gelule implements Iterable<LinkedCaps> {
     public void render() {
         main.render();
         linked.render();
+    }
+
+    public void render(Rectangle zone) {
+        main.render(zone.x, zone.y, zone.width/2, zone.height);
+        linked.render(zone.x + zone.width/2, zone.y, zone.width/2, zone.height);
     }
 }

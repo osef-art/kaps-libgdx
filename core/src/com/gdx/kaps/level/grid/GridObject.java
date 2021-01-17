@@ -3,10 +3,9 @@ package com.gdx.kaps.level.grid;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
-import java.util.Objects;
-
 import static com.gdx.kaps.MainScreen.batch;
 import static com.gdx.kaps.MainScreen.dim;
+import static java.util.Objects.requireNonNull;
 
 public abstract class GridObject implements GridObjectInterface {
     private final Color color;
@@ -14,11 +13,10 @@ public abstract class GridObject implements GridObjectInterface {
     private Sprite sprite;
 
     public GridObject(int x, int y, Color color) {
-        Objects.requireNonNull(color);
+        requireNonNull(color);
         this.position = new Position(x, y);
         this.color = color;
     }
-
 
     @Override
     public int x() {
@@ -36,6 +34,7 @@ public abstract class GridObject implements GridObjectInterface {
     }
 
     void move(Look look) {
+        requireNonNull(look);
         position.add(look.vector());
     }
 
@@ -48,14 +47,17 @@ public abstract class GridObject implements GridObjectInterface {
 
     @Override
     public void render(int x, int y) {
-        batch.begin();
-        batch.draw(
-          sprite,
+        render(
           dim.gridMargin + x * dim.tile.height,
           dim.topTile(y),
           dim.tile.width,
           dim.tile.height
         );
+    }
+
+    public void render(float x, float y, float width, float height) {
+        batch.begin();
+        batch.draw(sprite, x, y, width, height);
         batch.end();
     }
 }

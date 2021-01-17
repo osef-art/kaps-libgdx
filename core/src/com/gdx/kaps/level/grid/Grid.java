@@ -61,11 +61,14 @@ public class Grid implements Renderable {
 
         var grid = new Grid(charGrid.get(0).size(), charGrid.size());
 
-        for (int y = 0; y < charGrid.size(); y++) {
-            for (int x = 0; x < charGrid.get(y).size(); x++) {
-                grid.set(x, y, Germ.of(x, y, charGrid.get(y).get(x), colors));
+        do {
+            for (int y = 0; y < charGrid.size(); y++) {
+                for (int x = 0; x < charGrid.get(y).size(); x++) {
+                    grid.set(x, y, Germ.of(x, y, charGrid.get(y).get(x), colors));
+                }
             }
-        }
+        } while (grid.containsMatches());
+
         return grid;
     }
 
@@ -132,6 +135,10 @@ public class Grid implements Renderable {
         boolean canDip = obj.canDip(this);
         canDip &= obj.linked().map(o -> o.canDip(this)).orElse(true);
         return canDip;
+    }
+
+    private boolean containsMatches() {
+        return !matchingObjects().isEmpty();
     }
 
     // transactions
@@ -267,7 +274,14 @@ public class Grid implements Renderable {
      * @return true if matches were deleted, false if not.
      */
     public boolean deleteMatches() {
+        var matches = matchingObjects();
+        matches.forEach(this::hit);
+        return !matches.isEmpty();
+    }
+
+    private HashSet<GridObject> matchingObjects() {
         var toDelete = new HashSet<GridObject>();
+        //IMPL: make a flatmap of it
         everyObjectInGrid().forEach(obj -> {
             if (obj.x() >= Level.MIN_MATCH_RANGE - 1) {
                 toDelete.addAll(matchingGridObjectFrom(n -> get(obj.x() - n, obj.y())));
@@ -276,8 +290,7 @@ public class Grid implements Renderable {
                 toDelete.addAll(matchingGridObjectFrom(n -> get(obj.x(), obj.y() - n)));
             }
         });
-        toDelete.forEach(this::hit);
-        return !toDelete.isEmpty();
+        return toDelete;
     }
 
     /**

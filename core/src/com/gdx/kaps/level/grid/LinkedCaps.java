@@ -30,6 +30,7 @@ public class LinkedCaps extends Caps {
           caps.linked.color()
         );
         look = caps.look;
+        updateSprite();
     }
 
     // getters

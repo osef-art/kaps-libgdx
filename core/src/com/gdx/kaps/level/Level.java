@@ -45,6 +45,7 @@ public class Level implements Renderable {
             throw new AssertionError("Error when parsing file " + filePath + ": " + e);
         }
         updateTimer = new Timer(updateSpeed);
+        next = new Gelule(this);
         spawnNewGelule();
     }
 
@@ -64,7 +65,8 @@ public class Level implements Renderable {
 
     private void spawnNewGelule() {
         if (gelule != null) return;
-        gelule = new Gelule(this);
+        gelule = next.copy();
+        next = new Gelule(this);
         // TODO: display gelule when game over. maybe in main loop ?
         checkGameOver();
     }
@@ -170,5 +172,7 @@ public class Level implements Renderable {
           dim.bottomPanel,
           new Color(0.6f, 0.45f, 0.85f, 1)
         );
+
+        next.render(dim.nextGelule);
     }
 }
