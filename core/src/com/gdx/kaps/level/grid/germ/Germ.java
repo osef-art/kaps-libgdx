@@ -1,25 +1,16 @@
 package com.gdx.kaps.level.grid.germ;
 
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.gdx.kaps.level.grid.Color;
 import com.gdx.kaps.level.grid.Grid;
 import com.gdx.kaps.level.grid.GridObject;
-import com.gdx.kaps.level.grid.Position;
 
 import java.util.Optional;
 import java.util.Set;
 
-import static com.gdx.kaps.MainScreen.batch;
-import static com.gdx.kaps.MainScreen.dim;
 import static java.util.Objects.requireNonNull;
 
-public abstract class Germ implements GridObject {
-    // TODO: abstract class for fields shared w/ caps ?
+public abstract class Germ extends GridObject {
     private final GermRecord type;
-    private final Color color;
-    final Position position;
-    private Sprite sprite;
     private int health;
 
     Germ(int x, int y, Color color, GermRecord type) {
@@ -27,14 +18,12 @@ public abstract class Germ implements GridObject {
     }
 
     Germ(int x, int y, Color color, GermRecord type, int health) {
-        requireNonNull(color);
+        super(x, y, color);
         requireNonNull(type);
         if (health > type.maxHP())
             throw new IllegalArgumentException("Too much health given to " + type.name() + " (" + health + ")" );
 
-        position = new Position(x, y);
         this.health = health;
-        this.color = color;
         this.type = type;
         updateSprite();
     }
@@ -61,21 +50,6 @@ public abstract class Germ implements GridObject {
     }
 
     // getters
-
-    @Override
-    public int x() {
-        return position.x();
-    }
-
-    @Override
-    public int y() {
-        return position.y();
-    }
-
-    @Override
-    public Color color() {
-        return color;
-    }
 
     @Override
     public Optional<GridObject> linked() {
@@ -107,21 +81,23 @@ public abstract class Germ implements GridObject {
     @Override
     public void hit() {
         health--;
-        if (!isDestroyed()) updateSprite();
-    }
+        if (!isDestroyed()) updateSprite("android/assets/img/" + color().id() + "/germs/" + type.type() + (type.maxHP() == 1 ? "" : health) + "/idle_0.png");
 
-    private void updateSprite() {
-        sprite = new Sprite(new Texture(
-          "android/assets/img/" + color.id() +
-            "/germs/" + type.type() +
-            (type.maxHP() == 1 ? "" : health) +
-            "/idle_0.png"
-        ));
-        sprite.flip(false, true);
     }
 
     @Override
     public void dipIfPossible(Grid grid) {
+    }
+
+    // update
+
+    void updateSprite() {
+        updateSprite(
+          "android/assets/img/" + color().id() +
+            "/germs/" + type.type() +
+            (type.maxHP() == 1 ? "" : health) +
+            "/idle_0.png"
+        );
     }
 
     @Override
@@ -129,17 +105,5 @@ public abstract class Germ implements GridObject {
         return "{" + x() + ',' + y() + '}';
     }
 
-    @Override
-    public void render(int x, int y) {
-        batch.begin();
-        batch.draw(
-          sprite,
-          dim.gridMargin + x * dim.tile.height,
-          dim.topTile(y),
-          dim.tile.width,
-          dim.tile.height
-        );
-        batch.end();
-    }
 }
 

@@ -196,7 +196,6 @@ public class Grid implements Renderable {
      * @param obj the obj to pop.
      */
     private void pop(GridObject obj) {
-        // TODO: handle health (germs)
         get(obj.x(), obj.y()).flatMap(GridObject::linked).ifPresent(this::unlink);
         remove(obj.x(), obj.y());
     }
