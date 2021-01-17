@@ -279,18 +279,19 @@ public class Grid implements Renderable {
         return !matches.isEmpty();
     }
 
-    private HashSet<GridObject> matchingObjects() {
-        var toDelete = new HashSet<GridObject>();
-        //IMPL: make a flatmap of it
-        everyObjectInGrid().forEach(obj -> {
-            if (obj.x() >= Level.MIN_MATCH_RANGE - 1) {
-                toDelete.addAll(matchingGridObjectFrom(n -> get(obj.x() - n, obj.y())));
-            }
-            if (obj.y() >= Level.MIN_MATCH_RANGE - 1) {
-                toDelete.addAll(matchingGridObjectFrom(n -> get(obj.x(), obj.y() - n)));
-            }
-        });
-        return toDelete;
+    private Set<GridObject> matchingObjects() {
+        return everyObjectInGrid()
+                 .flatMap(obj -> {
+                     var toDelete = new HashSet<GridObject>();
+                     if (obj.x() >= Level.MIN_MATCH_RANGE - 1) {
+                         toDelete.addAll(matchingGridObjectFrom(n -> get(obj.x() - n, obj.y())));
+                     }
+                     if (obj.y() >= Level.MIN_MATCH_RANGE - 1) {
+                         toDelete.addAll(matchingGridObjectFrom(n -> get(obj.x(), obj.y() - n)));
+                     }
+                     return toDelete.stream();
+                 })
+                 .collect(Collectors.toUnmodifiableSet());
     }
 
     /**
