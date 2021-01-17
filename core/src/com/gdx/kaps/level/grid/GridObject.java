@@ -8,8 +8,8 @@ import static com.gdx.kaps.MainScreen.dim;
 import static java.util.Objects.requireNonNull;
 
 public abstract class GridObject implements GridObjectInterface {
+    private final Position position;
     private final Color color;
-    final Position position; // IMPL: find a way to make it private (so close..)
     private Sprite sprite;
 
     public GridObject(int x, int y, Color color) {
@@ -33,9 +33,8 @@ public abstract class GridObject implements GridObjectInterface {
         return color;
     }
 
-    void move(Look look) {
-        requireNonNull(look);
-        position.add(look.vector());
+    public Position pos() {
+        return position;
     }
 
     // update

@@ -2,7 +2,7 @@ package com.gdx.kaps.level;
 
 import com.badlogic.gdx.graphics.Color;
 import com.gdx.kaps.Renderable;
-import com.gdx.kaps.level.grid.Gelule;
+import com.gdx.kaps.level.grid.caps.Gelule;
 import com.gdx.kaps.level.grid.Grid;
 import com.gdx.kaps.time.Timer;
 

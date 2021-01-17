@@ -1,7 +1,8 @@
-package com.gdx.kaps.level.grid;
+package com.gdx.kaps.level.grid.caps;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.gdx.kaps.level.Level;
+import com.gdx.kaps.level.grid.Grid;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;

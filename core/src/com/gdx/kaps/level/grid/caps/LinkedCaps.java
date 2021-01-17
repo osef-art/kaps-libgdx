@@ -1,6 +1,8 @@
-package com.gdx.kaps.level.grid;
+package com.gdx.kaps.level.grid.caps;
 
 import com.gdx.kaps.level.Level;
+import com.gdx.kaps.level.grid.Color;
+import com.gdx.kaps.level.grid.GridObject;
 
 import java.util.Optional;
 
@@ -79,7 +81,7 @@ public class LinkedCaps extends Caps {
     void updateLinked() {
         requireNonNull(linked);
         linked.look = look.opposite();
-        linked.position.set(position);
+        linked.pos().set(pos());
         linked.move(linked.look);
         linked.updateSprite();
     }

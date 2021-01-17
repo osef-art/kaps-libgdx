@@ -3,6 +3,7 @@ package com.gdx.kaps.level.grid;
 import com.badlogic.gdx.graphics.Color;
 import com.gdx.kaps.Renderable;
 import com.gdx.kaps.level.Level;
+import com.gdx.kaps.level.grid.caps.Gelule;
 import com.gdx.kaps.level.grid.germ.Germ;
 
 import java.io.BufferedReader;
@@ -189,13 +190,10 @@ public class Grid implements Renderable {
     }
 
     private void hit(GridObject obj) {
-        // IMPL: get(obj.x, obj.y) -> redundant ?
-        //  just apply it on obj ? (since it's also col[x][y])
         get(obj.x(), obj.y()).ifPresent(o -> {
             o.hit();
             if (o.isDestroyed()) pop(o);
         });
-
     }
 
     /**
@@ -284,10 +282,10 @@ public class Grid implements Renderable {
                  .flatMap(obj -> {
                      var toDelete = new HashSet<GridObject>();
                      if (obj.x() >= Level.MIN_MATCH_RANGE - 1) {
-                         toDelete.addAll(matchingGridObjectFrom(n -> get(obj.x() - n, obj.y())));
+                         toDelete.addAll(matchingObjectsFrom(n -> get(obj.x() - n, obj.y())));
                      }
                      if (obj.y() >= Level.MIN_MATCH_RANGE - 1) {
-                         toDelete.addAll(matchingGridObjectFrom(n -> get(obj.x(), obj.y() - n)));
+                         toDelete.addAll(matchingObjectsFrom(n -> get(obj.x(), obj.y() - n)));
                      }
                      return toDelete.stream();
                  })
@@ -300,7 +298,7 @@ public class Grid implements Renderable {
      * @return a {@link Collection} of the obj to delete.
      * The collection is empty if the obj don't match.
      */
-    private List<GridObject> matchingGridObjectFrom(IntFunction<Optional<GridObject>> collector) {
+    private List<GridObject> matchingObjectsFrom(IntFunction<Optional<GridObject>> collector) {
         // IMPL: cleaner way to do this ?
         var colors = IntStream.range(0, Level.MIN_MATCH_RANGE)
                        .mapToObj(collector)

@@ -1,4 +1,8 @@
-package com.gdx.kaps.level.grid;
+package com.gdx.kaps.level.grid.caps;
+
+import com.gdx.kaps.level.grid.Color;
+import com.gdx.kaps.level.grid.Grid;
+import com.gdx.kaps.level.grid.GridObject;
 
 import java.util.Optional;
 
@@ -75,6 +79,11 @@ public class Caps extends GridObject {
     }
 
     // movement
+
+    void move(Look look) {
+        requireNonNull(look);
+        pos().add(look.vector());
+    }
 
     private void moveIfPossible(Look look, Grid grid) {
         if (!canMove(look, grid)) return;
