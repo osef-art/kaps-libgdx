@@ -15,14 +15,12 @@ import static com.gdx.kaps.MainScreen.dim;
 import static java.util.Objects.requireNonNull;
 
 public abstract class Germ implements GridObject {
-    // TODO: abstract class for shared fiels ?
+    // TODO: abstract class for fields shared w/ caps ?
     private final GermRecord type;
-    private final Sprite sprite;
     private final Color color;
     final Position position;
-    private int cooldown;
+    private Sprite sprite;
     private int health;
-    private int maxHP;
 
     Germ(int x, int y, Color color, GermRecord type) {
         this(x, y, color, type, type.maxHP());
@@ -31,53 +29,38 @@ public abstract class Germ implements GridObject {
     Germ(int x, int y, Color color, GermRecord type, int health) {
         requireNonNull(color);
         requireNonNull(type);
+        if (health > type.maxHP())
+            throw new IllegalArgumentException("Too much health given to " + type.name() + " (" + health + ")" );
 
-        sprite = new Sprite(new Texture(
-          "android/assets/img/" + color.id() +
-            "/germs/" + type.type() +
-            (type.maxHP() == 1 ? "" : health + 1) +
-            "/idle_0.png"
-        ));
-        sprite.flip(false, true);
         position = new Position(x, y);
-        this.cooldown = type.cooldown();
         this.health = health;
         this.color = color;
         this.type = type;
+        updateSprite();
     }
 
     public static Germ of(int x, int y, char symbol, Set<Color> colors) {
-        Germ germ;
         switch (symbol) {
             case 'B':
-                germ = new BasicGerm(x, y, Color.random(colors));
-                break;
+                return new BasicGerm(x, y, Color.random(colors));
             case 'W':
-                germ = new WallGerm(x, y, Color.random(colors), 1);
-                break;
+                return new WallGerm(x, y, Color.random(colors), 2);
             case 'X':
-                germ = new WallGerm(x, y, Color.random(colors), 2);
-                break;
+                return new WallGerm(x, y, Color.random(colors), 3);
             case 'Y':
-                germ = new WallGerm(x, y, Color.random(colors), 3);
-                break;
-            case 'Z':
-                germ = new WallGerm(x, y, Color.random(colors));
-                break;
+                return new WallGerm(x, y, Color.random(colors));
             case 'T':
-                germ = new ThornGerm(x, y, Color.random(colors));
-                break;
+                return new ThornGerm(x, y, Color.random(colors));
             case 'V':
-                germ = new VirusGerm(x, y, Color.random(colors));
-                break;
+                return new VirusGerm(x, y, Color.random(colors));
             case '.':
-                germ = null;
-                break;
+                return null;
             default:
                 throw new IllegalStateException("Couldn't resolve symbol: " + symbol);
         }
-        return germ;
     }
+
+    // getters
 
     @Override
     public int x() {
@@ -104,6 +87,8 @@ public abstract class Germ implements GridObject {
         return this;
     }
 
+    // predicates
+
     @Override
     public boolean canDip(Grid grid) {
         return false;
@@ -112,6 +97,27 @@ public abstract class Germ implements GridObject {
     @Override
     public boolean isGerm() {
         return true;
+    }
+
+    @Override
+    public boolean isDestroyed() {
+        return health <= 0;
+    }
+
+    @Override
+    public void hit() {
+        health--;
+        if (!isDestroyed()) updateSprite();
+    }
+
+    private void updateSprite() {
+        sprite = new Sprite(new Texture(
+          "android/assets/img/" + color.id() +
+            "/germs/" + type.type() +
+            (type.maxHP() == 1 ? "" : health) +
+            "/idle_0.png"
+        ));
+        sprite.flip(false, true);
     }
 
     @Override

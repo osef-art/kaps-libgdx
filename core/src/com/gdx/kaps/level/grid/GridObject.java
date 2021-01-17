@@ -13,8 +13,11 @@ public interface GridObject extends Renderable {
     GridObject unlinked();
 
     boolean isGerm();
+    boolean isDestroyed();
     boolean canDip(Grid grid);
+
     void dipIfPossible(Grid grid);
+    void hit();
 
     void render(int x, int y);
     default void render() {

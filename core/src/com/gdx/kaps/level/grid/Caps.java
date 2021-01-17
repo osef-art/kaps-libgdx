@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 public class Caps implements GridObject {
     private final Sprite sprite;
     private final Color color;
+    private boolean destroyed;
     final Position position;
 
     Caps(int x, int y, Color color) {
@@ -24,6 +25,7 @@ public class Caps implements GridObject {
 
     Caps(Caps caps) {
         requireNonNull(caps);
+        destroyed = false;
         position = caps.position.shifted(0, 0);
         sprite = caps.sprite;
         color = caps.color;
@@ -74,6 +76,11 @@ public class Caps implements GridObject {
         return false;
     }
 
+    @Override
+    public boolean isDestroyed() {
+        return destroyed;
+    }
+
     public boolean isInGrid(Grid grid) {
         requireNonNull(grid);
         return grid.isInGrid(position.x(), position.y());
@@ -111,6 +118,11 @@ public class Caps implements GridObject {
     @Override
     public void dipIfPossible(Grid grid) {
         moveIfPossible(Look.DOWN, grid);
+    }
+
+    @Override
+    public void hit() {
+        destroyed = true;
     }
 
     // update

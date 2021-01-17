@@ -86,11 +86,16 @@ def replace_colors(pix, set1, set2):
 def generate_new_color_folder(set1, set2):
     set1: ColorSet
     set2: ColorSet
-    paths = all_paths(set1.code)
+    # paths = all_paths(set1.code)
+    paths = [files for (root, doss, files) in os.walk("./1/germs/wall1")][0]
+    paths = ["./1/germs/wall1/" + file for file in paths]
     total = len(paths)
 
     for i, path in enumerate(paths):
-        dst_path = path.replace(set1.code_str(), set2.code_str())
+        tmp = path.split(set1.code_str())
+        dst_path = set2.code_str().join(tmp[:2])
+        if len(tmp) > 2:
+            dst_path += set1.code_str() + set1.code_str().join(tmp[2:])
 
         im = Image.open(path)
         pix = im.load()

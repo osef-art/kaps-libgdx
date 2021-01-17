@@ -181,11 +181,22 @@ public class Grid implements Renderable {
         doOnGridObjectAndLinkedIfExists(obj, c -> remove(c.x(), c.y()));
     }
 
+    private void hit(GridObject obj) {
+        // IMPL: get(obj.x, obj.y) -> redundant ?
+        //  just apply it on obj ? (since it's also col[x][y])
+        get(obj.x(), obj.y()).ifPresent(o -> {
+            o.hit();
+            if (o.isDestroyed()) pop(o);
+        });
+
+    }
+
     /**
      * Pops a obj depending on its inner indexes.
      * @param obj the obj to pop.
      */
     private void pop(GridObject obj) {
+        // TODO: handle health (germs)
         get(obj.x(), obj.y()).flatMap(GridObject::linked).ifPresent(this::unlink);
         remove(obj.x(), obj.y());
     }
@@ -266,7 +277,7 @@ public class Grid implements Renderable {
                 toDelete.addAll(matchingGridObjectFrom(n -> get(obj.x(), obj.y() - n)));
             }
         });
-        toDelete.forEach(this::pop);
+        toDelete.forEach(this::hit);
         return !toDelete.isEmpty();
     }
 
