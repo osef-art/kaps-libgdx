@@ -20,6 +20,7 @@ public class MainScreen extends ApplicationAdapter {
 
 	public static OrthographicCamera camera;
 	public static ShapeRendererAdaptor sra;
+	public static TextRendererAdaptor tra;
 	public static SpriteBatch batch;
 	public static Dimensions dim;
 
@@ -28,13 +29,14 @@ public class MainScreen extends ApplicationAdapter {
 		camera = new OrthographicCamera();
 		camera.setToOrtho(true);
 
+		sra = new ShapeRendererAdaptor();
+		tra = new TextRendererAdaptor();
 		batch = new SpriteBatch();
 		batch.setProjectionMatrix(camera.combined);
-		sra = new ShapeRendererAdaptor();
 
 		// TODO: handle all sidekicks (when they have powers) (strategy)
 		level = new Level(
-			Path.of("android/assets/levels/level" + 0),//new Random().nextInt(21)),
+			Path.of("android/assets/levels/level" + new Random().nextInt(21)),
 			new HashSet<>(Arrays.asList(Sidekick.ZYRAME, Sidekick.SEAN))
 		);
 		dim = new Dimensions(level, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());

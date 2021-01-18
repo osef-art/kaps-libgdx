@@ -12,11 +12,8 @@ public enum Sidekick {
     MIMAPS      (Color.COLOR_4), // INFO: Hits 3 random.tiles
     PAINT       (Color.COLOR_5), // INFO: Paints 5 tiles in mate's color
     XERETH      (Color.COLOR_6), // INFO: Slices two.diagonals
-    SIDEKICK_7  (Color.COLOR_7), // INFO:
     JIM         (Color.COLOR_10), // INFO: Slices a.random line
     COLOR       (Color.COLOR_11), // INFO: Generates a.single-colored gelule
-    SIDEKICK_12 (Color.COLOR_12), // INFO:
-    SIDEKICK_13 (Color.COLOR_13), // INFO:
     // TODO: sidekick that generates a single Caps ?
     ;
 

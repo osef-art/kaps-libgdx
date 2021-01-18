@@ -14,8 +14,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.gdx.kaps.MainScreen.dim;
-import static com.gdx.kaps.MainScreen.sra;
+import static com.gdx.kaps.MainScreen.*;
 
 public class Level implements Renderable {
     // INFO: temporary renderer
@@ -116,7 +115,7 @@ public class Level implements Renderable {
         updateTimer.reset();
     }
 
-    private void checkGameOver() {
+    public void checkGameOver() {
         if (!gelule.isAtValidEmplacement(grid) || grid.remainingGerms() <= 0) {
             try {
                 Thread.sleep(1500);
@@ -131,7 +130,7 @@ public class Level implements Renderable {
     public void hold() {
         if (!canHold) return;
         var tmp = Optional.ofNullable(hold);
-        hold = gelule.copy();
+        hold = Gelule.copyColorFrom(gelule, new Gelule(this));
         tmp.ifPresentOrElse(
           hold -> gelule = Gelule.copyColorFrom(hold, gelule),
           () -> {
@@ -178,10 +177,13 @@ public class Level implements Renderable {
           dim.nextBox,
           new Color(0.45f, 0.5f, 0.6f, 1)
         );
+        tra.drawText("NEXT", dim.nextBox.x, dim.nextBox.y + dim.nextBox.height + 10);
+
         sra.drawRect(
           dim.holdBox,
           new Color(0.45f, 0.5f, 0.6f, 1)
         );
+        tra.drawText("HOLD", dim.holdBox.x, dim.holdBox.y + dim.holdBox.height + 10);
 
         sra.drawRect(
           dim.bottomPanel,
@@ -189,7 +191,6 @@ public class Level implements Renderable {
         );
 
         next.render(dim.nextGelule);
-        // FIXME: bad rendering for vertical caps
         Optional.ofNullable(hold).ifPresent(hold -> hold.render(dim.holdGelule));
     }
 }
