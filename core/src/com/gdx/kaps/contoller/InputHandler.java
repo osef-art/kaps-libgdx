@@ -10,10 +10,11 @@ import java.util.stream.IntStream;
 public class InputHandler implements InputProcessor {
     private final HashMap<Integer, Boolean> pressed = new HashMap<>();
     private final static double UPDATE_SPEED = 75_000_000;
-    private final Timer moveSpeed = new Timer(UPDATE_SPEED);
+    private final Timer moveSpeed;
     private final Level level;
 
     public InputHandler(Level lvl) {
+        moveSpeed = new Timer(UPDATE_SPEED);
         level = lvl;
         IntStream.range(0, 100)
           .forEach(n -> pressed.put(n, false));
@@ -30,6 +31,7 @@ public class InputHandler implements InputProcessor {
                 level.dropGelule();
                 break;
             case 36: // H
+                level.hold();
                 break;
             case 45: // Q
                 System.exit(0);

@@ -6,14 +6,15 @@ import com.gdx.kaps.level.grid.Grid;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import java.util.Objects;
+
+import static java.util.Objects.requireNonNull;
 
 public class Gelule implements Iterable<LinkedCaps> {
     private final LinkedCaps linked;
     private final LinkedCaps main;
 
     public Gelule(Level lvl) {
-        Objects.requireNonNull(lvl);
+        requireNonNull(lvl);
         int x = lvl.gridWidth() /2 -1;
         int y = lvl.gridHeight() -1;
         main = new LinkedCaps(x, y, Look.LEFT, lvl);
@@ -22,12 +23,21 @@ public class Gelule implements Iterable<LinkedCaps> {
     }
 
     private Gelule(Gelule gelule, Look look) {
-        Objects.requireNonNull(gelule);
-        Objects.requireNonNull(look);
+        requireNonNull(gelule);
+        requireNonNull(look);
         main = new LinkedCaps(gelule.main).shifted(look);
         linked = new LinkedCaps(gelule.linked).shifted(look);
         linked.linkTo(main);
     }
+
+    private Gelule(Gelule color, Gelule pos) {
+        requireNonNull(color);
+        requireNonNull(pos);
+        main = new LinkedCaps(pos.x(), pos.y(), pos.main.look(), color.main.color());
+        linked = new LinkedCaps(pos.linked.x(), pos.linked.y(), pos.linked.look(), color.linked.color());
+        linked.linkTo(this.main);
+    }
+
 
     // getters
 
@@ -41,6 +51,10 @@ public class Gelule implements Iterable<LinkedCaps> {
 
     public Gelule copy() {
         return new Gelule(this, Look.NONE);
+    }
+
+    public static Gelule copyColorFrom(Gelule color, Gelule pos) {
+        return new Gelule(color, pos);
     }
 
     /**

@@ -63,23 +63,6 @@ public class Level implements Renderable {
         return colors;
     }
 
-    private void spawnNewGelule() {
-        if (gelule != null) return;
-        gelule = next.copy();
-        next = new Gelule(this);
-        // TODO: display gelule when game over. maybe in main loop ?
-        checkGameOver();
-    }
-
-    private void acceptGelule() {
-        grid.accept(gelule);
-        gelule = null;
-
-        updateGrid();
-        speedUp();
-        spawnNewGelule();
-    }
-
     // control
 
     public void moveGeluleLeft() {
@@ -105,6 +88,24 @@ public class Level implements Renderable {
 
     // update
 
+    private void spawnNewGelule() {
+        if (gelule != null) return;
+        gelule = next.copy();
+        next = new Gelule(this);
+        canHold = true;
+        // TODO: display gelule when game over. maybe in main loop ?
+        checkGameOver();
+    }
+
+    private void acceptGelule() {
+        grid.accept(gelule);
+        gelule = null;
+
+        updateGrid();
+        speedUp();
+        spawnNewGelule();
+    }
+
     public void update() {
         if (updateTimer.resetIfExceeds()) dipGelule();
     }
@@ -125,6 +126,20 @@ public class Level implements Renderable {
             System.out.println("GAME OVER");
             System.exit(0);
         }
+    }
+
+    public void hold() {
+        if (!canHold) return;
+        var tmp = Optional.ofNullable(hold);
+        hold = gelule.copy();
+        tmp.ifPresentOrElse(
+          hold -> gelule = Gelule.copyColorFrom(hold, gelule),
+          () -> {
+            gelule = null;
+            spawnNewGelule();
+          }
+        );
+        canHold = false;
     }
 
     private void updateGrid() {
@@ -174,5 +189,7 @@ public class Level implements Renderable {
         );
 
         next.render(dim.nextGelule);
+        // FIXME: bad rendering for vertical caps
+        Optional.ofNullable(hold).ifPresent(hold -> hold.render(dim.holdGelule));
     }
 }
