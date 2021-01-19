@@ -1,6 +1,8 @@
 package com.gdx.kaps.level.grid;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.gdx.kaps.renderer.Dimensions;
 import com.gdx.kaps.renderer.Renderable;
 import com.gdx.kaps.level.Level;
 import com.gdx.kaps.level.grid.caps.Gelule;
@@ -61,6 +63,8 @@ public class Grid implements Renderable {
             throw new IllegalStateException("Invalid file: " + path);
 
         var grid = new Grid(charGrid.get(0).size(), charGrid.size());
+        dim = new Dimensions(grid, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
 
         do {
             for (int y = 0; y < charGrid.size(); y++) {

@@ -43,8 +43,11 @@ public abstract class GridObject implements GridObjectInterface {
 
     // update
 
-    protected void updateSprite(String path) {
+    protected void updateSprite(int x, int y, String path) {
         sprite = new Sprite(new Texture(path));
+        sprite.setX(dim.gridMargin + x * dim.tile.height);
+        sprite.setY(dim.topTile(y));
+        // FIXME: update sprite size
         sprite.flip(false, true);
     }
 
@@ -59,10 +62,10 @@ public abstract class GridObject implements GridObjectInterface {
     }
 
     public void render(float x, float y, float width, float height) {
-        batch.enableBlending();
         batch.begin();
-        batch.draw(sprite, x, y, width, height);
+        // TODO: use for certain cases
+        //  batch.draw(sprite, x, y, width, height);
+        sprite.draw(batch);
         batch.end();
-        batch.disableBlending();
     }
 }

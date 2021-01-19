@@ -1,7 +1,7 @@
 package com.gdx.kaps.renderer;
 
 import com.badlogic.gdx.math.Rectangle;
-import com.gdx.kaps.level.Level;
+import com.gdx.kaps.level.grid.Grid;
 
 import static com.gdx.kaps.MainScreen.dim;
 
@@ -24,14 +24,14 @@ public class Dimensions {
     public final Rectangle sidekick1Box;
     public final Rectangle sidekick2Box;
 
-    public Dimensions(Level level, int windowWidth, int windowHeight) {
+    public Dimensions(Grid grd, int windowWidth, int windowHeight) {
         window = new Rectangle(0, 0, windowWidth, windowHeight);
         gridMargin = window.width / 20;
-        GRID_HEIGHT = level.gridHeight();
+        GRID_HEIGHT = grd.height();
 
         gridPanel = new Rectangle(0, 0, window.width*2/3, window.height);
         grid = new Rectangle(gridMargin, gridMargin, gridPanel.width - 2 * gridMargin, window.height);
-        tile = new Rectangle(gridMargin, gridMargin, grid.width / level.gridWidth(), grid.width / level.gridWidth());
+        tile = new Rectangle(gridMargin, gridMargin, grid.width / grd.width(), grid.width / grd.width());
         grid.height = tile.height * GRID_HEIGHT;
         gridPanel.height = grid.height + 2* gridMargin;
 

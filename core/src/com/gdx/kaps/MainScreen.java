@@ -42,7 +42,6 @@ public class MainScreen extends ApplicationAdapter {
 			Path.of("android/assets/levels/level" + new Random().nextInt(21)),
 			new HashSet<>(Arrays.asList(Sidekick.ZYRAME, Sidekick.SEAN))
 		);
-		dim = new Dimensions(level, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
 		controller = new InputHandler(level);
 		Gdx.input.setInputProcessor(controller);
