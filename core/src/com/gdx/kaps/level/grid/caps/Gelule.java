@@ -22,13 +22,11 @@ public class Gelule implements Iterable<LinkedCaps> {
         linked.linkTo(main);
     }
 
-    private Gelule(Gelule gelule, float alpha) {
+    Gelule(Gelule gelule) {
         requireNonNull(gelule);
         main = new LinkedCaps(gelule.main);
         linked = new LinkedCaps(gelule.linked);
         linked.linkTo(main);
-        main.setSpriteAlpha(alpha);
-        linked.setSpriteAlpha(alpha);
     }
 
     private Gelule(Gelule gelule, Look look) {
@@ -59,11 +57,7 @@ public class Gelule implements Iterable<LinkedCaps> {
     }
 
     public Gelule copy() {
-        return new Gelule(this, Look.NONE);
-    }
-
-    public Gelule copyWithAlpha(float alpha) {
-        return new Gelule(this, alpha);
+        return new Gelule(this);
     }
 
     public static Gelule copyColorFrom(Gelule color, Gelule pos) {

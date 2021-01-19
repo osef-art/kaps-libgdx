@@ -81,7 +81,7 @@ public abstract class Germ extends GridObject {
     @Override
     public void hit() {
         health--;
-        if (!isDestroyed()) updateSprite(x(), y(), "android/assets/img/" + color().id() + "/germs/" + type.type() + (type.maxHP() == 1 ? "" : health) + "/idle_0.png");
+        if (!isDestroyed()) updateSprite("android/assets/img/" + color().id() + "/germs/" + type.type() + (type.maxHP() == 1 ? "" : health) + "/idle_0.png");
 
     }
 
@@ -92,7 +92,7 @@ public abstract class Germ extends GridObject {
     // update
 
     void updateSprite() {
-        updateSprite(x(), y(),
+        updateSprite(
           "android/assets/img/" + color().id() +
             "/germs/" + type.type() +
             (type.maxHP() == 1 ? "" : health) +

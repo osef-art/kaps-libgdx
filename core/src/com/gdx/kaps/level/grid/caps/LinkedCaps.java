@@ -72,7 +72,7 @@ public class LinkedCaps extends Caps {
     // update
 
     void updateSprite() {
-        updateSprite(x(), y(),
+        updateSprite(
           "android/assets/img/" + color().id() +
             "/caps/" + look + ".png"
         );

@@ -1,6 +1,7 @@
 package com.gdx.kaps.level;
 
 import com.badlogic.gdx.graphics.Color;
+import com.gdx.kaps.level.grid.caps.PreviewGelule;
 import com.gdx.kaps.renderer.Renderable;
 import com.gdx.kaps.level.grid.caps.Gelule;
 import com.gdx.kaps.level.grid.Grid;
@@ -24,7 +25,7 @@ public class Level implements Renderable {
     private final Set<com.gdx.kaps.level.grid.Color> colors;
     private boolean canHold;
     private final Grid grid;
-    private Gelule preview;
+    private PreviewGelule preview;
     private Gelule gelule;
     private Gelule next;
     private Gelule hold;
@@ -91,7 +92,7 @@ public class Level implements Renderable {
     // update
 
     private void updatePreview() {
-        preview = gelule.copyWithAlpha(0.5f);
+        preview = new PreviewGelule(gelule);
         while (preview.dipIfPossible(grid));
     }
 
