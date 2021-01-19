@@ -7,6 +7,7 @@ import com.gdx.kaps.renderer.Renderable;
 import com.gdx.kaps.level.Level;
 import com.gdx.kaps.level.grid.caps.Gelule;
 import com.gdx.kaps.level.grid.germ.Germ;
+import com.gdx.kaps.renderer.Zone;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -336,10 +337,10 @@ public class Grid implements Renderable {
                 Color color = new Color(0.45f + shift, 0.5f + shift, 0.6f + shift, 1);
 
                 sra.drawRect(
-                  dim.gridMargin + x * dim.tile.width,
-                  dim.gridMargin + y * dim.tile.height,
-                  dim.tile.width,
-                  dim.tile.height,
+                  dim.gridMargin + x * dim.get(Zone.TILE).width,
+                  dim.gridMargin + y * dim.get(Zone.TILE).height,
+                  dim.get(Zone.TILE).width,
+                  dim.get(Zone.TILE).height,
                   color
                 );
             }

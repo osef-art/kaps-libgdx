@@ -3,63 +3,52 @@ package com.gdx.kaps.renderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.gdx.kaps.level.grid.Grid;
 
+import java.util.EnumMap;
+
 import static com.gdx.kaps.MainScreen.dim;
 
 public class Dimensions {
+    private final EnumMap<Zone, Rectangle> map = new EnumMap<>(Zone.class);
+
     private final int GRID_HEIGHT;
     public final float sidePadding;
     public final float gridMargin;
     public final float boxPadding;
-    // IMPL: use an enum map
-    public final Rectangle window;
-    public final Rectangle grid;
-    public final Rectangle tile;
-    public final Rectangle bottomPanel;
-    public final Rectangle gridPanel;
-    public final Rectangle sidePanel;
-    public final Rectangle nextBox;
-    public final Rectangle holdBox;
-    public final Rectangle nextGelule;
-    public final Rectangle holdGelule;
-    public final Rectangle sidekick1Box;
-    public final Rectangle sidekick2Box;
 
     public Dimensions(Grid grd, int windowWidth, int windowHeight) {
-        window = new Rectangle(0, 0, windowWidth, windowHeight);
-        gridMargin = window.width / 20;
+        map.put(Zone.WINDOW, new Rectangle(0, 0, windowWidth, windowHeight));
+        gridMargin = map.get(Zone.WINDOW).width / 20;
         GRID_HEIGHT = grd.height();
 
-        gridPanel = new Rectangle(0, 0, window.width*2/3, window.height);
-        grid = new Rectangle(gridMargin, gridMargin, gridPanel.width - 2 * gridMargin, window.height);
-        tile = new Rectangle(gridMargin, gridMargin, grid.width / grd.width(), grid.width / grd.width());
-        grid.height = tile.height * GRID_HEIGHT;
-        gridPanel.height = grid.height + 2* gridMargin;
+        map.put(Zone.GRID_PANEL, new Rectangle(0, 0, map.get(Zone.WINDOW).width*2/3, map.get(Zone.WINDOW).height));
+        map.put(Zone.GRID, new Rectangle(gridMargin, gridMargin, map.get(Zone.GRID_PANEL).width - 2 * gridMargin, map.get(Zone.WINDOW).height));
+        map.put(Zone.TILE, new Rectangle(gridMargin, gridMargin, map.get(Zone.GRID).width / grd.width(), map.get(Zone.GRID).width / grd.width()));
+        map.get(Zone.GRID).height = map.get(Zone.TILE).height * GRID_HEIGHT;
+        map.get(Zone.GRID_PANEL).height = map.get(Zone.GRID).height + 2* gridMargin;
 
-        sidePanel = new Rectangle(gridPanel.width, 0, window.width - gridPanel.width, window.height);
-        bottomPanel = new Rectangle(0, window.height - 100, window.width, 100);//window.height - gridPanel.height - gridMargin);
-        sidePadding = sidePanel.width / 10;
+        map.put(Zone.SIDE_PANEL, new Rectangle(map.get(Zone.GRID_PANEL).width, 0, map.get(Zone.WINDOW).width - map.get(Zone.GRID_PANEL).width, map.get(Zone.WINDOW).height));
+        map.put(Zone.BOTTOM_PANEL, new Rectangle(0, map.get(Zone.WINDOW).height - 100, map.get(Zone.WINDOW).width, 100));
+        sidePadding = map.get(Zone.SIDE_PANEL).width / 10;
 
-        nextBox = new Rectangle(sidePanel.x + sidePadding, gridMargin, sidePanel.width - 2 * sidePadding, sidePanel.width - 2 * sidePadding);
-        holdBox = new Rectangle(sidePanel.x + sidePadding, gridMargin * 3 + nextBox.height, sidePanel.width - 2 * sidePadding, sidePanel.width - 2 * sidePadding);
-        boxPadding = nextBox.width / 10;
+        map.put(Zone.NEXT_BOX, new Rectangle(map.get(Zone.SIDE_PANEL).x + sidePadding, gridMargin, map.get(Zone.SIDE_PANEL).width - 2 * sidePadding, map.get(Zone.SIDE_PANEL).width - 2 * sidePadding));
+        map.put(Zone.HOLD_BOX, new Rectangle(map.get(Zone.SIDE_PANEL).x + sidePadding, gridMargin * 3 + map.get(Zone.NEXT_BOX).height, map.get(Zone.SIDE_PANEL).width - 2 * sidePadding, map.get(Zone.SIDE_PANEL).width - 2 * sidePadding));
+        boxPadding = map.get(Zone.NEXT_BOX).width / 10;
 
-        nextGelule = new Rectangle(nextBox.x + boxPadding, nextBox.y + boxPadding, nextBox.width - 2 * boxPadding, (nextBox.width - 2 * boxPadding) / 2);
-        nextGelule.y = nextBox.y + nextBox.height/2 - nextGelule.height/2;
-        holdGelule = new Rectangle(holdBox.x + boxPadding, holdBox.y + holdBox.height/2 - nextGelule.height/2, holdBox.width - 2 * boxPadding, (holdBox.width - 2 * boxPadding) / 2);
+        map.put(Zone.NEXT_GELULE, new Rectangle(map.get(Zone.NEXT_BOX).x + boxPadding, map.get(Zone.NEXT_BOX).y + boxPadding, map.get(Zone.NEXT_BOX).width - 2 * boxPadding, (map.get(Zone.NEXT_BOX).width - 2 * boxPadding) / 2));
+        map.get(Zone.NEXT_GELULE).y = map.get(Zone.NEXT_BOX).y + map.get(Zone.NEXT_BOX).height/2 - map.get(Zone.NEXT_GELULE).height/2;
+        map.put(Zone.HOLD_GELULE, new Rectangle(map.get(Zone.HOLD_BOX).x + boxPadding, map.get(Zone.HOLD_BOX).y + map.get(Zone.HOLD_BOX).height/2 - map.get(Zone.NEXT_GELULE).height/2, map.get(Zone.HOLD_BOX).width - 2 * boxPadding, (map.get(Zone.HOLD_BOX).width - 2 * boxPadding) / 2));
 
-        sidekick1Box = new Rectangle(sidePanel.x, gridMargin * 5 + nextBox.height * 2, sidePanel.width, nextBox.height / 2);
-        sidekick2Box = new Rectangle(sidePanel.x, gridMargin * 6 + nextBox.height * 2.5f, sidePanel.width, nextBox.height / 2);
+        map.put(Zone.SIDEKICK1_BOX, new Rectangle(map.get(Zone.SIDE_PANEL).x, gridMargin * 5 + map.get(Zone.NEXT_BOX).height * 2, map.get(Zone.SIDE_PANEL).width, map.get(Zone.NEXT_BOX).height / 2));
+        map.put(Zone.SIDEKICK2_BOX, new Rectangle(map.get(Zone.SIDE_PANEL).x, gridMargin * 6 + map.get(Zone.NEXT_BOX).height * 2.5f, map.get(Zone.SIDE_PANEL).width, map.get(Zone.NEXT_BOX).height / 2));
+
+        // TODO: both sidekicks heads. but first, an enum map. (+ handle n sidekicks ?)
     }
 
-    public float halfTile() {
-        return tile.width/2;
-    }
-
-    public float sidePanelWithPadding() {
-        return sidePanel.x + sidePadding;
+    public Rectangle get(Zone zone) {
+        return map.get(zone);
     }
 
     public float topTile(int y) {
-        return dim.gridMargin + ((GRID_HEIGHT -1) - y) * dim.tile.width;
+        return dim.gridMargin + ((GRID_HEIGHT -1) - y) * dim.map.get(Zone.TILE).width;
     }
 }

@@ -2,6 +2,7 @@ package com.gdx.kaps.level.grid;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.gdx.kaps.renderer.Zone;
 
 import static com.gdx.kaps.MainScreen.batch;
 import static com.gdx.kaps.MainScreen.dim;
@@ -47,10 +48,10 @@ public abstract class GridObject implements GridObjectInterface {
     @Override
     public void render(int x, int y) {
         render(
-          dim.gridMargin + x * dim.tile.height,
+          dim.gridMargin + x * dim.get(Zone.TILE).height,
           dim.topTile(y),
-          dim.tile.width,
-          dim.tile.height
+          dim.get(Zone.TILE).width,
+          dim.get(Zone.TILE).height
         );
     }
 

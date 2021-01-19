@@ -5,6 +5,7 @@ import com.gdx.kaps.level.grid.caps.PreviewGelule;
 import com.gdx.kaps.renderer.Renderable;
 import com.gdx.kaps.level.grid.caps.Gelule;
 import com.gdx.kaps.level.grid.Grid;
+import com.gdx.kaps.renderer.Zone;
 import com.gdx.kaps.time.Timer;
 
 import java.io.IOException;
@@ -164,47 +165,47 @@ public class Level implements Renderable {
         // background
         sra.drawRect(
           dim.gridMargin,
-          dim.gridMargin + dim.grid.height + 10,
-          dim.grid.width,
+          dim.gridMargin + dim.get(Zone.GRID).height + 10,
+          dim.get(Zone.GRID).width,
           dim.gridMargin - 10,
           new Color(0.5f, 0.5f, 0.65f, 1)
         );
         sra.drawRect(
           dim.gridMargin,
-          dim.gridMargin + dim.grid.height + 10,
-          (float) (dim.grid.width * updateTimer.ratio()),
+          dim.gridMargin + dim.get(Zone.GRID).height + 10,
+          (float) (dim.get(Zone.GRID).width * updateTimer.ratio()),
           dim.gridMargin - 10,
           new Color(0.6f, 0.6f, 0.75f, 1)
         );
 
         sra.drawRect(
-          dim.sidePanel,
+          dim.get(Zone.SIDE_PANEL),
           new Color(0.4f, 0.45f, 0.55f, 1)
         );
 
         sra.drawRect(
-          dim.nextBox,
+          dim.get(Zone.NEXT_BOX),
           new Color(0.45f, 0.5f, 0.6f, 1)
         );
-        tra.drawText("NEXT", dim.nextBox.x, dim.nextBox.y + dim.nextBox.height + 10);
+        tra.drawText("NEXT", dim.get(Zone.NEXT_BOX).x, dim.get(Zone.NEXT_BOX).y + dim.get(Zone.NEXT_BOX).height + 10);
 
         sra.drawRect(
-          dim.holdBox,
+          dim.get(Zone.HOLD_BOX),
           new Color(0.45f, 0.5f, 0.6f, 1)
         );
-        tra.drawText("HOLD", dim.holdBox.x, dim.holdBox.y + dim.holdBox.height + 10);
+        tra.drawText("HOLD", dim.get(Zone.HOLD_BOX).x, dim.get(Zone.HOLD_BOX).y + dim.get(Zone.HOLD_BOX).height + 10);
 
         sra.drawRect(
-          dim.sidekick1Box,
+          dim.get(Zone.SIDEKICK1_BOX),
           new Color(0.45f, 0.5f, 0.6f, 1)
         );
         sra.drawRect(
-          dim.sidekick2Box,
+          dim.get(Zone.SIDEKICK2_BOX),
           new Color(0.45f, 0.5f, 0.6f, 1)
         );
 
         sra.drawRect(
-          dim.bottomPanel,
+          dim.get(Zone.BOTTOM_PANEL),
           new Color(0.6f, 0.45f, 0.85f, 1)
         );
 
@@ -213,7 +214,7 @@ public class Level implements Renderable {
         Optional.ofNullable(preview).ifPresent(Gelule::render);
         Optional.ofNullable(gelule).ifPresent(Gelule::render);
 
-        next.render(dim.nextGelule);
-        Optional.ofNullable(hold).ifPresent(hold -> hold.render(dim.holdGelule));
+        next.render(dim.get(Zone.NEXT_GELULE));
+        Optional.ofNullable(hold).ifPresent(hold -> hold.render(dim.get(Zone.HOLD_GELULE)));
     }
 }
