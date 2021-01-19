@@ -31,7 +31,6 @@ public enum Sidekick {
                  .findAny()
                  .get().type
           ;
-        // return Sidekick.BLANK_1.type;
     }
 
     public Color color() {

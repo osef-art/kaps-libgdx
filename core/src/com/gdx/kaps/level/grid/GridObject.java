@@ -37,6 +37,10 @@ public abstract class GridObject implements GridObjectInterface {
         return position;
     }
 
+    public void setSpriteAlpha(float alpha) {
+        sprite.setAlpha(alpha);
+    }
+
     // update
 
     protected void updateSprite(String path) {
@@ -55,8 +59,10 @@ public abstract class GridObject implements GridObjectInterface {
     }
 
     public void render(float x, float y, float width, float height) {
+        batch.enableBlending();
         batch.begin();
         batch.draw(sprite, x, y, width, height);
         batch.end();
+        batch.disableBlending();
     }
 }

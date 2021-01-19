@@ -1,4 +1,4 @@
-package com.gdx.kaps;
+package com.gdx.kaps.renderer;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.gdx.kaps.level.Level;
@@ -6,10 +6,11 @@ import com.gdx.kaps.level.Level;
 import static com.gdx.kaps.MainScreen.dim;
 
 public class Dimensions {
-    private static int GRID_HEIGHT;
+    private final int GRID_HEIGHT;
     public final float sidePadding;
     public final float gridMargin;
     public final float boxPadding;
+    // IMPL: use an enum map
     public final Rectangle window;
     public final Rectangle grid;
     public final Rectangle tile;
@@ -20,6 +21,8 @@ public class Dimensions {
     public final Rectangle holdBox;
     public final Rectangle nextGelule;
     public final Rectangle holdGelule;
+    public final Rectangle sidekick1Box;
+    public final Rectangle sidekick2Box;
 
     public Dimensions(Level level, int windowWidth, int windowHeight) {
         window = new Rectangle(0, 0, windowWidth, windowHeight);
@@ -32,17 +35,20 @@ public class Dimensions {
         grid.height = tile.height * GRID_HEIGHT;
         gridPanel.height = grid.height + 2* gridMargin;
 
-        sidePanel = new Rectangle(gridPanel.width, 0, window.width - gridPanel.width, gridPanel.height);
-        bottomPanel = new Rectangle(0, gridPanel.height + gridMargin, window.width, window.height - gridPanel.height - gridMargin);
+        sidePanel = new Rectangle(gridPanel.width, 0, window.width - gridPanel.width, window.height);
+        bottomPanel = new Rectangle(0, window.height - 100, window.width, 100);//window.height - gridPanel.height - gridMargin);
         sidePadding = sidePanel.width / 10;
 
         nextBox = new Rectangle(sidePanel.x + sidePadding, gridMargin, sidePanel.width - 2 * sidePadding, sidePanel.width - 2 * sidePadding);
-        holdBox = new Rectangle(sidePanel.x + sidePadding, gridMargin * 4 + nextBox.height, sidePanel.width - 2 * sidePadding, sidePanel.width - 2 * sidePadding);
+        holdBox = new Rectangle(sidePanel.x + sidePadding, gridMargin * 3 + nextBox.height, sidePanel.width - 2 * sidePadding, sidePanel.width - 2 * sidePadding);
         boxPadding = nextBox.width / 10;
 
         nextGelule = new Rectangle(nextBox.x + boxPadding, nextBox.y + boxPadding, nextBox.width - 2 * boxPadding, (nextBox.width - 2 * boxPadding) / 2);
         nextGelule.y = nextBox.y + nextBox.height/2 - nextGelule.height/2;
         holdGelule = new Rectangle(holdBox.x + boxPadding, holdBox.y + holdBox.height/2 - nextGelule.height/2, holdBox.width - 2 * boxPadding, (holdBox.width - 2 * boxPadding) / 2);
+
+        sidekick1Box = new Rectangle(sidePanel.x, gridMargin * 5 + nextBox.height * 2, sidePanel.width, nextBox.height / 2);
+        sidekick2Box = new Rectangle(sidePanel.x, gridMargin * 6 + nextBox.height * 2.5f, sidePanel.width, nextBox.height / 2);
     }
 
     public float halfTile() {

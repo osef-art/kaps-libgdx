@@ -110,4 +110,8 @@ public class Caps extends GridObject {
     public String toString() {
         return "(" + x() + "," + y() + ")";
     }
+
+    public void render(float alpha) {
+
+    }
 }

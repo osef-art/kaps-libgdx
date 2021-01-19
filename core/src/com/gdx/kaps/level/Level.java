@@ -1,7 +1,7 @@
 package com.gdx.kaps.level;
 
 import com.badlogic.gdx.graphics.Color;
-import com.gdx.kaps.Renderable;
+import com.gdx.kaps.renderer.Renderable;
 import com.gdx.kaps.level.grid.caps.Gelule;
 import com.gdx.kaps.level.grid.Grid;
 import com.gdx.kaps.time.Timer;
@@ -18,13 +18,13 @@ import static com.gdx.kaps.MainScreen.*;
 
 public class Level implements Renderable {
     // INFO: temporary renderer
-    public final static int MIN_MATCH_RANGE = 4;    // TODO: find a way better name
+    public final static int MIN_MATCH_RANGE = 4;
     private int updateSpeed = 1_000_000_000;
     private final Timer updateTimer;
     private final Set<com.gdx.kaps.level.grid.Color> colors;
-    // TODO: implement next & hold
     private boolean canHold;
     private final Grid grid;
+    private Gelule preview;
     private Gelule gelule;
     private Gelule next;
     private Gelule hold;
@@ -66,10 +66,12 @@ public class Level implements Renderable {
 
     public void moveGeluleLeft() {
         gelule.moveLeftIfPossible(grid);
+        updatePreview();
     }
 
     public void moveGeluleRight() {
         gelule.moveRightIfPossible(grid);
+        updatePreview();
     }
 
     public void dipGelule() {
@@ -78,6 +80,7 @@ public class Level implements Renderable {
 
     public void flipGelule() {
         gelule.flipIfPossible(grid);
+        updatePreview();
     }
 
     public void dropGelule() {
@@ -87,9 +90,16 @@ public class Level implements Renderable {
 
     // update
 
+    private void updatePreview() {
+        preview = gelule.copyWithAlpha(0.5f);
+        while (preview.dipIfPossible(grid));
+    }
+
     private void spawnNewGelule() {
         if (gelule != null) return;
         gelule = next.copy();
+        updatePreview();
+
         next = new Gelule(this);
         canHold = true;
         // TODO: display gelule when game over. maybe in main loop ?
@@ -98,6 +108,7 @@ public class Level implements Renderable {
 
     private void acceptGelule() {
         grid.accept(gelule);
+        preview = null;
         gelule = null;
 
         updateGrid();
@@ -149,10 +160,7 @@ public class Level implements Renderable {
 
     @Override
     public void render() {
-        grid.render();
-        Optional.ofNullable(gelule).ifPresent(Gelule::render);
-        // TODO: render gelule preview
-
+        // background
         sra.drawRect(
           dim.gridMargin,
           dim.gridMargin + dim.grid.height + 10,
@@ -186,9 +194,23 @@ public class Level implements Renderable {
         tra.drawText("HOLD", dim.holdBox.x, dim.holdBox.y + dim.holdBox.height + 10);
 
         sra.drawRect(
+          dim.sidekick1Box,
+          new Color(0.45f, 0.5f, 0.6f, 1)
+        );
+        sra.drawRect(
+          dim.sidekick2Box,
+          new Color(0.45f, 0.5f, 0.6f, 1)
+        );
+
+        sra.drawRect(
           dim.bottomPanel,
           new Color(0.6f, 0.45f, 0.85f, 1)
         );
+
+        // level
+        grid.render();
+        Optional.ofNullable(preview).ifPresent(Gelule::render);
+        Optional.ofNullable(gelule).ifPresent(Gelule::render);
 
         next.render(dim.nextGelule);
         Optional.ofNullable(hold).ifPresent(hold -> hold.render(dim.holdGelule));

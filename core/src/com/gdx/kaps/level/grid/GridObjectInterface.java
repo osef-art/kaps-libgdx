@@ -1,6 +1,6 @@
 package com.gdx.kaps.level.grid;
 
-import com.gdx.kaps.Renderable;
+import com.gdx.kaps.renderer.Renderable;
 
 import java.util.Optional;
 
@@ -20,6 +20,7 @@ public interface GridObjectInterface extends Renderable {
     void hit();
 
     void render(int x, int y);
+
     default void render() {
         render(x(), y());
     }

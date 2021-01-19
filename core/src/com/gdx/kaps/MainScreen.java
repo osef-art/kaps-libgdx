@@ -8,6 +8,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.gdx.kaps.contoller.InputHandler;
 import com.gdx.kaps.level.Level;
 import com.gdx.kaps.level.Sidekick;
+import com.gdx.kaps.renderer.Dimensions;
+import com.gdx.kaps.renderer.ShapeRendererAdaptor;
+import com.gdx.kaps.renderer.TextRendererAdaptor;
 
 import java.nio.file.Path;
 import java.util.Arrays;
