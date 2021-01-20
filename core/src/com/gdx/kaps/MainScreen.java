@@ -7,7 +7,8 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.gdx.kaps.contoller.InputHandler;
 import com.gdx.kaps.level.Level;
-import com.gdx.kaps.level.Sidekick;
+import com.gdx.kaps.level.sidekick.Sidekick;
+import com.gdx.kaps.level.sidekick.SidekickRecord;
 import com.gdx.kaps.renderer.Dimensions;
 import com.gdx.kaps.renderer.ShapeRendererAdaptor;
 import com.gdx.kaps.renderer.TextRendererAdaptor;
@@ -40,7 +41,7 @@ public class MainScreen extends ApplicationAdapter {
 		// TODO: handle all sidekicks (when they have powers) (strategy)
 		level = new Level(
 			Path.of("android/assets/levels/level" + new Random().nextInt(21)),
-			new HashSet<>(Arrays.asList(Sidekick.ZYRAME, Sidekick.SEAN))
+			new HashSet<>(Arrays.asList(new Sidekick(SidekickRecord.ZYRAME), new Sidekick(SidekickRecord.SEAN)))
 		);
 
 		controller = new InputHandler(level);

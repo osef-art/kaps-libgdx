@@ -1,12 +1,13 @@
-package com.gdx.kaps.level;
+package com.gdx.kaps.level.sidekick;
 
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.gdx.kaps.level.grid.Color;
 
 import java.util.Set;
 
-public enum Sidekick {
+public enum SidekickRecord {
+    // IMPL: make it a class + SidekickRecord
+    //  extends 'animated'.
+
     // TODO: add powers
     SEAN   (Color.COLOR_1, "Sean"),    // INFO: Hits a tile then its neighbors
     ZYRAME (Color.COLOR_2, "Zyrame"),  // INFO: Hits 2 random germs
@@ -19,16 +20,15 @@ public enum Sidekick {
     // TODO: sidekick that generates a single Caps ?
     ;
 
-    private final Sprite sprite;
+    private final String name;
     private final Color type;
 
-    Sidekick(Color type, String name) {
+    SidekickRecord(Color type, String name) {
+        this.name = name;
         this.type = type;
-        sprite = new Sprite(new Texture("android/assets/img/sidekicks/" + name + "_0.png"));
-        sprite.flip(false, true);
     }
 
-    public static Color random(Set<Sidekick> sidekicks) {
+    public static Color random(Set<SidekickRecord> sidekicks) {
         if (sidekicks.isEmpty()) {
             throw new IllegalArgumentException("Can't get a type from empty set.");
         }
@@ -42,7 +42,7 @@ public enum Sidekick {
         return type;
     }
 
-    public Sprite sprite() {
-        return sprite;
+    public String path() {
+        return name;
     }
 }

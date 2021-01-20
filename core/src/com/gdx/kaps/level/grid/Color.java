@@ -1,6 +1,6 @@
 package com.gdx.kaps.level.grid;
 
-import com.gdx.kaps.level.Sidekick;
+import com.gdx.kaps.level.sidekick.SidekickRecord;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -28,8 +28,8 @@ public enum Color {
 
     public static Color randomBlank() {
         var blankColors = Arrays.stream(values())
-                            .filter(color -> Arrays.stream(Sidekick.values())
-                                             .map(Sidekick::color)
+                            .filter(color -> Arrays.stream(SidekickRecord.values())
+                                             .map(SidekickRecord::color)
                                             .noneMatch(color::equals))
                             .collect(Collectors.toList());
 

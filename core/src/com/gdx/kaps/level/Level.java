@@ -2,6 +2,8 @@ package com.gdx.kaps.level;
 
 import com.badlogic.gdx.graphics.Color;
 import com.gdx.kaps.level.grid.caps.PreviewGelule;
+import com.gdx.kaps.level.sidekick.Sidekick;
+import com.gdx.kaps.renderer.Animated;
 import com.gdx.kaps.renderer.Renderable;
 import com.gdx.kaps.level.grid.caps.Gelule;
 import com.gdx.kaps.level.grid.Grid;
@@ -22,6 +24,7 @@ public class Level implements Renderable {
     private int updateSpeed = 1_000_000_000;
     private final Timer updateTimer;
     private final List<Sidekick> sidekicks;
+    // TODO: handle sidekicks gauges
     private final Set<com.gdx.kaps.level.grid.Color> colors;
     private final Grid grid;
     private boolean canHold;
@@ -121,6 +124,7 @@ public class Level implements Renderable {
 
     public void update() {
         if (updateTimer.resetIfExceeds()) dipGelule();
+        sidekicks.forEach(Animated::update);
     }
 
     private void speedUp() {
@@ -228,5 +232,7 @@ public class Level implements Renderable {
 
         next.render(dim.get(Zone.NEXT_GELULE));
         Optional.ofNullable(hold).ifPresent(hold -> hold.render(dim.get(Zone.HOLD_GELULE)));
+
+        // TODO: render level name, score, remaining caps
     }
 }
