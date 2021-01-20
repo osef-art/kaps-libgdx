@@ -21,7 +21,7 @@ public interface GridObjectInterface extends Renderable {
 
     void render(int x, int y);
 
-    default void render() {
+    default void render(float x, float y, float width, float height) {
         render(x(), y());
     }
 }

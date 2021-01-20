@@ -3,7 +3,7 @@ package com.gdx.kaps.level;
 import com.badlogic.gdx.graphics.Color;
 import com.gdx.kaps.level.grid.caps.PreviewGelule;
 import com.gdx.kaps.level.sidekick.Sidekick;
-import com.gdx.kaps.renderer.Animated;
+import com.gdx.kaps.renderer.AnimatedSprite;
 import com.gdx.kaps.renderer.Renderable;
 import com.gdx.kaps.level.grid.caps.Gelule;
 import com.gdx.kaps.level.grid.Grid;
@@ -122,9 +122,11 @@ public class Level implements Renderable {
         spawnNewGelule();
     }
 
+    @Override
     public void update() {
         if (updateTimer.resetIfExceeds()) dipGelule();
-        sidekicks.forEach(Animated::update);
+        grid.update();
+        sidekicks.forEach(Renderable::update);
     }
 
     private void speedUp() {
@@ -209,15 +211,13 @@ public class Level implements Renderable {
               dim.get(Zone.NEXT_BOX).height / 2,
               new Color(0.45f, 0.5f, 0.6f, 1)
             );
-            batch.begin();
-            batch.draw(
-              sdk.sprite(),
+
+            sdk.render(
               dim.get(Zone.SIDE_PANEL).x + 5,
               dim.gridMargin * (6 + i) + dim.get(Zone.NEXT_BOX).height * (2 + 0.5f * i) + 5,
               dim.get(Zone.NEXT_BOX).height / 2 - 10,
               dim.get(Zone.NEXT_BOX).height / 2 - 10
             );
-            batch.end();
         }
 
         sra.drawRect(
@@ -234,5 +234,9 @@ public class Level implements Renderable {
         Optional.ofNullable(hold).ifPresent(hold -> hold.render(dim.get(Zone.HOLD_GELULE)));
 
         // TODO: render level name, score, remaining caps
+    }
+
+    @Override
+    public void render(float x, float y, float width, float height) {
     }
 }

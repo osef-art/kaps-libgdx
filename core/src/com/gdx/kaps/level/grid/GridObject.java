@@ -46,6 +46,11 @@ public abstract class GridObject implements GridObjectInterface {
     }
 
     @Override
+    public void render() {
+        render(x(), y());
+    }
+
+    @Override
     public void render(int x, int y) {
         render(
           dim.gridMargin + x * dim.get(Zone.TILE).height,

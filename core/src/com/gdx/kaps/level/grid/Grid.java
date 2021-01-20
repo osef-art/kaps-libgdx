@@ -330,6 +330,11 @@ public class Grid implements Renderable {
     }
 
     @Override
+    public void update() {
+        everyObjectInGrid().forEach(Renderable::update);
+    }
+
+    @Override
     public void render() {
         for (int x = 0; x < width(); x++) {
             for (int y = 0; y < height(); y++) {
@@ -352,5 +357,10 @@ public class Grid implements Renderable {
                 get(x, y).ifPresent(obj -> obj.render(finalX, finalY));
             }
         }
+    }
+
+    @Override
+    public void render(float x, float y, float width, float height) {
+
     }
 }

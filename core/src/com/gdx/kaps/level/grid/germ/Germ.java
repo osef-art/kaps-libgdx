@@ -3,13 +3,17 @@ package com.gdx.kaps.level.grid.germ;
 import com.gdx.kaps.level.grid.Color;
 import com.gdx.kaps.level.grid.Grid;
 import com.gdx.kaps.level.grid.GridObject;
+import com.gdx.kaps.renderer.AnimatedSprite;
+import com.gdx.kaps.renderer.Zone;
 
 import java.util.Optional;
 import java.util.Set;
 
+import static com.gdx.kaps.MainScreen.dim;
 import static java.util.Objects.requireNonNull;
 
 public abstract class Germ extends GridObject {
+    private final AnimatedSprite sprite;
     private final GermRecord type;
     private int health;
 
@@ -23,9 +27,15 @@ public abstract class Germ extends GridObject {
         if (health > type.maxHP())
             throw new IllegalArgumentException("Too much health given to " + type.name() + " (" + health + ")" );
 
+        sprite = new AnimatedSprite(
+          "android/assets/img/" + color().id() +
+            "/germs/" + type.type() +
+            (type.maxHP() == 1 ? "" : health) + "/idle_",
+          type.nbFrames(),
+          100_000_000
+        );
         this.health = health;
         this.type = type;
-        updateSprite();
     }
 
     public static Germ of(int x, int y, char symbol, Set<Color> colors) {
@@ -81,8 +91,10 @@ public abstract class Germ extends GridObject {
     @Override
     public void hit() {
         health--;
-        if (!isDestroyed()) updateSprite("android/assets/img/" + color().id() + "/germs/" + type.type() + (type.maxHP() == 1 ? "" : health) + "/idle_0.png");
-
+        if (!isDestroyed()) {
+            sprite.updatePath("android/assets/img/" + color().id() + "/germs/" + type.type() + (type.maxHP() == 1 ? "" : health) + "/idle_");
+            sprite.updateSprite();
+        }
     }
 
     @Override
@@ -90,14 +102,9 @@ public abstract class Germ extends GridObject {
     }
 
     // update
-
-    void updateSprite() {
-        updateSprite(
-          "android/assets/img/" + color().id() +
-            "/germs/" + type.type() +
-            (type.maxHP() == 1 ? "" : health) +
-            "/idle_0.png"
-        );
+    @Override
+    public void update() {
+        sprite.update();
     }
 
     @Override
@@ -105,5 +112,18 @@ public abstract class Germ extends GridObject {
         return "{" + x() + ',' + y() + '}';
     }
 
+    @Override
+    public void render(int x, int y) {
+        render(
+          dim.gridMargin + x * dim.get(Zone.TILE).height,
+          dim.topTile(y),
+          dim.get(Zone.TILE).width,
+          dim.get(Zone.TILE).height
+        );
+    }
+
+    public void render(float x, float y, float width, float height) {
+        sprite.render(x, y, width, height);
+    }
 }
 

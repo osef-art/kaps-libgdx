@@ -107,11 +107,13 @@ public class Caps extends GridObject {
 
     // update
 
+    @Override
+    public void update() {
+
+    }
+
     public String toString() {
         return "(" + x() + "," + y() + ")";
     }
 
-    public void render(float alpha) {
-
-    }
 }
