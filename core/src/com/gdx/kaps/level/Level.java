@@ -10,9 +10,7 @@ import com.gdx.kaps.time.Timer;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -23,9 +21,10 @@ public class Level implements Renderable {
     public final static int MIN_MATCH_RANGE = 4;
     private int updateSpeed = 1_000_000_000;
     private final Timer updateTimer;
+    private final List<Sidekick> sidekicks;
     private final Set<com.gdx.kaps.level.grid.Color> colors;
-    private boolean canHold;
     private final Grid grid;
+    private boolean canHold;
     private PreviewGelule preview;
     private Gelule gelule;
     private Gelule next;
@@ -33,10 +32,12 @@ public class Level implements Renderable {
 
     public Level(Path filePath, Set<Sidekick> sidekicks) {
         Objects.requireNonNull(sidekicks);
+        Objects.requireNonNull(filePath);
 
+        this.sidekicks = new ArrayList<>(sidekicks);
         colors =
           Stream.concat(
-            sidekicks.stream().map(Sidekick::color),
+            this.sidekicks.stream().map(Sidekick::color),
             Stream.of(com.gdx.kaps.level.grid.Color.randomBlank())
           ).collect(Collectors.toUnmodifiableSet());
 
@@ -195,14 +196,25 @@ public class Level implements Renderable {
         );
         tra.drawText("HOLD", dim.get(Zone.HOLD_BOX).x, dim.get(Zone.HOLD_BOX).y + dim.get(Zone.HOLD_BOX).height + 10);
 
-        sra.drawRect(
-          dim.get(Zone.SIDEKICK1_BOX),
-          new Color(0.45f, 0.5f, 0.6f, 1)
-        );
-        sra.drawRect(
-          dim.get(Zone.SIDEKICK2_BOX),
-          new Color(0.45f, 0.5f, 0.6f, 1)
-        );
+        for (int i = 0; i < sidekicks.size(); i++) {
+            var sdk = sidekicks.get(i);
+            sra.drawRect(
+              dim.get(Zone.SIDE_PANEL).x,
+              dim.gridMargin * (6 + i) + dim.get(Zone.NEXT_BOX).height * (2 + 0.5f * i),
+              dim.get(Zone.SIDE_PANEL).width,
+              dim.get(Zone.NEXT_BOX).height / 2,
+              new Color(0.45f, 0.5f, 0.6f, 1)
+            );
+            batch.begin();
+            batch.draw(
+              sdk.sprite(),
+              dim.get(Zone.SIDE_PANEL).x + 5,
+              dim.gridMargin * (6 + i) + dim.get(Zone.NEXT_BOX).height * (2 + 0.5f * i) + 5,
+              dim.get(Zone.NEXT_BOX).height / 2 - 10,
+              dim.get(Zone.NEXT_BOX).height / 2 - 10
+            );
+            batch.end();
+        }
 
         sra.drawRect(
           dim.get(Zone.BOTTOM_PANEL),

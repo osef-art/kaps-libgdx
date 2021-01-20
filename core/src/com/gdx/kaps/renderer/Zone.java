@@ -11,6 +11,4 @@ public enum Zone {
     HOLD_BOX,
     NEXT_GELULE,
     HOLD_GELULE,
-    SIDEKICK1_BOX,
-    SIDEKICK2_BOX,
 }

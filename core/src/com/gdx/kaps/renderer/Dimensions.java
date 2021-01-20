@@ -37,10 +37,6 @@ public class Dimensions {
         map.put(Zone.NEXT_GELULE, new Rectangle(map.get(Zone.NEXT_BOX).x + boxPadding, map.get(Zone.NEXT_BOX).y + boxPadding, map.get(Zone.NEXT_BOX).width - 2 * boxPadding, (map.get(Zone.NEXT_BOX).width - 2 * boxPadding) / 2));
         map.get(Zone.NEXT_GELULE).y = map.get(Zone.NEXT_BOX).y + map.get(Zone.NEXT_BOX).height/2 - map.get(Zone.NEXT_GELULE).height/2;
         map.put(Zone.HOLD_GELULE, new Rectangle(map.get(Zone.HOLD_BOX).x + boxPadding, map.get(Zone.HOLD_BOX).y + map.get(Zone.HOLD_BOX).height/2 - map.get(Zone.NEXT_GELULE).height/2, map.get(Zone.HOLD_BOX).width - 2 * boxPadding, (map.get(Zone.HOLD_BOX).width - 2 * boxPadding) / 2));
-
-        map.put(Zone.SIDEKICK1_BOX, new Rectangle(map.get(Zone.SIDE_PANEL).x, gridMargin * 5 + map.get(Zone.NEXT_BOX).height * 2, map.get(Zone.SIDE_PANEL).width, map.get(Zone.NEXT_BOX).height / 2));
-        map.put(Zone.SIDEKICK2_BOX, new Rectangle(map.get(Zone.SIDE_PANEL).x, gridMargin * 6 + map.get(Zone.NEXT_BOX).height * 2.5f, map.get(Zone.SIDE_PANEL).width, map.get(Zone.NEXT_BOX).height / 2));
-
         // TODO: both sidekicks heads. but first, an enum map. (+ handle n sidekicks ?)
     }
 
