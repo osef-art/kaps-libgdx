@@ -5,6 +5,9 @@ import com.gdx.kaps.level.grid.Color;
 import com.gdx.kaps.renderer.AnimatedSprite;
 import com.gdx.kaps.renderer.Renderable;
 
+import java.util.*;
+import java.util.stream.Collectors;
+
 public class Sidekick implements Renderable {
     private final AnimatedSprite sprite;
     private final SidekickRecord type;
@@ -14,6 +17,14 @@ public class Sidekick implements Renderable {
         sprite = new AnimatedSprite("android/assets/img/sidekicks/" + record.path() + "_", 4, 250_000_000);
         type = record;
         gauge = new Gauge(record.maxGauge());
+    }
+
+    public static Set<Sidekick> RandomSetOf(int n) {
+        var sdks = Arrays.stream(SidekickRecord.values())
+          .map(Sidekick::new)
+          .collect(Collectors.toList());
+        while (sdks.size() > n) sdks.remove(new Random().nextInt(sdks.size()));
+        return new HashSet<>(sdks);
     }
 
     public Color color() {

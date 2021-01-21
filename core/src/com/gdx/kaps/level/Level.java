@@ -6,7 +6,6 @@ import com.gdx.kaps.level.grid.GridObject;
 import com.gdx.kaps.level.grid.caps.Gelule;
 import com.gdx.kaps.level.grid.caps.PreviewGelule;
 import com.gdx.kaps.level.sidekick.Sidekick;
-import com.gdx.kaps.level.sidekick.SidekickRecord;
 import com.gdx.kaps.renderer.Renderable;
 import com.gdx.kaps.renderer.Zone;
 import com.gdx.kaps.time.Timer;
@@ -35,14 +34,11 @@ public class Level implements Renderable {
     private Gelule next;
     private Gelule hold;
 
-    public Level(Path filePath, SidekickRecord... sidekicks) {
+    public Level(Path filePath, Set<Sidekick> sidekicks) {
         Objects.requireNonNull(sidekicks);
         Objects.requireNonNull(filePath);
 
-        this.sidekicks = Arrays.stream(sidekicks)
-                           .distinct()
-                           .map(Sidekick::new)
-                           .collect(Collectors.toList());
+        this.sidekicks = new ArrayList<>(sidekicks);
 
         colors = Stream.concat(
           this.sidekicks.stream().map(Sidekick::color),
@@ -54,6 +50,7 @@ public class Level implements Renderable {
         } catch (IOException e) {
             throw new AssertionError("Error when parsing file " + filePath + ": " + e);
         }
+
         updateTimer = new Timer(updateSpeed);
         next = new Gelule(this);
         spawnNewGelule();
@@ -270,18 +267,10 @@ public class Level implements Renderable {
               sdk.color().value()
             );
 
-//            tra.drawText(
-//              sdk.gauge().value() + "",
-//              dim.get(Zone.SIDE_PANEL).x + dim.sidekickPanelHeight + 10,
-//              dim.gridMargin * (6 + i) + dim.get(Zone.NEXT_BOX).height * (2 + 0.5f * i) + 5
-//              //35, sdk.color().value()
-//            );
-
             tra.drawText(
               sdk.gauge().value() + " / " + sdk.gauge().max(),
               dim.get(Zone.SIDE_PANEL).x + 10 + dim.sidekickPanelHeight - 10,
               dim.gridMargin * (6 + i) + dim.get(Zone.NEXT_BOX).height * (2 + 0.5f * i) + 10
-              //20, new Color(1, 1, 1, 1)
             );
         }
     }

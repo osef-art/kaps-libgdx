@@ -9,14 +9,11 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.gdx.kaps.contoller.InputHandler;
 import com.gdx.kaps.level.Level;
 import com.gdx.kaps.level.sidekick.Sidekick;
-import com.gdx.kaps.level.sidekick.SidekickRecord;
 import com.gdx.kaps.renderer.Dimensions;
 import com.gdx.kaps.renderer.ShapeRendererAdaptor;
 import com.gdx.kaps.renderer.TextRendererAdaptor;
 
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Random;
 
 public class MainScreen extends ApplicationAdapter {
@@ -39,10 +36,9 @@ public class MainScreen extends ApplicationAdapter {
 		batch = new SpriteBatch();
 		batch.setProjectionMatrix(camera.combined);
 
-		// TODO: handle all sidekicks (when they have powers) (strategy)
 		level = new Level(
 			Path.of("android/assets/levels/level" + new Random().nextInt(21)),
-			SidekickRecord.ZYRAME, SidekickRecord.SEAN
+			Sidekick.RandomSetOf(2)
 		);
 
 		controller = new InputHandler(level);
@@ -51,7 +47,7 @@ public class MainScreen extends ApplicationAdapter {
 
 	@Override
 	public void render () {
-		Gdx.gl.glClearColor(0.8f, 0.85f, 0.9f, 1);
+		Gdx.gl.glClearColor(0.3f, 0.3f, 0.4f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		controller.update();
