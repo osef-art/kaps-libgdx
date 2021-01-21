@@ -1,5 +1,6 @@
 package com.gdx.kaps.level.grid;
 
+import com.gdx.kaps.level.Level;
 import com.gdx.kaps.level.sidekick.SidekickRecord;
 
 import java.util.*;
@@ -42,6 +43,10 @@ public enum Color {
             throw new NoSuchElementException("Need new color w/o sidekick.");
         }
         return new ArrayList<>(blankColors).get(new Random().nextInt(blankColors.size()));
+    }
+
+    public static Color random(Level lvl) {
+        return random(lvl.colors());
     }
 
     public static Color random(Set<Color> colors) {

@@ -47,4 +47,8 @@ public class TextRendererAdaptor {
         font.draw(batch, layout, fontX, fontY);
         batch.end();
     }
+
+    public void dispose() {
+        font.dispose();
+    }
 }

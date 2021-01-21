@@ -15,8 +15,6 @@ import com.gdx.kaps.renderer.ShapeRendererAdaptor;
 import com.gdx.kaps.renderer.TextRendererAdaptor;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Random;
 
 public class MainScreen extends ApplicationAdapter {
@@ -42,7 +40,7 @@ public class MainScreen extends ApplicationAdapter {
 		level = new Level(
 			Path.of("android/assets/levels/level" + new Random().nextInt(21)),
 			Sidekick.setOf(SidekickRecord.COLOR, SidekickRecord.XERETH)
-		//Sidekick.RandomSetOf(2)
+			//Sidekick.RandomSetOf(2)
 		);
 
 		controller = new InputHandler(level);
@@ -63,5 +61,6 @@ public class MainScreen extends ApplicationAdapter {
 	public void dispose () {
 		batch.dispose();
 		sra.dispose();
+		tra.dispose();
 	}
 }

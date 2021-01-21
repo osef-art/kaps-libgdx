@@ -13,7 +13,7 @@ public class LinkedCaps extends Caps {
     private Look look;
 
     LinkedCaps(int x, int y, Look look, Level lvl) {
-        this(x, y, look, Color.random(requireNonNull(lvl).colors()));
+        this(x, y, look, Color.random(requireNonNull(lvl)));
     }
 
     LinkedCaps(int x, int y, Look look, Color color) {

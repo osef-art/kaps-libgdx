@@ -30,8 +30,8 @@ public class Level implements Renderable {
     private boolean paused;
     private boolean canHold;
     private PreviewGelule preview;
+    private final Gelule[] next;
     private Gelule gelule;
-    private Gelule next;
     private Gelule hold;
 
     public Level(Path filePath, Set<Sidekick> sidekicks) {
@@ -51,8 +51,11 @@ public class Level implements Renderable {
             throw new AssertionError("Error when parsing file " + filePath + ": " + e);
         }
 
+        next = new Gelule[2];
+        for (int i = 0; i < next.length; i++) {
+            next[i] = new Gelule(this);
+        }
         updateTimer = new Timer(updateSpeed);
-        next = new Gelule(this);
         spawnNewGelule();
     }
 
@@ -120,19 +123,18 @@ public class Level implements Renderable {
         canHold = false;
     }
 
-    // update
+    // operations
 
-    private void updatePreview() {
-        preview = new PreviewGelule(gelule);
-        while (preview.dipIfPossible(grid));
+    public void setNext(int n, Gelule gelule) {
+        next[n-1] = gelule;
     }
 
     private void spawnNewGelule() {
         if (gelule != null) return;
-        gelule = next.copy();
+        gelule = next[0].copy();
+        updateNext();
         updatePreview();
 
-        next = new Gelule(this);
         canHold = true;
         multiplier = 1;
         // TODO: display gelule when game over. maybe in main loop ?
@@ -146,25 +148,44 @@ public class Level implements Renderable {
 
         updateGrid();
         speedUp();
-        sidekicks.forEach(Sidekick::decreaseCooldown);
+        triggerSidekicks();
         spawnNewGelule();
     }
 
     private void triggerSidekicks() {
-
-    }
-
-    @Override
-    public void update() {
-        if (updateTimer.resetIfExceeds()) dipGelule();
-        grid.update();
-        sidekicks.forEach(Renderable::update);
+        sidekicks.forEach(sdk -> {
+            sdk.decreaseCooldown();
+            if (sdk.isReady()) {
+                sdk.trigger(this);
+                sdk.reset();
+            }
+        });
     }
 
     private void speedUp() {
         updateSpeed -= 100;
         updateTimer.updateLimit(updateSpeed);
         updateTimer.reset();
+    }
+
+    // update
+
+    private void updateNext() {
+        System.arraycopy(next, 1, next, 0, next.length - 1);
+        next[next.length - 1] = new Gelule(this);
+    }
+
+    private void updatePreview() {
+        preview = new PreviewGelule(gelule);
+        while (preview.dipIfPossible(grid));
+    }
+
+    @Override
+    public void update() {
+        if (paused) return;
+        if (updateTimer.resetIfExceeds()) dipGelule();
+        grid.update();
+        sidekicks.forEach(Renderable::update);
     }
 
     public void checkGameOver() {
@@ -187,7 +208,6 @@ public class Level implements Renderable {
                 sidekickOfColor(o.color()).ifPresent(Sidekick::increaseMana);
                 score += o.points() * multiplier;
             });
-            triggerSidekicks();
             grid.dropAll();
             multiplier++;
         } while (!matches.isEmpty());
@@ -288,7 +308,7 @@ public class Level implements Renderable {
         Optional.ofNullable(preview).ifPresent(Gelule::render);
         Optional.ofNullable(gelule).ifPresent(Gelule::render);
 
-        next.render(dim.get(Zone.NEXT_GELULE));
+        next[0].render(dim.get(Zone.NEXT_GELULE));
         Optional.ofNullable(hold).ifPresent(hold -> hold.render(dim.get(Zone.HOLD_GELULE)));
     }
 

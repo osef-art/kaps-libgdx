@@ -2,6 +2,7 @@ package com.gdx.kaps.level.grid.caps;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.gdx.kaps.level.Level;
+import com.gdx.kaps.level.grid.Color;
 import com.gdx.kaps.level.grid.Grid;
 
 import java.util.Iterator;
@@ -19,6 +20,15 @@ public class Gelule implements Iterable<LinkedCaps> {
         int y = lvl.gridHeight() -1;
         main = new LinkedCaps(x, y, Look.LEFT, lvl);
         linked = new LinkedCaps(x+1, y, Look.RIGHT, lvl);
+        linked.linkTo(main);
+    }
+
+    public Gelule(Level lvl, Color color) {
+        requireNonNull(lvl);
+        int x = lvl.gridWidth() /2 -1;
+        int y = lvl.gridHeight() -1;
+        main = new LinkedCaps(x, y, Look.LEFT, color);
+        linked = new LinkedCaps(x+1, y, Look.RIGHT, color);
         linked.linkTo(main);
     }
 

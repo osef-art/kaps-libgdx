@@ -1,6 +1,7 @@
 package com.gdx.kaps.level.sidekick;
 
 import com.gdx.kaps.level.Gauge;
+import com.gdx.kaps.level.Level;
 import com.gdx.kaps.level.grid.Color;
 import com.gdx.kaps.renderer.AnimatedSprite;
 import com.gdx.kaps.renderer.Renderable;
@@ -56,6 +57,10 @@ public class Sidekick implements Renderable {
         if (hasCooldown) gauge.decrease();
     }
 
+    public void trigger(Level level) {
+        type.power().accept(level);
+    }
+
     // update
 
     @Override
@@ -72,4 +77,12 @@ public class Sidekick implements Renderable {
         sprite.render(x, y, width, height);
     }
 
+    public boolean isReady() {
+        return (hasCooldown && gauge.isEmpty()) || (!hasCooldown && gauge.isFull());
+    }
+
+    public void reset() {
+        if (hasCooldown) gauge.fill();
+        else gauge.empty();
+    }
 }

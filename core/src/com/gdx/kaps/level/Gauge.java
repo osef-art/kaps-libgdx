@@ -17,6 +17,8 @@ public class Gauge {
         this.max = max;
     }
 
+    // getters
+
     public int max() {
         return max;
     }
@@ -27,6 +29,26 @@ public class Gauge {
 
     public float ratio() {
         return (float) value / max;
+    }
+
+    // predicates
+
+    public boolean isEmpty() {
+        return value == 0;
+    }
+
+    public boolean isFull() {
+        return value >= max;
+    }
+
+    // operations
+
+    public void fill() {
+        value = max;
+    }
+
+    public void empty() {
+        value = 0;
     }
 
     public void increase() {
