@@ -36,8 +36,8 @@ public class Gauge {
         sra.drawRect(x + height/2, y, width - height, height, back);
         sra.drawCircle(x + width - height/2, y + height/2, height/2, back);
 
-        sra.drawRect(x + height/2, y, width * ratio(), height, main);
+        sra.drawRect(x + height/2, y, (width - height) * ratio(), height, main);
         sra.drawCircle(x + height/2, y + height/2, height/2, main);
-        sra.drawCircle(x + (width - height) * ratio() + height/2, y + height/2, height/2, main);
+        sra.drawCircle(x + height/2 + (width - height) * ratio(), y + height/2, height/2, main);
     }
 }
