@@ -20,10 +20,15 @@ public enum Color {
     COLOR_12 (new java.awt.Color(235, 150, 130)),
     COLOR_13 (new java.awt.Color(70,  50,  130));
 
-    private final java.awt.Color color;
+    private final com.badlogic.gdx.graphics.Color gdxColor;
 
     Color(java.awt.Color color) {
-        this.color = color;
+        gdxColor = new com.badlogic.gdx.graphics.Color(
+          (float) (color.getRed() / 255.),
+          (float) (color.getGreen() / 255.),
+          (float) (color.getBlue() / 255.),
+          (float) (color.getAlpha() / 255.)
+        );
     }
 
     public static Color randomBlank() {
@@ -51,11 +56,6 @@ public enum Color {
     }
 
     public com.badlogic.gdx.graphics.Color value() {
-        return new com.badlogic.gdx.graphics.Color(
-          (float) (color.getRed() / 255.),
-          (float) (color.getGreen() / 255.),
-          (float) (color.getBlue() / 255.),
-          (float) (color.getAlpha() / 255.)
-        );
+        return gdxColor;
     }
 }

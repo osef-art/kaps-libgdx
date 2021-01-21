@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.gdx.kaps.time.Timer;
 
 import java.nio.file.Path;
+import java.util.Random;
 
 import static com.gdx.kaps.MainScreen.batch;
 
@@ -16,6 +17,7 @@ public class AnimatedSprite implements Renderable {
     private int frame;
 
     public AnimatedSprite(String path, int frames, double speed) {
+        frame = new Random().nextInt(frames);
         updateTimer = new Timer(speed);
         nbFrames = frames;
         updatePath(path);

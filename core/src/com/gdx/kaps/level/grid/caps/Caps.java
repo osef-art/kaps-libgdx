@@ -48,6 +48,11 @@ public class Caps extends GridObject {
         return this;
     }
 
+    @Override
+    public int points() {
+        return 20;
+    }
+
     // predicates
 
     @Override

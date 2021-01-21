@@ -18,7 +18,6 @@ public class Gauge {
 
     public void increase() {
         value = Math.min(value + 1, max);
-        System.out.println(value);
     }
 
     public void reset() {

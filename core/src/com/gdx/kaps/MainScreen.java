@@ -41,7 +41,7 @@ public class MainScreen extends ApplicationAdapter {
 		// TODO: handle all sidekicks (when they have powers) (strategy)
 		level = new Level(
 			Path.of("android/assets/levels/level" + new Random().nextInt(21)),
-			new HashSet<>(Arrays.asList(new Sidekick(SidekickRecord.ZYRAME), new Sidekick(SidekickRecord.SEAN)))
+			SidekickRecord.ZYRAME, SidekickRecord.SEAN
 		);
 
 		controller = new InputHandler(level);

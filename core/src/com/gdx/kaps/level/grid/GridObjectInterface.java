@@ -11,6 +11,7 @@ public interface GridObjectInterface extends Renderable {
 
     Optional<GridObject> linked();
     GridObject unlinked();
+    int points();
 
     boolean isGerm();
     boolean isDestroyed();

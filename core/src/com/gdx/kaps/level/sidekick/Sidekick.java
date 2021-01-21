@@ -39,5 +39,4 @@ public class Sidekick implements Renderable {
     public void render(float x, float y, float width, float height) {
         sprite.render(x, y, width, height);
     }
-
 }

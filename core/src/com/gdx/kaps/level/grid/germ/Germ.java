@@ -71,6 +71,11 @@ public abstract class Germ extends GridObject {
         return this;
     }
 
+    @Override
+    public int points() {
+        return isDestroyed() ? 50 : 10;
+    }
+
     // predicates
 
     @Override

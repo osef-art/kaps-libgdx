@@ -6,6 +6,7 @@ import com.gdx.kaps.level.grid.GridObject;
 import com.gdx.kaps.level.grid.caps.Gelule;
 import com.gdx.kaps.level.grid.caps.PreviewGelule;
 import com.gdx.kaps.level.sidekick.Sidekick;
+import com.gdx.kaps.level.sidekick.SidekickRecord;
 import com.gdx.kaps.renderer.Renderable;
 import com.gdx.kaps.renderer.Zone;
 import com.gdx.kaps.time.Timer;
@@ -22,25 +23,31 @@ public class Level implements Renderable {
     public final static int MIN_MATCH_RANGE = 4;
     private int updateSpeed = 1_000_000_000;
     private final Timer updateTimer;
+    private int multiplier = 1;
+    private int score;
     private final List<Sidekick> sidekicks;
     private final Set<com.gdx.kaps.level.grid.Color> colors;
     private final Grid grid;
+    private boolean paused;
     private boolean canHold;
     private PreviewGelule preview;
     private Gelule gelule;
     private Gelule next;
     private Gelule hold;
 
-    public Level(Path filePath, Set<Sidekick> sidekicks) {
+    public Level(Path filePath, SidekickRecord... sidekicks) {
         Objects.requireNonNull(sidekicks);
         Objects.requireNonNull(filePath);
 
-        this.sidekicks = new ArrayList<>(sidekicks);
-        colors =
-          Stream.concat(
-            this.sidekicks.stream().map(Sidekick::color),
-            Stream.of(com.gdx.kaps.level.grid.Color.randomBlank())
-          ).collect(Collectors.toUnmodifiableSet());
+        this.sidekicks = Arrays.stream(sidekicks)
+                           .distinct()
+                           .map(Sidekick::new)
+                           .collect(Collectors.toList());
+
+        colors = Stream.concat(
+          this.sidekicks.stream().map(Sidekick::color),
+          Stream.of(com.gdx.kaps.level.grid.Color.randomBlank())
+        ).collect(Collectors.toUnmodifiableSet());
 
         try {
             grid = Grid.parseLevel(filePath, colors);
@@ -67,7 +74,9 @@ public class Level implements Renderable {
     }
 
     private Optional<Sidekick> sidekickOfColor(com.gdx.kaps.level.grid.Color color) {
-        return sidekicks.stream().filter(sdk -> sdk.color() == color).findAny();
+        return sidekicks.stream()
+                 .filter(sdk -> sdk.color() == Objects.requireNonNull(color))
+                 .findAny();
     }
 
     // control
@@ -96,6 +105,10 @@ public class Level implements Renderable {
         acceptGelule();
     }
 
+    public void togglePause() {
+        paused = !paused;
+    }
+
     // update
 
     private void updatePreview() {
@@ -110,6 +123,7 @@ public class Level implements Renderable {
 
         next = new Gelule(this);
         canHold = true;
+        multiplier = 1;
         // TODO: display gelule when game over. maybe in main loop ?
         checkGameOver();
     }
@@ -122,6 +136,10 @@ public class Level implements Renderable {
         updateGrid();
         speedUp();
         spawnNewGelule();
+    }
+
+    private void triggerSidekicks() {
+
     }
 
     @Override
@@ -167,14 +185,17 @@ public class Level implements Renderable {
         Set<GridObject> matches;
         do {
             matches = grid.deleteMatches();
-            matches.forEach(o -> sidekickOfColor(o.color()).ifPresent(s -> s.gauge().increase()));
+            matches.forEach(o -> {
+                sidekickOfColor(o.color()).ifPresent(s -> s.gauge().increase());
+                score += o.points() * multiplier;
+            });
+            triggerSidekicks();
             grid.dropAll();
+            multiplier++;
         } while (!matches.isEmpty());
     }
 
-    @Override
-    public void render() {
-        // background
+    private void renderBackGround() {
         sra.drawRect(
           dim.gridMargin,
           dim.gridMargin + dim.get(Zone.GRID).height + 10,
@@ -207,6 +228,23 @@ public class Level implements Renderable {
         );
         tra.drawText("HOLD", dim.get(Zone.HOLD_BOX).x, dim.get(Zone.HOLD_BOX).y + dim.get(Zone.HOLD_BOX).height + 10);
 
+        sra.drawRect(
+          dim.get(Zone.BOTTOM_PANEL),
+          new Color(0.6f, 0.45f, 0.85f, 1)
+        );
+
+        // TODO: remaining caps
+
+        tra.drawCenteredText(score + "", dim.get(Zone.BOTTOM_PANEL));
+        tra.drawCenteredText( "score:",
+          dim.get(Zone.BOTTOM_PANEL).x,
+          dim.get(Zone.BOTTOM_PANEL).y,
+          dim.get(Zone.BOTTOM_PANEL).width,0
+        );
+
+    }
+
+    private void renderSidekicks() {
         for (int i = 0; i < sidekicks.size(); i++) {
             var sdk = sidekicks.get(i);
             sra.drawRect(
@@ -233,11 +271,12 @@ public class Level implements Renderable {
               sdk.color().value()
             );
         }
+    }
 
-        sra.drawRect(
-          dim.get(Zone.BOTTOM_PANEL),
-          new Color(0.6f, 0.45f, 0.85f, 1)
-        );
+    @Override
+    public void render() {
+        renderBackGround();
+        renderSidekicks();
 
         // level
         grid.render();
@@ -246,8 +285,6 @@ public class Level implements Renderable {
 
         next.render(dim.get(Zone.NEXT_GELULE));
         Optional.ofNullable(hold).ifPresent(hold -> hold.render(dim.get(Zone.HOLD_GELULE)));
-
-        // TODO: render level name, score, remaining caps
     }
 
     @Override

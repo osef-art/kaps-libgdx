@@ -33,6 +33,9 @@ public class InputHandler implements InputProcessor {
             case 36: // H
                 level.hold();
                 break;
+            case 44: // P
+                level.togglePause();
+                break;
             case 45: // Q
                 System.exit(0);
         }
