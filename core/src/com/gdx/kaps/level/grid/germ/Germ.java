@@ -98,7 +98,6 @@ public abstract class Germ extends GridObject {
         health--;
         if (!isDestroyed()) {
             sprite.updatePath("android/assets/img/" + color().id() + "/germs/" + type.type() + (type.maxHP() == 1 ? "" : health) + "/idle_");
-            sprite.updateSprite();
         }
     }
 

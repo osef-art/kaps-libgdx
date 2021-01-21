@@ -12,42 +12,50 @@ import static com.gdx.kaps.MainScreen.batch;
 public class AnimatedSprite implements Renderable {
     private final Timer updateTimer;
     private final int nbFrames;
-    private Sprite sprite;
+    private final Sprite[] sprites;
     private Path path;
     private int frame;
 
     public AnimatedSprite(String path, int frames, double speed) {
         frame = new Random().nextInt(frames);
         updateTimer = new Timer(speed);
+        sprites = new Sprite[frames];
         nbFrames = frames;
+
         updatePath(path);
-        updateSprite();
+    }
+
+    private Sprite currentSprite() {
+        return sprites[frame];
     }
 
     public void updatePath(String path) {
         this.path = Path.of(path);
+        updateSprites();
     }
 
-    public void updateSprite() {
-        sprite = new Sprite(new Texture(path.toString() + frame + ".png"));
-        sprite.flip(false, true);
+    private void updateSprites() {
+        for (int i = 0; i < nbFrames; i++) {
+            var sprite = new Sprite(new Texture(path.toString() + i + ".png"));
+            sprite.flip(false, true);
+            sprites[i] = sprite;
+        }
     }
 
     @Override
     public void update() {
         if (updateTimer.resetIfExceeds()) frame = (frame + 1) % nbFrames;
-        updateSprite();
     }
 
     @Override
     public void render() {
-        sprite.draw(batch);
+        currentSprite().draw(batch);
     }
 
     @Override
     public void render(float x, float y, float width, float height) {
         batch.begin();
-        batch.draw(sprite, x, y, width, height);
+        batch.draw(currentSprite(), x, y, width, height);
         batch.end();
     }
 }
