@@ -14,7 +14,7 @@ public class Dimensions {
     public final float sidePadding;
     public final float gridMargin;
     public final float boxPadding;
-    public final float sidekickHeadSize;
+    public final float sidekickPanelHeight;
 
     public Dimensions(Grid grd, int windowWidth, int windowHeight) {
         map.put(Zone.WINDOW, new Rectangle(0, 0, windowWidth, windowHeight));
@@ -39,7 +39,7 @@ public class Dimensions {
         map.get(Zone.NEXT_GELULE).y = map.get(Zone.NEXT_BOX).y + map.get(Zone.NEXT_BOX).height/2 - map.get(Zone.NEXT_GELULE).height/2;
         map.put(Zone.HOLD_GELULE, new Rectangle(map.get(Zone.HOLD_BOX).x + boxPadding, map.get(Zone.HOLD_BOX).y + map.get(Zone.HOLD_BOX).height/2 - map.get(Zone.NEXT_GELULE).height/2, map.get(Zone.HOLD_BOX).width - 2 * boxPadding, (map.get(Zone.HOLD_BOX).width - 2 * boxPadding) / 2));
 
-        sidekickHeadSize = map.get(Zone.NEXT_BOX).height / 2 - 10;
+        sidekickPanelHeight = map.get(Zone.NEXT_BOX).height / 2;
         // TODO: both sidekicks heads. but first, an enum map. (+ handle n sidekicks ?)
     }
 

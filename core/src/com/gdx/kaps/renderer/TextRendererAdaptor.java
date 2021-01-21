@@ -11,20 +11,18 @@ import com.badlogic.gdx.math.Rectangle;
 import static com.gdx.kaps.MainScreen.*;
 
 public class TextRendererAdaptor {
-    private final FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("android/assets/fonts/Gotham.ttf"));
-    private final FreeTypeFontParameter parameter = new FreeTypeFontParameter();
-    private BitmapFont font;
+    // IMPL: ability to change size/color and handle memory ?
+    //  or one renderer per color/size ?
+    private final BitmapFont font;
 
-    public TextRendererAdaptor() {
-        parameter.color = new Color(1, 1, 1, 1);
+    public TextRendererAdaptor(int size, Color color) {
+        FreeTypeFontParameter parameter = new FreeTypeFontParameter();
+        parameter.color = color;
         parameter.flip = true;
-        parameter.size = 25;
+        parameter.size = size;
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("android/assets/fonts/Gotham.ttf"));
         font = generator.generateFont(parameter);
         generator.dispose();
-    }
-
-    public void drawText(float value, float x, float y) {
-        drawText(value + "", x, y);
     }
 
     public void drawText(String text, float x, float y) {
@@ -32,6 +30,7 @@ public class TextRendererAdaptor {
         font.draw(batch, text, x, y);
         batch.end();
     }
+
 
     public void drawCenteredText(String txt, Rectangle rect) {
         drawCenteredText(txt, rect.x, rect.y, rect.width, rect.height);
@@ -47,12 +46,5 @@ public class TextRendererAdaptor {
         batch.begin();
         font.draw(batch, layout, fontX, fontY);
         batch.end();
-    }
-
-    public void setFontSizeAndColor(int size, Color color) {
-        // IMPL: to be changed. Builder ?
-        parameter.color = color;
-        parameter.size = size;
-        font = generator.generateFont(parameter);
     }
 }

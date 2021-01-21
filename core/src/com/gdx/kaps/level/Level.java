@@ -233,8 +233,6 @@ public class Level implements Renderable {
           new Color(0.6f, 0.45f, 0.85f, 1)
         );
 
-        // TODO: remaining caps
-
         tra.drawCenteredText(score + "", dim.get(Zone.BOTTOM_PANEL));
         tra.drawCenteredText( "score:",
           dim.get(Zone.BOTTOM_PANEL).x,
@@ -251,24 +249,39 @@ public class Level implements Renderable {
               dim.get(Zone.SIDE_PANEL).x,
               dim.gridMargin * (6 + i) + dim.get(Zone.NEXT_BOX).height * (2 + 0.5f * i),
               dim.get(Zone.SIDE_PANEL).width,
-              dim.get(Zone.NEXT_BOX).height / 2,
+              dim.sidekickPanelHeight,
               new Color(0.45f, 0.5f, 0.6f, 1)
             );
 
             sdk.render(
               dim.get(Zone.SIDE_PANEL).x + 5,
               dim.gridMargin * (6 + i) + dim.get(Zone.NEXT_BOX).height * (2 + 0.5f * i) + 5,
-              dim.sidekickHeadSize,
-              dim.sidekickHeadSize
+              dim.sidekickPanelHeight - 10,
+              dim.sidekickPanelHeight - 10
             );
 
+            // gauge
             sdk.gauge().render(
-              dim.get(Zone.SIDE_PANEL).x + 10 + dim.sidekickHeadSize,
-              dim.gridMargin * (6 + i) + dim.get(Zone.NEXT_BOX).height * (2.25f + 0.5f * i) - 10,
-              dim.get(Zone.SIDE_PANEL).width - dim.sidekickHeadSize - 15,
+              dim.get(Zone.SIDE_PANEL).x + 10 + dim.sidekickPanelHeight - 10,
+              dim.gridMargin * (6 + i) + dim.get(Zone.NEXT_BOX).height  * (2 + 0.5f * i) + dim.sidekickPanelHeight - 30,
+              dim.get(Zone.SIDE_PANEL).width - (dim.sidekickPanelHeight - 10) - 15,
               20,
               new Color(0.5f, 0.55f, 0.65f, 1),
               sdk.color().value()
+            );
+
+//            tra.drawText(
+//              sdk.gauge().value() + "",
+//              dim.get(Zone.SIDE_PANEL).x + dim.sidekickPanelHeight + 10,
+//              dim.gridMargin * (6 + i) + dim.get(Zone.NEXT_BOX).height * (2 + 0.5f * i) + 5
+//              //35, sdk.color().value()
+//            );
+
+            tra.drawText(
+              sdk.gauge().value() + " / " + sdk.gauge().max(),
+              dim.get(Zone.SIDE_PANEL).x + 10 + dim.sidekickPanelHeight - 10,
+              dim.gridMargin * (6 + i) + dim.get(Zone.NEXT_BOX).height * (2 + 0.5f * i) + 10
+              //20, new Color(1, 1, 1, 1)
             );
         }
     }

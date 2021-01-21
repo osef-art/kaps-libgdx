@@ -12,10 +12,10 @@ import static com.gdx.kaps.MainScreen.camera;
 public class ShapeRendererAdaptor {
     private final ShapeRenderer rd = new ShapeRenderer();
 
-    public void drawCircle(float x, float y, float radius) {
+    public void drawCircle(float x, float y, float radius, Color c) {
         rd.setProjectionMatrix(camera.combined);
-        rd.begin(ShapeType.Line);
-        rd.setColor(1, 1, 1, 1);
+        rd.begin(ShapeType.Filled);
+        rd.setColor(c.r, c.g, c.b, c.a);
         rd.circle(x, y, radius);
         rd.end();
     }

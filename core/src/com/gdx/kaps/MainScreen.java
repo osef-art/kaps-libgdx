@@ -2,6 +2,7 @@ package com.gdx.kaps;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -34,7 +35,7 @@ public class MainScreen extends ApplicationAdapter {
 		camera.setToOrtho(true);
 
 		sra = new ShapeRendererAdaptor();
-		tra = new TextRendererAdaptor();
+		tra = new TextRendererAdaptor(25, new Color(1, 1, 1, 1));
 		batch = new SpriteBatch();
 		batch.setProjectionMatrix(camera.combined);
 
