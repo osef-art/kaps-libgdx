@@ -12,6 +12,11 @@ public class Gauge {
         max = value;
     }
 
+    public Gauge(int value, int max) {
+        this.value = value;
+        this.max = max;
+    }
+
     public int max() {
         return max;
     }
@@ -26,6 +31,10 @@ public class Gauge {
 
     public void increase() {
         value = Math.min(value + 1, max);
+    }
+
+    public void decrease() {
+        value = Math.max(value - 1, 0);
     }
 
     public void reset() {

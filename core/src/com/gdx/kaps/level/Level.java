@@ -106,6 +106,20 @@ public class Level implements Renderable {
         paused = !paused;
     }
 
+    public void hold() {
+        if (!canHold) return;
+        var tmp = Optional.ofNullable(hold);
+        hold = Gelule.copyColorFrom(gelule, new Gelule(this));
+        tmp.ifPresentOrElse(
+          hold -> gelule = Gelule.copyColorFrom(hold, gelule),
+          () -> {
+              gelule = null;
+              spawnNewGelule();
+          }
+        );
+        canHold = false;
+    }
+
     // update
 
     private void updatePreview() {
@@ -132,6 +146,7 @@ public class Level implements Renderable {
 
         updateGrid();
         speedUp();
+        sidekicks.forEach(Sidekick::decreaseCooldown);
         spawnNewGelule();
     }
 
@@ -164,26 +179,12 @@ public class Level implements Renderable {
         }
     }
 
-    public void hold() {
-        if (!canHold) return;
-        var tmp = Optional.ofNullable(hold);
-        hold = Gelule.copyColorFrom(gelule, new Gelule(this));
-        tmp.ifPresentOrElse(
-          hold -> gelule = Gelule.copyColorFrom(hold, gelule),
-          () -> {
-            gelule = null;
-            spawnNewGelule();
-          }
-        );
-        canHold = false;
-    }
-
     private void updateGrid() {
         Set<GridObject> matches;
         do {
             matches = grid.deleteMatches();
             matches.forEach(o -> {
-                sidekickOfColor(o.color()).ifPresent(s -> s.gauge().increase());
+                sidekickOfColor(o.color()).ifPresent(Sidekick::increaseMana);
                 score += o.points() * multiplier;
             });
             triggerSidekicks();
@@ -191,6 +192,8 @@ public class Level implements Renderable {
             multiplier++;
         } while (!matches.isEmpty());
     }
+
+    // rendering
 
     private void renderBackGround() {
         sra.drawRect(

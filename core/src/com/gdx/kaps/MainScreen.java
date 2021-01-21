@@ -9,11 +9,14 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.gdx.kaps.contoller.InputHandler;
 import com.gdx.kaps.level.Level;
 import com.gdx.kaps.level.sidekick.Sidekick;
+import com.gdx.kaps.level.sidekick.SidekickRecord;
 import com.gdx.kaps.renderer.Dimensions;
 import com.gdx.kaps.renderer.ShapeRendererAdaptor;
 import com.gdx.kaps.renderer.TextRendererAdaptor;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Random;
 
 public class MainScreen extends ApplicationAdapter {
@@ -38,7 +41,8 @@ public class MainScreen extends ApplicationAdapter {
 
 		level = new Level(
 			Path.of("android/assets/levels/level" + new Random().nextInt(21)),
-			Sidekick.RandomSetOf(2)
+			Sidekick.setOf(SidekickRecord.COLOR, SidekickRecord.XERETH)
+		//Sidekick.RandomSetOf(2)
 		);
 
 		controller = new InputHandler(level);

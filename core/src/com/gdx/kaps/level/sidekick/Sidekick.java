@@ -11,20 +11,33 @@ import java.util.stream.Collectors;
 public class Sidekick implements Renderable {
     private final AnimatedSprite sprite;
     private final SidekickRecord type;
+    private final boolean hasCooldown;
     private final Gauge gauge;
 
     public Sidekick(SidekickRecord record) {
-        sprite = new AnimatedSprite("android/assets/img/sidekicks/" + record.path() + "_", 4, 250_000_000);
+        sprite = new AnimatedSprite("android/assets/img/sidekicks/" + record.path() + "_", 4, 200_000_000);
+        hasCooldown = record.maxMana() < record.cooldown();
+        gauge = hasCooldown ?
+                  new Gauge(record.cooldown(), record.cooldown()) :
+                  new Gauge(record.maxMana());
         type = record;
-        gauge = new Gauge(record.maxGauge());
     }
 
-    public static Set<Sidekick> RandomSetOf(int n) {
+    public static Set<Sidekick> randomSetOf(int n) {
         var sdks = Arrays.stream(SidekickRecord.values())
           .map(Sidekick::new)
           .collect(Collectors.toList());
-        while (sdks.size() > n) sdks.remove(new Random().nextInt(sdks.size()));
-        return new HashSet<>(sdks);
+        var set = new HashSet<Sidekick>();
+        for (int i = 0; i < n; i++) {
+            set.add(sdks.remove(new Random().nextInt(sdks.size())));
+        }
+        return set;
+    }
+
+    public static Set<Sidekick> setOf(SidekickRecord ... sidekicks) {
+        return Arrays.stream(sidekicks)
+                 .map(Sidekick::new)
+                 .collect(Collectors.toSet());
     }
 
     public Color color() {
@@ -33,6 +46,14 @@ public class Sidekick implements Renderable {
 
     public Gauge gauge() {
         return gauge;
+    }
+
+    public void increaseMana() {
+        if (!hasCooldown) gauge.increase();
+    }
+
+    public void decreaseCooldown() {
+        if (hasCooldown) gauge.decrease();
     }
 
     // update
@@ -50,4 +71,5 @@ public class Sidekick implements Renderable {
     public void render(float x, float y, float width, float height) {
         sprite.render(x, y, width, height);
     }
+
 }
