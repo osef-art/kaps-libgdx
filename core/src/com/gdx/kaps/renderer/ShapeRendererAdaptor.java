@@ -35,8 +35,8 @@ public class ShapeRendererAdaptor {
         drawRect(r.x, r.y, r.width, r.height, c, ShapeType.Filled);
     }
 
-    public void drawRect(float x, float y, float w, float h, Color c) {
-        drawRect(x, y, w, h, c, ShapeType.Filled);
+    public void drawRect(float x, float y, float width, float height, Color color) {
+        drawRect(x, y, width, height, color, ShapeType.Filled);
     }
 
     public void drawOutlineRect(Rectangle r, Color c) {

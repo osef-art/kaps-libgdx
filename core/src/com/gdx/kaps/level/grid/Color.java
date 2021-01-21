@@ -49,4 +49,13 @@ public enum Color {
     public int id() {
         return ordinal() + 1;
     }
+
+    public com.badlogic.gdx.graphics.Color value() {
+        return new com.badlogic.gdx.graphics.Color(
+          (float) (color.getRed() / 255.),
+          (float) (color.getGreen() / 255.),
+          (float) (color.getBlue() / 255.),
+          (float) (color.getAlpha() / 255.)
+        );
+    }
 }

@@ -1,12 +1,12 @@
 package com.gdx.kaps.level;
 
 import com.badlogic.gdx.graphics.Color;
+import com.gdx.kaps.level.grid.Grid;
+import com.gdx.kaps.level.grid.GridObject;
+import com.gdx.kaps.level.grid.caps.Gelule;
 import com.gdx.kaps.level.grid.caps.PreviewGelule;
 import com.gdx.kaps.level.sidekick.Sidekick;
-import com.gdx.kaps.renderer.AnimatedSprite;
 import com.gdx.kaps.renderer.Renderable;
-import com.gdx.kaps.level.grid.caps.Gelule;
-import com.gdx.kaps.level.grid.Grid;
 import com.gdx.kaps.renderer.Zone;
 import com.gdx.kaps.time.Timer;
 
@@ -19,12 +19,10 @@ import java.util.stream.Stream;
 import static com.gdx.kaps.MainScreen.*;
 
 public class Level implements Renderable {
-    // INFO: temporary renderer
     public final static int MIN_MATCH_RANGE = 4;
     private int updateSpeed = 1_000_000_000;
     private final Timer updateTimer;
     private final List<Sidekick> sidekicks;
-    // TODO: handle sidekicks gauges
     private final Set<com.gdx.kaps.level.grid.Color> colors;
     private final Grid grid;
     private boolean canHold;
@@ -66,6 +64,10 @@ public class Level implements Renderable {
 
     public Set<com.gdx.kaps.level.grid.Color> colors() {
         return colors;
+    }
+
+    private Optional<Sidekick> sidekickOfColor(com.gdx.kaps.level.grid.Color color) {
+        return sidekicks.stream().filter(sdk -> sdk.color() == color).findAny();
     }
 
     // control
@@ -162,9 +164,12 @@ public class Level implements Renderable {
     }
 
     private void updateGrid() {
-        while (grid.deleteMatches()) {
+        Set<GridObject> matches;
+        do {
+            matches = grid.deleteMatches();
+            matches.forEach(o -> sidekickOfColor(o.color()).ifPresent(s -> s.gauge().increase()));
             grid.dropAll();
-        }
+        } while (!matches.isEmpty());
     }
 
     @Override
@@ -215,8 +220,17 @@ public class Level implements Renderable {
             sdk.render(
               dim.get(Zone.SIDE_PANEL).x + 5,
               dim.gridMargin * (6 + i) + dim.get(Zone.NEXT_BOX).height * (2 + 0.5f * i) + 5,
-              dim.get(Zone.NEXT_BOX).height / 2 - 10,
-              dim.get(Zone.NEXT_BOX).height / 2 - 10
+              dim.sidekickHeadSize,
+              dim.sidekickHeadSize
+            );
+
+            sdk.gauge().render(
+              dim.get(Zone.SIDE_PANEL).x + 10 + dim.sidekickHeadSize,
+              dim.gridMargin * (6 + i) + dim.get(Zone.NEXT_BOX).height * (2.25f + 0.5f * i) - 10,
+              dim.get(Zone.SIDE_PANEL).width - dim.sidekickHeadSize - 15,
+              20,
+              new Color(0.5f, 0.55f, 0.65f, 1),
+              sdk.color().value()
             );
         }
 

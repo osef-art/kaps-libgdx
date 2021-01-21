@@ -272,14 +272,11 @@ public class Grid implements Renderable {
         );
     }
 
-    /**
-     * Deletes all matches of {@code MIN_MATCH_RANGE} obj of same color in a row.
-     * @return true if matches were deleted, false if not.
-     */
-    public boolean deleteMatches() {
+
+    public Set<GridObject> deleteMatches() {
         var matches = matchingObjects();
         matches.forEach(this::hit);
-        return !matches.isEmpty();
+        return matches;
     }
 
     private Set<GridObject> matchingObjects() {
