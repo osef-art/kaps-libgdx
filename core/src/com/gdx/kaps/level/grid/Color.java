@@ -1,5 +1,6 @@
 package com.gdx.kaps.level.grid;
 
+import com.gdx.kaps.Utils;
 import com.gdx.kaps.level.Level;
 import com.gdx.kaps.level.sidekick.SidekickRecord;
 
@@ -39,10 +40,8 @@ public enum Color {
                                             .noneMatch(color::equals))
                             .collect(Collectors.toList());
 
-        if (blankColors.isEmpty()) {
-            throw new NoSuchElementException("Need new color w/o sidekick.");
-        }
-        return new ArrayList<>(blankColors).get(new Random().nextInt(blankColors.size()));
+        return Utils.getRandomFrom(blankColors)
+                 .orElseThrow(() -> new IllegalStateException("Create a color not associated with a sidekick."));
     }
 
     public static Color random(Level lvl) {
@@ -50,10 +49,9 @@ public enum Color {
     }
 
     public static Color random(Set<Color> colors) {
-        if (colors.isEmpty()) {
-            throw new IllegalArgumentException("Can't get a type from empty set.");
-        }
-        return new ArrayList<>(colors).get(new Random().nextInt(colors.size()));
+        return Utils.getRandomFrom(colors).orElseThrow(
+          () -> new IllegalArgumentException("Can't get a type from empty set.")
+        );
     }
 
     public int id() {

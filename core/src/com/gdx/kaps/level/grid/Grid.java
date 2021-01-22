@@ -2,6 +2,7 @@ package com.gdx.kaps.level.grid;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.gdx.kaps.Utils;
 import com.gdx.kaps.level.Level;
 import com.gdx.kaps.level.grid.caps.Gelule;
 import com.gdx.kaps.level.grid.germ.Germ;
@@ -16,13 +17,13 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.IntFunction;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static com.gdx.kaps.MainScreen.dim;
 import static com.gdx.kaps.MainScreen.sra;
 import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.*;
 
 public class Grid implements Renderable {
     static class Column {
@@ -56,7 +57,7 @@ public class Grid implements Renderable {
             charGrid.add(0,
               Arrays.stream(line.split(""))
                 .map(sym -> sym.charAt(0))
-                .collect(Collectors.toList())
+                .collect(toList())
             );
         }
 
@@ -100,6 +101,10 @@ public class Grid implements Renderable {
      */
     public Optional<GridObject> get(int x, int y) {
         return Optional.ofNullable(columns[x].tiles[y]);
+    }
+
+    public Optional<GridObject> pickRandomObject() {
+        return Utils.getRandomFrom(everyObjectInGrid().collect(toList()));
     }
 
     public int remainingGerms() {
@@ -291,7 +296,7 @@ public class Grid implements Renderable {
                      }
                      return toDelete.stream();
                  })
-                 .collect(Collectors.toUnmodifiableSet());
+                 .collect(toUnmodifiableSet());
     }
 
     /**
@@ -306,13 +311,13 @@ public class Grid implements Renderable {
                        .mapToObj(collector)
                       .map(opt -> opt.map(GridObject::color).orElse(null))
                       .filter(Objects::nonNull)
-                      .collect(Collectors.toUnmodifiableList());
+                      .collect(toUnmodifiableList());
 
         if (colors.size() >= Level.MIN_MATCH_RANGE && colors.stream().allMatch(colors.get(0)::equals)) {
             return IntStream.range(0, Level.MIN_MATCH_RANGE)
                      .mapToObj(collector)
                      .map(Optional::get)
-                     .collect(Collectors.toUnmodifiableList());
+                     .collect(toUnmodifiableList());
         }
         return new ArrayList<>();
     }
