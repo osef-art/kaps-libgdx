@@ -4,8 +4,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.gdx.kaps.renderer.Zone;
 
-import static com.gdx.kaps.MainScreen.batch;
-import static com.gdx.kaps.MainScreen.dim;
+import static com.gdx.kaps.MainScreen.*;
 import static java.util.Objects.requireNonNull;
 
 public abstract class GridObject implements GridObjectInterface {
@@ -65,9 +64,7 @@ public abstract class GridObject implements GridObjectInterface {
     }
 
     public void render(float x, float y, float width, float height, float alpha) {
-        batch.begin();
-        batch.setColor(1,1,1, alpha);
-        batch.draw(sprite, x, y, width, height);
-        batch.end();
+
+        spra.render(sprite, x, y, width, height, alpha);
     }
 }

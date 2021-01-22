@@ -29,32 +29,14 @@ public class ShapeRendererAdaptor {
 
     public void drawCircle(float x, float y, float radius, Color c) {
         draw(() -> rd.circle(x, y, radius), c);
-//        Gdx.gl.glEnable(GL20.GL_BLEND);
-//        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);rd.begin(ShapeType.Filled);
-//        rd.setColor(c.r, c.g, c.b, c.a);
-//        rd.circle(x, y, radius);
-//        rd.end();
-//        Gdx.gl.glDisable(GL20.GL_BLEND);
     }
 
     public void drawArc(float x, float y, float radius, float start, float degrees, Color c) {
         draw(() -> rd.arc(x, y, radius, start, degrees), c);
-//        Gdx.gl.glEnable(GL20.GL_BLEND);
-//        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);rd.begin(ShapeType.Filled);
-//        rd.setColor(c.r, c.g, c.b, c.a);
-//        rd.arc(x, y, radius, start, degrees);
-//        rd.end();
-//        Gdx.gl.glDisable(GL20.GL_BLEND);
     }
 
     public void drawRect(float x, float y, float w, float h, Color c) {
         draw(() -> rd.rect(x, y, w, h), c);
-//        Gdx.gl.glEnable(GL20.GL_BLEND);
-//        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-//        rd.setColor(c.r, c.g, c.b, c.a);
-//        rd.rect(x, y, w, h);
-//        rd.end();
-//        Gdx.gl.glDisable(GL20.GL_BLEND);
     }
 
     public void drawRect(Rectangle r, Color c) {

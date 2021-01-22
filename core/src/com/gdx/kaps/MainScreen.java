@@ -5,12 +5,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.gdx.kaps.contoller.InputHandler;
 import com.gdx.kaps.level.Level;
 import com.gdx.kaps.level.sidekick.Sidekick;
 import com.gdx.kaps.renderer.Dimensions;
 import com.gdx.kaps.renderer.ShapeRendererAdaptor;
+import com.gdx.kaps.renderer.SpriteRendererAdaptor;
 import com.gdx.kaps.renderer.TextRendererAdaptor;
 
 import java.nio.file.Path;
@@ -24,9 +24,9 @@ public class MainScreen extends ApplicationAdapter {
 	private Level level;
 
 	public static OrthographicCamera camera;
+	public static SpriteRendererAdaptor spra;
 	public static ShapeRendererAdaptor sra;
 	public static TextRendererAdaptor tra;
-	public static SpriteBatch batch;
 	public static Dimensions dim;
 
 	public MainScreen(String ... sdks) {
@@ -38,10 +38,9 @@ public class MainScreen extends ApplicationAdapter {
 		camera = new OrthographicCamera();
 		camera.setToOrtho(true);
 
+		spra = new SpriteRendererAdaptor();
 		sra = new ShapeRendererAdaptor();
 		tra = new TextRendererAdaptor(25, new Color(1, 1, 1, 1));
-		batch = new SpriteBatch();
-		batch.setProjectionMatrix(camera.combined);
 
 		var sidekicks = Sidekick.randomSetOf(2, Arrays.stream(args)
 												.map(Sidekick::ofName)
@@ -68,7 +67,7 @@ public class MainScreen extends ApplicationAdapter {
 	
 	@Override
 	public void dispose () {
-		batch.dispose();
+		spra.dispose();
 		sra.dispose();
 		tra.dispose();
 	}

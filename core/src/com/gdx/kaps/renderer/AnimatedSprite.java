@@ -7,7 +7,7 @@ import com.gdx.kaps.time.Timer;
 import java.nio.file.Path;
 import java.util.Random;
 
-import static com.gdx.kaps.MainScreen.batch;
+import static com.gdx.kaps.MainScreen.spra;
 
 public class AnimatedSprite implements Renderable {
     private final Timer updateTimer;
@@ -49,13 +49,11 @@ public class AnimatedSprite implements Renderable {
 
     @Override
     public void render() {
-        currentSprite().draw(batch);
+        spra.render(currentSprite());
     }
 
     @Override
     public void render(float x, float y, float width, float height) {
-        batch.begin();
-        batch.draw(currentSprite(), x, y, width, height);
-        batch.end();
+        spra.render(currentSprite(), x, y, width, height);
     }
 }
