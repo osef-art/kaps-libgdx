@@ -7,8 +7,6 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Rectangle;
 
-import java.util.function.Consumer;
-
 import static com.gdx.kaps.MainScreen.camera;
 
 public class ShapeRendererAdaptor {

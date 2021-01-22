@@ -32,11 +32,11 @@ public class TextRendererAdaptor {
     }
 
 
-    public void drawCenteredText(String txt, Rectangle rect) {
-        drawCenteredText(txt, rect.x, rect.y, rect.width, rect.height);
+    public void drawText(String txt, Rectangle rect) {
+        drawText(txt, rect.x, rect.y, rect.width, rect.height);
     }
 
-    public void drawCenteredText(String txt, float x, float y, float width, float height) {
+    public void drawText(String txt, float x, float y, float width, float height) {
         final GlyphLayout layout = new GlyphLayout(font, txt);
         // or for non final texts: layout.setText(font, text);
 

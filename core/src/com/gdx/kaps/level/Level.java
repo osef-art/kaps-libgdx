@@ -270,8 +270,8 @@ public class Level implements Renderable {
           new Color(0.6f, 0.45f, 0.85f, 1)
         );
 
-        tra.drawCenteredText(score + "", dim.get(Zone.BOTTOM_PANEL));
-        tra.drawCenteredText( "score:",
+        tra.drawText(score + "", dim.get(Zone.BOTTOM_PANEL));
+        tra.drawText( "score:",
           dim.get(Zone.BOTTOM_PANEL).x,
           dim.get(Zone.BOTTOM_PANEL).y,
           dim.get(Zone.BOTTOM_PANEL).width,0
@@ -281,16 +281,7 @@ public class Level implements Renderable {
 
     private void renderSidekicks() {
         for (int i = 0; i < sidekicks.size(); i++) {
-            var sdk = sidekicks.get(i);
-            sra.drawRect(
-              dim.get(Zone.SIDE_PANEL).x,
-              dim.gridMargin * (6 + i) + dim.get(Zone.NEXT_BOX).height * (2 + 0.5f * i),
-              dim.get(Zone.SIDE_PANEL).width,
-              dim.sidekickPanelHeight,
-              new Color(0.45f, 0.5f, 0.6f, 1)
-            );
-
-            sdk.render(i);
+            sidekicks.get(i).render(i);
         }
     }
 
