@@ -1,6 +1,7 @@
 package com.gdx.kaps.level;
 
 import com.badlogic.gdx.graphics.Color;
+import com.gdx.kaps.Sound;
 import com.gdx.kaps.level.grid.Grid;
 import com.gdx.kaps.level.grid.GridObject;
 import com.gdx.kaps.level.grid.caps.Gelule;
@@ -82,12 +83,12 @@ public class Level implements Renderable {
     // control
 
     public void moveGeluleLeft() {
-        gelule.moveLeftIfPossible(grid);
+        if (!gelule.moveLeftIfPossible(grid)) Sound.play("cant");
         updatePreview();
     }
 
     public void moveGeluleRight() {
-        gelule.moveRightIfPossible(grid);
+        if (!gelule.moveRightIfPossible(grid)) Sound.play("cant");
         updatePreview();
     }
 
@@ -96,7 +97,8 @@ public class Level implements Renderable {
     }
 
     public void flipGelule() {
-        gelule.flipIfPossible(grid);
+        var sound = gelule.flipIfPossible(grid) ? "flip" : "cant";
+        Sound.play(sound);
         updatePreview();
     }
 
@@ -120,6 +122,8 @@ public class Level implements Renderable {
               spawnNewGelule();
           }
         );
+        Sound.play("hold");
+
         canHold = false;
     }
 
@@ -143,6 +147,7 @@ public class Level implements Renderable {
 
     private void acceptGelule() {
         grid.accept(gelule);
+        Sound.play("impact");
         preview = null;
         gelule = null;
 
@@ -160,6 +165,7 @@ public class Level implements Renderable {
             }
         });
     }
+
     private void decreaseCooldowns() {
         sidekicks.forEach(sdk -> {
             sdk.decreaseCooldown();
@@ -201,18 +207,24 @@ public class Level implements Renderable {
         do {
             // TODO: implement short animation
             matches = grid.deleteMatches();
-            matches.forEach(o -> {
-                sidekickOfColor(o.color()).ifPresent(Sidekick::increaseMana);
-                score += o.points() * multiplier;
-            });
-            triggerSidekicks();
-            grid.dropAll();
-            multiplier++;
+            if (!matches.isEmpty()) {
+                Sound.play("plop0");
+                matches.forEach(o -> {
+                    sidekickOfColor(o.color()).ifPresent(Sidekick::increaseMana);
+                    score += o.points() * multiplier;
+                });
+                triggerSidekicks();
+                grid.dropAll();
+                multiplier++;
+            }
         } while (!matches.isEmpty());
     }
 
     public void checkGameOver() {
-        if (!gelule.isAtValidEmplacement(grid) || grid.remainingGerms() <= 0) {
+        boolean defeat = !gelule.isAtValidEmplacement(grid),
+          victory = grid.remainingGerms() <= 0;
+        if (defeat || victory) {
+            Sound.play(defeat ? "game_over" : "cleared");
             try {
                 Thread.sleep(1500);
             } catch (InterruptedException e) {

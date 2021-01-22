@@ -2,6 +2,7 @@ package com.gdx.kaps.level.grid;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.gdx.kaps.Sound;
 import com.gdx.kaps.renderer.Dimensions;
 import com.gdx.kaps.renderer.Renderable;
 import com.gdx.kaps.level.Level;

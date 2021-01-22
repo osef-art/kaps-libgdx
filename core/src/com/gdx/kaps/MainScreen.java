@@ -52,7 +52,7 @@ public class MainScreen extends ApplicationAdapter {
 		sidekicks.addAll(Sidekick.randomSetOf(Math.max(0, 2 - sidekicks.size())));
 
 		level = new Level(
-			Path.of("android/assets/levels/level" + new Random().nextInt(21)),
+			Path.of("android/assets/levels/level" + new Random().nextInt(1)),
 			sidekicks
 		);
 

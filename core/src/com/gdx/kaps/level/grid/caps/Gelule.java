@@ -132,20 +132,20 @@ public class Gelule implements Iterable<LinkedCaps> {
         return true;
     }
 
-    public void moveLeftIfPossible(Grid grid) {
-        moveIfPossible(Look.LEFT, grid);
+    public boolean moveLeftIfPossible(Grid grid) {
+        return moveIfPossible(Look.LEFT, grid);
     }
 
-    public void moveRightIfPossible(Grid grid) {
-        moveIfPossible(Look.RIGHT, grid);
+    public boolean moveRightIfPossible(Grid grid) {
+        return moveIfPossible(Look.RIGHT, grid);
     }
 
     public boolean dipIfPossible(Grid grid) {
         return moveIfPossible(Look.DOWN, grid);
     }
 
-    public void flipIfPossible(Grid grid) {
-        if (!canFlip(grid)) return;
+    public boolean flipIfPossible(Grid grid) {
+        if (!canFlip(grid)) return false;
         // TODO: prevent flip if a caps bothers
         flip();
 
@@ -153,6 +153,7 @@ public class Gelule implements Iterable<LinkedCaps> {
         if (!linked.isAtValidEmplacement(grid)) {
             move(main.look());
         }
+        return true;
     }
 
     // update
