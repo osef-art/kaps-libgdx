@@ -171,7 +171,7 @@ public class Level implements Renderable {
     }
 
     private void speedUp() {
-        updateSpeed -= 100;
+        updateSpeed -= 2_500_000;
         updateTimer.updateLimit(updateSpeed);
         updateTimer.reset();
     }

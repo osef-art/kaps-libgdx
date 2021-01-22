@@ -34,7 +34,6 @@ class SidekickCooldown extends Sidekick {
 
     public void triggerIfReady(Level lvl) {
         if (isReady()) {
-            Sound.play("trigger_cooldown");
             trigger(lvl);
             reset();
         }

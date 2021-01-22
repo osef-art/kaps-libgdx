@@ -8,7 +8,7 @@ import java.util.Optional;
 import java.util.Random;
 
 public class Sound {
-    enum SoundRecord {
+    public enum SoundRecord {
         FIRE("fire", 2),
         FLIP("flip", 3),
         PAINT("paint", 3),
