@@ -2,12 +2,11 @@ package com.gdx.kaps.level.grid;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.gdx.kaps.Sound;
-import com.gdx.kaps.renderer.Dimensions;
-import com.gdx.kaps.renderer.Renderable;
 import com.gdx.kaps.level.Level;
 import com.gdx.kaps.level.grid.caps.Gelule;
 import com.gdx.kaps.level.grid.germ.Germ;
+import com.gdx.kaps.renderer.Dimensions;
+import com.gdx.kaps.renderer.Renderable;
 import com.gdx.kaps.renderer.Zone;
 
 import java.io.BufferedReader;

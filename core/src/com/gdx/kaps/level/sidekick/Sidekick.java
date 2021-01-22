@@ -32,25 +32,21 @@ public class Sidekick implements Renderable {
         type = record;
     }
 
-    public static Sidekick ofName(String name) {
-        return of(SidekickRecord.ofName(name));
-    }
-
     private static Sidekick of(SidekickRecord record) {
         return record.maxMana() < record.cooldown() ?
                  new SidekickCooldown(record) :
                  new Sidekick(record);
     }
 
-    public static Set<Sidekick> randomSetOf(int n, Set<Sidekick> include) {
-        var sdks = Arrays.stream(SidekickRecord.values())
-          .map(Sidekick::of)
-          .collect(Collectors.toList());
+    public static Set<Sidekick> randomSetOf(int n, Set<SidekickRecord> include) {
+        var sdks = new ArrayList<>(Arrays.asList(SidekickRecord.values()));
 
         while (include.size() < n) {
             include.add(sdks.remove(new Random().nextInt(sdks.size())));
         }
-        return include;
+        return include.stream()
+                 .map(Sidekick::of)
+                 .collect(Collectors.toUnmodifiableSet());
     }
 
     // getters

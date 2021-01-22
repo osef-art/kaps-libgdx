@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.gdx.kaps.contoller.InputHandler;
 import com.gdx.kaps.level.Level;
 import com.gdx.kaps.level.sidekick.Sidekick;
+import com.gdx.kaps.level.sidekick.SidekickRecord;
 import com.gdx.kaps.renderer.Dimensions;
 import com.gdx.kaps.renderer.ShapeRendererAdaptor;
 import com.gdx.kaps.renderer.SpriteRendererAdaptor;
@@ -42,9 +43,15 @@ public class MainScreen extends ApplicationAdapter {
 		sra = new ShapeRendererAdaptor();
 		tra = new TextRendererAdaptor(25, new Color(1, 1, 1, 1));
 
-		var sidekicks = Sidekick.randomSetOf(2, Arrays.stream(args)
-												.map(Sidekick::ofName)
-												.collect(Collectors.toSet()));
+//		var sidekicks = Sidekick.randomSetOf(2, Arrays.stream(args)
+//												.map(Sidekick::ofName)
+//												.collect(Collectors.toSet()));
+
+		var sidekicks = Sidekick.randomSetOf(2,
+			Arrays.stream(args)
+				.map(SidekickRecord::ofName)
+				.collect(Collectors.toSet())
+		);
 
 		level = new Level(
 			Path.of("android/assets/levels/level" + new Random().nextInt(21)),
