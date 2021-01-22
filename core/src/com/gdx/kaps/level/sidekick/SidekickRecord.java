@@ -2,18 +2,20 @@ package com.gdx.kaps.level.sidekick;
 
 import com.gdx.kaps.level.Level;
 import com.gdx.kaps.level.grid.Color;
+import com.gdx.kaps.level.grid.Grid;
 import com.gdx.kaps.level.grid.caps.Gelule;
 
 import java.util.function.Consumer;
+import java.util.stream.IntStream;
 
 public enum SidekickRecord {
     SEAN("Sean", Color.COLOR_1, "fire", (lvl) -> {}, 20),              // INFO: Hits a tile then its neighbors
     ZYRAME("Zyrame", Color.COLOR_2, "slice", (lvl) -> {}, 20, 2),   // INFO: Hits 2 random germs
-    RED("Red", Color.COLOR_3, "slice", (lvl) -> {}, 20, 2),      // INFO: Slices a.random column
+    RED("Red", Color.COLOR_3, "slice", (lvl) -> hitRandomColumn(lvl.grid()), 20, 2),
     MIMAPS("Mimaps", Color.COLOR_4, "fire", (lvl) -> {}, 15, 2),   // INFO: Hits 3 random.tiles
     PAINT("Paint", Color.COLOR_5, "paint", (lvl) -> {}, 10),             // INFO: Paints 5 tiles in mate's color
     XERETH("Xereth", Color.COLOR_6, "slice", (lvl) -> {}, 25),            // INFO: Slices two.diagonals
-    JIM("Jim", Color.COLOR_10, "slice", (lvl) -> {}, 25),              // INFO: Slices a.random line
+    JIM("Jim", Color.COLOR_10, "slice", (lvl) -> hitRandomLine(lvl.grid()), 25),
     COLOR("Color", Color.COLOR_11,"gen", SidekickRecord::generateSingleColoredGelule, -5),
     // TODO: sidekick that generates a single Caps ?
     ;
@@ -69,13 +71,27 @@ public enum SidekickRecord {
         return damage;
     }
 
-    //
+    public String sound() {
+        return sound;
+    }
+
+    // powers
 
     private static void generateSingleColoredGelule(Level lvl) {
         lvl.setNext(2, new Gelule(lvl, Color.random(lvl)));
     }
 
-    public String sound() {
-        return sound;
+    private static void hitRandomLine(Grid grid) {
+        grid.pickRandomObject().ifPresent(
+          obj -> IntStream.range(0, grid.width())
+                   .forEach(n -> grid.hit(n, obj.y()))
+        );
+    }
+
+    private static void hitRandomColumn(Grid grid) {
+        grid.pickRandomObject().ifPresent(
+          obj -> IntStream.range(0, grid.height())
+                   .forEach(n -> grid.hit(obj.x(), n))
+        );
     }
 }

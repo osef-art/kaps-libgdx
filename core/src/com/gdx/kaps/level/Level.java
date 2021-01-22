@@ -62,6 +62,10 @@ public class Level implements Renderable {
 
     // getters
 
+    public Grid grid() {
+        return grid;
+    }
+
     public int gridWidth() {
         return grid.width();
     }

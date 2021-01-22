@@ -200,7 +200,11 @@ public class Grid implements Renderable {
     }
 
     private void hit(GridObject obj) {
-        get(obj.x(), obj.y()).ifPresent(o -> {
+        hit(obj.x(), obj.y());
+    }
+
+    public void hit(int x, int y) {
+        get(x, y).ifPresent(o -> {
             o.hit();
             if (o.isDestroyed()) pop(o);
         });
