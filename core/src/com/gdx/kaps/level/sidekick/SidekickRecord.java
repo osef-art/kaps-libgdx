@@ -7,7 +7,6 @@ import com.gdx.kaps.level.grid.caps.Gelule;
 import java.util.function.Consumer;
 
 public enum SidekickRecord {
-    // TODO: add powers
     SEAN   (Color.COLOR_1, "Sean", (lvl) -> {}, 20),              // INFO: Hits a tile then its neighbors
     ZYRAME (Color.COLOR_2, "Zyrame", (lvl) -> {}, 20, 2),   // INFO: Hits 2 random germs
     RED    (Color.COLOR_3, "Red", (lvl) -> {}, 20, 2),      // INFO: Slices a.random column
@@ -15,7 +14,7 @@ public enum SidekickRecord {
     PAINT  (Color.COLOR_5, "Paint", (lvl) -> {}, 10),             // INFO: Paints 5 tiles in mate's color
     XERETH (Color.COLOR_6, "Xereth", (lvl) -> {}, 25),            // INFO: Slices two.diagonals
     JIM    (Color.COLOR_10, "Jim", (lvl) -> {}, 25),              // INFO: Slices a.random line
-    COLOR  (Color.COLOR_11, "Color", SidekickRecord::generateSingleColoredGelule, -5),             // INFO: Generates a.single-colored gelule
+    COLOR  (Color.COLOR_11, "Color", SidekickRecord::generateSingleColoredGelule, -5),
     // TODO: sidekick that generates a single Caps ?
     ;
 

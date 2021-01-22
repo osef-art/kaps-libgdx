@@ -2,7 +2,7 @@ package com.gdx.kaps.level.grid.germ;
 
 import java.util.Objects;
 
-public enum GermRecord { // IMPL: use a record if possible
+public enum GermRecord {
     BASIC("basic", 'B', 1, 0, 8),
     WALL("wall", 'W', 4, 0, 4),
     VIRUS("virus", 'V', 1, 7, 8),

@@ -1,6 +1,7 @@
 package com.gdx.kaps;
 
 import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Audio;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -23,6 +24,7 @@ public class MainScreen extends ApplicationAdapter {
 	private final String[] args;
 	private Level level;
 
+	// TODO: add sounds
 	public static OrthographicCamera camera;
 	public static ShapeRendererAdaptor sra;
 	public static TextRendererAdaptor tra;
@@ -50,7 +52,7 @@ public class MainScreen extends ApplicationAdapter {
 		sidekicks.addAll(Sidekick.randomSetOf(Math.max(0, 2 - sidekicks.size())));
 
 		level = new Level(
-			Path.of("android/assets/levels/level" + new Random().nextInt(1)),
+			Path.of("android/assets/levels/level" + new Random().nextInt(21)),
 			sidekicks
 		);
 

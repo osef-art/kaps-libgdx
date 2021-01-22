@@ -148,11 +148,19 @@ public class Level implements Renderable {
 
         updateGrid();
         speedUp();
-        triggerSidekicks();
+        decreaseCooldowns();
         spawnNewGelule();
     }
 
     private void triggerSidekicks() {
+        sidekicks.forEach(sdk -> {
+            if (sdk.isReady()) {
+                sdk.trigger(this);
+                sdk.reset();
+            }
+        });
+    }
+    private void decreaseCooldowns() {
         sidekicks.forEach(sdk -> {
             sdk.decreaseCooldown();
             if (sdk.isReady()) {
@@ -170,6 +178,14 @@ public class Level implements Renderable {
 
     // update
 
+    @Override
+    public void update() {
+        if (paused) return;
+        if (updateTimer.resetIfExceeds()) dipGelule();
+        grid.update();
+        sidekicks.forEach(Renderable::update);
+    }
+
     private void updateNext() {
         System.arraycopy(next, 1, next, 0, next.length - 1);
         next[next.length - 1] = new Gelule(this);
@@ -180,12 +196,19 @@ public class Level implements Renderable {
         while (preview.dipIfPossible(grid));
     }
 
-    @Override
-    public void update() {
-        if (paused) return;
-        if (updateTimer.resetIfExceeds()) dipGelule();
-        grid.update();
-        sidekicks.forEach(Renderable::update);
+    private void updateGrid() {
+        Set<GridObject> matches;
+        do {
+            // TODO: implement short animation
+            matches = grid.deleteMatches();
+            matches.forEach(o -> {
+                sidekickOfColor(o.color()).ifPresent(Sidekick::increaseMana);
+                score += o.points() * multiplier;
+            });
+            triggerSidekicks();
+            grid.dropAll();
+            multiplier++;
+        } while (!matches.isEmpty());
     }
 
     public void checkGameOver() {
@@ -198,19 +221,6 @@ public class Level implements Renderable {
             System.out.println("GAME OVER");
             System.exit(0);
         }
-    }
-
-    private void updateGrid() {
-        Set<GridObject> matches;
-        do {
-            matches = grid.deleteMatches();
-            matches.forEach(o -> {
-                sidekickOfColor(o.color()).ifPresent(Sidekick::increaseMana);
-                score += o.points() * multiplier;
-            });
-            grid.dropAll();
-            multiplier++;
-        } while (!matches.isEmpty());
     }
 
     // rendering

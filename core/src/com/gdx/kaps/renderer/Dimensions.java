@@ -40,7 +40,6 @@ public class Dimensions {
         map.put(Zone.HOLD_GELULE, new Rectangle(map.get(Zone.HOLD_BOX).x + boxPadding, map.get(Zone.HOLD_BOX).y + map.get(Zone.HOLD_BOX).height/2 - map.get(Zone.NEXT_GELULE).height/2, map.get(Zone.HOLD_BOX).width - 2 * boxPadding, (map.get(Zone.HOLD_BOX).width - 2 * boxPadding) / 2));
 
         sidekickPanelHeight = map.get(Zone.NEXT_BOX).height / 2;
-        // TODO: both sidekicks heads. but first, an enum map. (+ handle n sidekicks ?)
     }
 
     public Rectangle get(Zone zone) {
