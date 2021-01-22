@@ -14,8 +14,10 @@ public class SpriteRendererAdaptor {
         batch.setProjectionMatrix(camera.combined);
     }
 
-    public void dispose() {
-        batch.dispose();
+    private void draw(Runnable action) {
+        batch.begin();
+        action.run();
+        batch.end();
     }
 
     public void render(Sprite sprite) {
@@ -23,22 +25,18 @@ public class SpriteRendererAdaptor {
     }
 
     public void render(Sprite sprite, float x, float y, float width, float height) {
-        batch.begin();
-        batch.draw(sprite, x, y, width, height);
-        batch.end();
+        draw(() -> batch.draw(sprite, x, y, width, height));
     }
 
     public void render(Sprite sprite, float x, float y, float width, float height, float alpha) {
-        batch.begin();
-        batch.setColor(1,1,1, alpha);
-        batch.draw(sprite, x, y, width, height);
-        batch.end();
+        draw(() -> {
+            batch.setColor(1,1,1, alpha);
+            batch.draw(sprite, x, y, width, height);
+        });
     }
 
     public void renderText(String text, BitmapFont font, float x, float y) {
-        batch.begin();
-        font.draw(batch, text, x, y);
-        batch.end();
+        draw(() -> font.draw(batch, text, x, y));
     }
 
     public void renderText(String txt, BitmapFont font, float x, float y, float width, float height) {
@@ -46,8 +44,10 @@ public class SpriteRendererAdaptor {
         final float fontX = x + (width - layout.width) / 2;
         final float fontY = y + (height + layout.height) / 2;
 
-        batch.begin();
-        font.draw(batch, layout, fontX, fontY);
-        batch.end();
+        draw(() -> font.draw(batch, layout, fontX, fontY));
+    }
+
+    public void dispose() {
+        batch.dispose();
     }
 }
