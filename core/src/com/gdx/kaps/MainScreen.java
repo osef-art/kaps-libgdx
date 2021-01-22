@@ -15,10 +15,12 @@ import com.gdx.kaps.renderer.ShapeRendererAdaptor;
 import com.gdx.kaps.renderer.TextRendererAdaptor;
 
 import java.nio.file.Path;
-import java.util.Random;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class MainScreen extends ApplicationAdapter {
 	private InputHandler controller;
+	private final String[] args;
 	private Level level;
 
 	public static OrthographicCamera camera;
@@ -26,6 +28,10 @@ public class MainScreen extends ApplicationAdapter {
 	public static TextRendererAdaptor tra;
 	public static SpriteBatch batch;
 	public static Dimensions dim;
+
+	public MainScreen(String ... sdks) {
+		args = sdks;
+	}
 
 	@Override
 	public void create () {
@@ -37,10 +43,15 @@ public class MainScreen extends ApplicationAdapter {
 		batch = new SpriteBatch();
 		batch.setProjectionMatrix(camera.combined);
 
+		var sidekicks = Arrays.stream(args)
+						.map(sdk -> new Sidekick(SidekickRecord.ofName(sdk)))
+						.collect(Collectors.toSet());
+
+		sidekicks.addAll(Sidekick.randomSetOf(Math.max(0, 2 - sidekicks.size())));
+
 		level = new Level(
-			Path.of("android/assets/levels/level" + new Random().nextInt(21)),
-			Sidekick.setOf(SidekickRecord.COLOR, SidekickRecord.XERETH)
-			//Sidekick.RandomSetOf(2)
+			Path.of("android/assets/levels/level" + new Random().nextInt(1)),
+			sidekicks
 		);
 
 		controller = new InputHandler(level);

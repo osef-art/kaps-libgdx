@@ -40,6 +40,10 @@ public enum SidekickRecord {
         damage = dmg;
     }
 
+    public static SidekickRecord ofName(String sdkName) {
+        return valueOf(sdkName.toUpperCase());
+    }
+
     public Consumer<Level> power() {
         return power;
     }

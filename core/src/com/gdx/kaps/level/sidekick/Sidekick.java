@@ -16,7 +16,10 @@ public class Sidekick implements Renderable {
     private final Gauge gauge;
 
     public Sidekick(SidekickRecord record) {
-        sprite = new AnimatedSprite("android/assets/img/sidekicks/" + record.path() + "_", 4, 200_000_000);
+        sprite = new AnimatedSprite(
+          "android/assets/img/sidekicks/" + record.path() + "_",
+          4, 200_000_000
+        );
         hasCooldown = record.maxMana() < record.cooldown();
         gauge = hasCooldown ?
                   new Gauge(record.cooldown(), record.cooldown()) :
@@ -28,17 +31,12 @@ public class Sidekick implements Renderable {
         var sdks = Arrays.stream(SidekickRecord.values())
           .map(Sidekick::new)
           .collect(Collectors.toList());
+
         var set = new HashSet<Sidekick>();
         for (int i = 0; i < n; i++) {
             set.add(sdks.remove(new Random().nextInt(sdks.size())));
         }
         return set;
-    }
-
-    public static Set<Sidekick> setOf(SidekickRecord ... sidekicks) {
-        return Arrays.stream(sidekicks)
-                 .map(Sidekick::new)
-                 .collect(Collectors.toSet());
     }
 
     public Color color() {
