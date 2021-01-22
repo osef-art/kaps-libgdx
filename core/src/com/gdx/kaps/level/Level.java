@@ -280,8 +280,28 @@ public class Level implements Renderable {
     }
 
     private void renderSidekicks() {
-        for (int i = 0; i < sidekicks.size(); i++) {
-            sidekicks.get(i).render(i);
+        for (int n = 0; n < sidekicks.size(); n++) {
+            var sdk = sidekicks.get(n);
+
+            // fond
+            sra.drawRect(
+              dim.get(Zone.SIDE_PANEL).x,
+              dim.gridMargin * (6 + n) + dim.get(Zone.NEXT_BOX).height * (2 + 0.5f * n),
+              dim.get(Zone.SIDE_PANEL).width,
+              dim.sidekickPanelHeight,
+              new com.badlogic.gdx.graphics.Color(0.45f, 0.5f, 0.6f, 1)
+            );
+
+            // head
+            sdk.render(
+              dim.get(Zone.SIDE_PANEL).x + 5,
+              dim.gridMargin * (6 + n) + dim.get(Zone.NEXT_BOX).height * (2 + 0.5f * n) + 5,
+              dim.sidekickPanelHeight - 10,
+              dim.sidekickPanelHeight - 10
+            );
+
+            // gauge
+            sdk.renderGauge(n);
         }
     }
 

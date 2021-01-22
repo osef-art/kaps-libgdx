@@ -59,10 +59,6 @@ public class Gauge {
         value = Math.max(value - 1, 0);
     }
 
-    public void reset() {
-        value = 0;
-    }
-
     public void render(float x, float y, float width, float height, Color back, Color main) {
         sra.drawRect(x + height/2, y, width - height, height, back);
         sra.drawCircle(x + width - height/2, y + height/2, height/2, back);

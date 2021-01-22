@@ -9,7 +9,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.gdx.kaps.contoller.InputHandler;
 import com.gdx.kaps.level.Level;
 import com.gdx.kaps.level.sidekick.Sidekick;
-import com.gdx.kaps.level.sidekick.SidekickRecord;
 import com.gdx.kaps.renderer.Dimensions;
 import com.gdx.kaps.renderer.ShapeRendererAdaptor;
 import com.gdx.kaps.renderer.TextRendererAdaptor;
@@ -44,15 +43,13 @@ public class MainScreen extends ApplicationAdapter {
 		batch = new SpriteBatch();
 		batch.setProjectionMatrix(camera.combined);
 
-		var sidekicks = Arrays.stream(args)
-						.map(sdk -> new Sidekick(SidekickRecord.ofName(sdk)))
-						.collect(Collectors.toSet());
-
-		var sdks = Sidekick.randomSetOf(2, sidekicks);
+		var sidekicks = Sidekick.randomSetOf(2, Arrays.stream(args)
+												.map(Sidekick::ofName)
+												.collect(Collectors.toSet()));
 
 		level = new Level(
-			Path.of("android/assets/levels/level" + new Random().nextInt(1)),
-			sdks
+			Path.of("android/assets/levels/level" + new Random().nextInt(21)),
+			sidekicks
 		);
 
 		controller = new InputHandler(level);
