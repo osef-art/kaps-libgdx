@@ -72,5 +72,7 @@ public class Gauge {
         sra.drawCircle(x + height/2 + (width - height) * ratio(), y + height/2, height/2, main);
     }
 
-    // TODO: circular gauge
+    public void render(float x, float y, float radius, Color color) {
+        sra.drawArc(x , y, radius, 90, 90, color);
+    }
 }

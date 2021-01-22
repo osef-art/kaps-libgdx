@@ -290,28 +290,7 @@ public class Level implements Renderable {
               new Color(0.45f, 0.5f, 0.6f, 1)
             );
 
-            sdk.render(
-              dim.get(Zone.SIDE_PANEL).x + 5,
-              dim.gridMargin * (6 + i) + dim.get(Zone.NEXT_BOX).height * (2 + 0.5f * i) + 5,
-              dim.sidekickPanelHeight - 10,
-              dim.sidekickPanelHeight - 10
-            );
-
-            // gauge
-            sdk.gauge().render(
-              dim.get(Zone.SIDE_PANEL).x + 10 + dim.sidekickPanelHeight - 10,
-              dim.gridMargin * (6 + i) + dim.get(Zone.NEXT_BOX).height  * (2 + 0.5f * i) + dim.sidekickPanelHeight - 30,
-              dim.get(Zone.SIDE_PANEL).width - (dim.sidekickPanelHeight - 10) - 15,
-              20,
-              new Color(0.5f, 0.55f, 0.65f, 1),
-              sdk.color().value()
-            );
-
-            tra.drawText(
-              sdk.gauge().value() + " / " + sdk.gauge().max(),
-              dim.get(Zone.SIDE_PANEL).x + 10 + dim.sidekickPanelHeight - 10,
-              dim.gridMargin * (6 + i) + dim.get(Zone.NEXT_BOX).height * (2 + 0.5f * i) + 10
-            );
+            sdk.render(i);
         }
     }
 

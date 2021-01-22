@@ -63,4 +63,10 @@ public enum Color {
     public com.badlogic.gdx.graphics.Color value() {
         return gdxColor;
     }
+
+    public com.badlogic.gdx.graphics.Color value(float alpha) {
+        return new com.badlogic.gdx.graphics.Color(
+          gdxColor.r, gdxColor.g, gdxColor.b, alpha
+        );
+    }
 }

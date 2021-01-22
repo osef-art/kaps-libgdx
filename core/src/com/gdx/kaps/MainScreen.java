@@ -48,11 +48,11 @@ public class MainScreen extends ApplicationAdapter {
 						.map(sdk -> new Sidekick(SidekickRecord.ofName(sdk)))
 						.collect(Collectors.toSet());
 
-		sidekicks.addAll(Sidekick.randomSetOf(Math.max(0, 2 - sidekicks.size())));
+		var sdks = Sidekick.randomSetOf(2, sidekicks);
 
 		level = new Level(
 			Path.of("android/assets/levels/level" + new Random().nextInt(1)),
-			sidekicks
+			sdks
 		);
 
 		controller = new InputHandler(level);
