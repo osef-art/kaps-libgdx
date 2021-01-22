@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.Rectangle;
 
 import static com.gdx.kaps.MainScreen.camera;
 
-public class ShapeRendererAdaptor {
+public class ShapeRendererAdaptor implements RendererAdaptor {
     private final ShapeRenderer rd = new ShapeRenderer();
 
     public ShapeRendererAdaptor() {
@@ -18,8 +18,7 @@ public class ShapeRendererAdaptor {
 
     private void draw(Runnable action, Color c) {
         Gdx.gl.glEnable(GL20.GL_BLEND);
-        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);rd.begin(ShapeType.Filled);
-        rd.end();
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         rd.begin(ShapeType.Filled);
         rd.setColor(c.r, c.g, c.b, c.a);
         action.run();
@@ -43,6 +42,7 @@ public class ShapeRendererAdaptor {
         drawRect(r.x, r.y, r.width, r.height, c);
     }
 
+    @Override
     public void dispose() {
         rd.dispose();
     }

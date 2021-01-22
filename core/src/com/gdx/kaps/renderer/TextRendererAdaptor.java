@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.Rectangle;
 
 import static com.gdx.kaps.MainScreen.spra;
 
-public class TextRendererAdaptor {
+public class TextRendererAdaptor implements RendererAdaptor {
     // IMPL: ability to change size/color and handle memory ?
     //  or one renderer per color/size ?
     private final BitmapFont font;
@@ -37,6 +37,7 @@ public class TextRendererAdaptor {
         spra.renderText(txt, font, x, y, width, height);
     }
 
+    @Override
     public void dispose() {
         font.dispose();
     }

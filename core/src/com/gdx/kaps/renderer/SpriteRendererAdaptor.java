@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import static com.gdx.kaps.MainScreen.camera;
 
-public class SpriteRendererAdaptor {
+public class SpriteRendererAdaptor implements RendererAdaptor {
     private final SpriteBatch batch = new SpriteBatch();
 
     public SpriteRendererAdaptor() {
@@ -47,6 +47,7 @@ public class SpriteRendererAdaptor {
         draw(() -> font.draw(batch, layout, fontX, fontY));
     }
 
+    @Override
     public void dispose() {
         batch.dispose();
     }

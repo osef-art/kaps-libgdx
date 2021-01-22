@@ -64,7 +64,6 @@ public abstract class GridObject implements GridObjectInterface {
     }
 
     public void render(float x, float y, float width, float height, float alpha) {
-
         spra.render(sprite, x, y, width, height, alpha);
     }
 }
