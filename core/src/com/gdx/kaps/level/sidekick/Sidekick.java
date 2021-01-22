@@ -1,5 +1,6 @@
 package com.gdx.kaps.level.sidekick;
 
+import com.gdx.kaps.Sound;
 import com.gdx.kaps.level.Gauge;
 import com.gdx.kaps.level.Level;
 import com.gdx.kaps.level.grid.Color;
@@ -82,5 +83,13 @@ public class Sidekick implements Renderable {
     public void reset() {
         if (hasCooldown) gauge.fill();
         else gauge.empty();
+    }
+
+    public void triggerIfReady(Level lvl) {
+        if (isReady()) {
+            Sound.play("trigger" + (hasCooldown ? "_cooldown" : ""));
+            trigger(lvl);
+            reset();
+        }
     }
 }

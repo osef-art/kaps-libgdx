@@ -1,7 +1,6 @@
 package com.gdx.kaps.level;
 
 import com.badlogic.gdx.graphics.Color;
-import com.gdx.kaps.Sound;
 import com.gdx.kaps.level.grid.Grid;
 import com.gdx.kaps.level.grid.GridObject;
 import com.gdx.kaps.level.grid.caps.Gelule;
@@ -18,6 +17,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.gdx.kaps.MainScreen.*;
+import static com.gdx.kaps.Sound.play;
 
 public class Level implements Renderable {
     public final static int MIN_MATCH_RANGE = 4;
@@ -83,12 +83,12 @@ public class Level implements Renderable {
     // control
 
     public void moveGeluleLeft() {
-        if (!gelule.moveLeftIfPossible(grid)) Sound.play("cant");
+        if (!gelule.moveLeftIfPossible(grid)) play("cant");
         updatePreview();
     }
 
     public void moveGeluleRight() {
-        if (!gelule.moveRightIfPossible(grid)) Sound.play("cant");
+        if (!gelule.moveRightIfPossible(grid)) play("cant");
         updatePreview();
     }
 
@@ -98,16 +98,18 @@ public class Level implements Renderable {
 
     public void flipGelule() {
         var sound = gelule.flipIfPossible(grid) ? "flip" : "cant";
-        Sound.play(sound);
+        play(sound);
         updatePreview();
     }
 
     public void dropGelule() {
+        play("drop");
         while (gelule.dipIfPossible(grid));
         acceptGelule();
     }
 
     public void togglePause() {
+        if (!paused) play("pause");
         paused = !paused;
     }
 
@@ -122,7 +124,7 @@ public class Level implements Renderable {
               spawnNewGelule();
           }
         );
-        Sound.play("hold");
+        play("hold");
 
         canHold = false;
     }
@@ -147,7 +149,7 @@ public class Level implements Renderable {
 
     private void acceptGelule() {
         grid.accept(gelule);
-        Sound.play("impact");
+        play("impact");
         preview = null;
         gelule = null;
 
@@ -158,21 +160,13 @@ public class Level implements Renderable {
     }
 
     private void triggerSidekicks() {
-        sidekicks.forEach(sdk -> {
-            if (sdk.isReady()) {
-                sdk.trigger(this);
-                sdk.reset();
-            }
-        });
+        sidekicks.forEach(sdk -> sdk.triggerIfReady(this));
     }
 
     private void decreaseCooldowns() {
         sidekicks.forEach(sdk -> {
             sdk.decreaseCooldown();
-            if (sdk.isReady()) {
-                sdk.trigger(this);
-                sdk.reset();
-            }
+            sdk.triggerIfReady(this);
         });
     }
 
@@ -187,6 +181,7 @@ public class Level implements Renderable {
     @Override
     public void update() {
         if (paused) return;
+        // FIXME: update on pause (récup remaining time)
         if (updateTimer.resetIfExceeds()) dipGelule();
         grid.update();
         sidekicks.forEach(Renderable::update);
@@ -208,7 +203,7 @@ public class Level implements Renderable {
             // TODO: implement short animation
             matches = grid.deleteMatches();
             if (!matches.isEmpty()) {
-                Sound.play("plop0");
+                play(matches.size() > 4 ? "match_five" : "plop0");
                 matches.forEach(o -> {
                     sidekickOfColor(o.color()).ifPresent(Sidekick::increaseMana);
                     score += o.points() * multiplier;
@@ -224,7 +219,7 @@ public class Level implements Renderable {
         boolean defeat = !gelule.isAtValidEmplacement(grid),
           victory = grid.remainingGerms() <= 0;
         if (defeat || victory) {
-            Sound.play(defeat ? "game_over" : "cleared");
+            play(defeat ? "game_over" : "cleared");
             try {
                 Thread.sleep(1500);
             } catch (InterruptedException e) {

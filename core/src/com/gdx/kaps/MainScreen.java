@@ -1,7 +1,6 @@
 package com.gdx.kaps;
 
 import com.badlogic.gdx.ApplicationAdapter;
-import com.badlogic.gdx.Audio;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -16,7 +15,8 @@ import com.gdx.kaps.renderer.ShapeRendererAdaptor;
 import com.gdx.kaps.renderer.TextRendererAdaptor;
 
 import java.nio.file.Path;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 public class MainScreen extends ApplicationAdapter {
@@ -24,7 +24,6 @@ public class MainScreen extends ApplicationAdapter {
 	private final String[] args;
 	private Level level;
 
-	// TODO: add sounds
 	public static OrthographicCamera camera;
 	public static ShapeRendererAdaptor sra;
 	public static TextRendererAdaptor tra;

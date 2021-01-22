@@ -71,4 +71,6 @@ public class Gauge {
         sra.drawCircle(x + height/2, y + height/2, height/2, main);
         sra.drawCircle(x + height/2 + (width - height) * ratio(), y + height/2, height/2, main);
     }
+
+    // TODO: circular gauge
 }
