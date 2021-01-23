@@ -75,6 +75,10 @@ public class Level implements Renderable {
         return colors;
     }
 
+    public List<Sidekick> sidekicks() {
+        return sidekicks;
+    }
+
     private Optional<Sidekick> sidekickOfColor(com.gdx.kaps.level.grid.Color color) {
         return sidekicks.stream()
                  .filter(sdk -> sdk.color() == Objects.requireNonNull(color))

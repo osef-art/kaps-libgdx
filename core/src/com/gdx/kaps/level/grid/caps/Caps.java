@@ -13,10 +13,7 @@ public class Caps extends GridObject {
 
     Caps(int x, int y, Color color) {
         super(x, y, color);
-        updateSprite(
-          "android/assets/img/" + color().id() +
-            "/caps/" + Look.NONE + ".png"
-        );
+        updateSprite();
     }
 
     Caps(Caps caps) {
@@ -108,6 +105,19 @@ public class Caps extends GridObject {
     @Override
     public void hit() {
         destroyed = true;
+    }
+
+    @Override
+    public void paint(Color color) {
+        super.paint(color);
+        updateSprite();
+    }
+
+    private void updateSprite() {
+        super.updateSprite(
+          "android/assets/img/" + color().id() +
+            "/caps/" + Look.NONE + ".png"
+        );
     }
 
     // update

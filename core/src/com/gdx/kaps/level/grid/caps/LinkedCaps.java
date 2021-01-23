@@ -69,9 +69,15 @@ public class LinkedCaps extends Caps {
         updateSprite();
     }
 
+    @Override
+    public void paint(Color color) {
+        super.paint(color);
+        updateSprite();
+    }
+
     // update
 
-    void updateSprite() {
+    private void updateSprite() {
         updateSprite(
           "android/assets/img/" + color().id() +
             "/caps/" + look + ".png"

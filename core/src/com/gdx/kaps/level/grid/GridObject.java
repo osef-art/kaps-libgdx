@@ -37,6 +37,10 @@ public abstract class GridObject implements GridObjectInterface {
         return position;
     }
 
+    public void paint(Color color) {
+        this.color = color;
+    }
+
     // update
 
     protected void updateSprite(String path) {
@@ -65,9 +69,5 @@ public abstract class GridObject implements GridObjectInterface {
 
     public void render(float x, float y, float width, float height, float alpha) {
         spra.render(sprite, x, y, width, height, alpha);
-    }
-
-    public void paint(Color color) {
-        this.color = color;
     }
 }

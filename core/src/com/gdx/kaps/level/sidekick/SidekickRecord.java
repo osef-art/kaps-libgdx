@@ -24,7 +24,6 @@ public enum SidekickRecord {
     // TODO: sidekick that generates a single Caps ?
     ;
 
-
     private final Consumer<Level> power;
     private final Color type;
     private final String name;
@@ -77,20 +76,20 @@ public enum SidekickRecord {
     }
 
     private static void repaintFiveTiles(Level lvl) {
-        for (int i = 0; i < 5; i++) {
-            lvl.applyToGrid(grid -> {
-                var color = getRandomFrom(
-                  lvl.colors().stream()
-                    .filter(c -> c != PAINT.color())
-                    .collect(toList())
-                ).orElse(PAINT.color());
+        var color = getRandomFrom(
+          lvl.sidekicks().stream()
+            .map(Sidekick::color)
+            .filter(c -> c != PAINT.color())
+            .collect(toList())
+        ).orElse(PAINT.color());
 
-                getRandomFrom(
-                  grid.everyObjectInGrid()
-                    .filter(obj -> !obj.isGerm())
-                    .collect(toList())
-                ).ifPresent(caps -> caps.paint(color));
-            });
+        for (int i = 0; i < 5; i++) {
+            lvl.applyToGrid(grid -> getRandomFrom(
+              grid.everyObjectInGrid()
+                .filter(obj -> !obj.color().equals(color))
+                .filter(obj -> !obj.isGerm())
+                .collect(toList())
+            ).ifPresent(caps -> caps.paint(color)));
         }
     }
 
