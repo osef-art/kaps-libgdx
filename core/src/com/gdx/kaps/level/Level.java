@@ -2,9 +2,9 @@ package com.gdx.kaps.level;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.gdx.kaps.level.grid.Grid;
 import com.gdx.kaps.level.grid.GridObject;
-import com.gdx.kaps.level.grid.GridObjectInterface;
 import com.gdx.kaps.level.grid.caps.Gelule;
 import com.gdx.kaps.level.grid.caps.PoppingCaps;
 import com.gdx.kaps.level.grid.caps.PreviewGelule;
@@ -222,23 +222,27 @@ public class Level implements Renderable {
                     score += o.points() * multiplier;
                 });
 
-                //TODO: ANIM !!
-                Gdx.graphics.setContinuousRendering(false);
+                //TODO: ANIM
+                // FIXME: last try:
+                //  'animMode' boolean in MainScreen
+                //  when true, render the anim, else continue the main loop -> one method per anim :x
                 var popping = matches.stream()
                                 .map(PoppingCaps::new)
                                 .collect(Collectors.toList());
 
                 while (!popping.isEmpty()) {
+                    Gdx.gl.glClearColor(0.3f, 0.3f, 0.4f, 1);
+                    Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+                    render();
+
                     popping.forEach(caps -> {
                         caps.update();
                         caps.render();
-                        Gdx.graphics.requestRendering();
                     });
                     popping = popping.stream()
                                 .filter(caps -> !caps.isDestroyed())
                                 .collect(Collectors.toList());
                 }
-                Gdx.graphics.isContinuousRendering();
 
                 triggerSidekicks();
                 grid.dropAll();
