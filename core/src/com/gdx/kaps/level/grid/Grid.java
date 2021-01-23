@@ -113,12 +113,6 @@ public class Grid implements Renderable {
                                      .collect(toList()));
     }
 
-    public Optional<GridObject> pickRandomCaps() {
-        return Utils.getRandomFrom(everyObjectInGrid()
-                                     .filter(obj -> !obj.isGerm())
-                                     .collect(toList()));
-    }
-
     public int remainingGerms() {
         return (int) everyObjectInGrid()
           .filter(GridObject::isGerm)

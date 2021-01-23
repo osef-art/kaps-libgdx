@@ -11,7 +11,9 @@ public class DesktopLauncher {
 		config.title = "KAPS";
 		config.width = 480;
 		config.height = 800;
-//		config.pauseWhenBackground = true;
+//		config.vSyncEnabled = true;
+		config.pauseWhenMinimized = true;
+		config.pauseWhenBackground = true;
 		config.addIcon("android/assets/img/icons/icon.png", Files.FileType.Local);
 
 		new LwjglApplication(new MainScreen(args), config);

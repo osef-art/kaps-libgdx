@@ -10,6 +10,7 @@ import java.util.Random;
 import static com.gdx.kaps.MainScreen.spra;
 
 public class AnimatedSprite implements Renderable {
+    // TODO: looping or not ? subclass ?
     private final Timer updateTimer;
     private final int nbFrames;
     private final Sprite[] sprites;
@@ -17,7 +18,11 @@ public class AnimatedSprite implements Renderable {
     private int frame;
 
     public AnimatedSprite(String path, int frames, double speed) {
-        frame = new Random().nextInt(frames);
+        this(path, new Random().nextInt(frames), frames, speed);
+    }
+
+    public AnimatedSprite(String path, int startingFrame, int frames, double speed) {
+        frame = startingFrame;
         updateTimer = new Timer(speed);
         sprites = new Sprite[frames];
         nbFrames = frames;
@@ -55,5 +60,9 @@ public class AnimatedSprite implements Renderable {
     @Override
     public void render(float x, float y, float width, float height) {
         spra.render(currentSprite(), x, y, width, height);
+    }
+
+    public boolean isOver() {
+        return frame == nbFrames - 1;
     }
 }

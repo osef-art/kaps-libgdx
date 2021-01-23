@@ -14,6 +14,7 @@ public interface GridObjectInterface extends Renderable {
     int points();
 
     boolean isGerm();
+
     boolean isDestroyed();
     boolean canDip(Grid grid);
 
@@ -21,7 +22,6 @@ public interface GridObjectInterface extends Renderable {
     void hit();
 
     void render(int x, int y);
-
     default void render(float x, float y, float width, float height) {
         render(x(), y());
     }

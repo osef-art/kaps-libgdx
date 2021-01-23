@@ -1,9 +1,12 @@
 package com.gdx.kaps.level;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.gdx.kaps.level.grid.Grid;
 import com.gdx.kaps.level.grid.GridObject;
+import com.gdx.kaps.level.grid.GridObjectInterface;
 import com.gdx.kaps.level.grid.caps.Gelule;
+import com.gdx.kaps.level.grid.caps.PoppingCaps;
 import com.gdx.kaps.level.grid.caps.PreviewGelule;
 import com.gdx.kaps.level.sidekick.Sidekick;
 import com.gdx.kaps.renderer.Renderable;
@@ -153,6 +156,7 @@ public class Level implements Renderable {
         canHold = true;
         multiplier = 1;
         // TODO: display gelule when game over. maybe in main loop ?
+
         checkGameOver();
     }
 
@@ -209,14 +213,33 @@ public class Level implements Renderable {
     private void updateGrid() {
         Set<GridObject> matches;
         do {
-            // TODO: implement short animation
             matches = grid.deleteMatches();
             if (!matches.isEmpty()) {
                 play(matches.size() > 4 ? "match_five" : "plop0");
+
                 matches.forEach(o -> {
                     sidekickOfColor(o.color()).ifPresent(Sidekick::increaseMana);
                     score += o.points() * multiplier;
                 });
+
+                //TODO: ANIM !!
+                Gdx.graphics.setContinuousRendering(false);
+                var popping = matches.stream()
+                                .map(PoppingCaps::new)
+                                .collect(Collectors.toList());
+
+                while (!popping.isEmpty()) {
+                    popping.forEach(caps -> {
+                        caps.update();
+                        caps.render();
+                        Gdx.graphics.requestRendering();
+                    });
+                    popping = popping.stream()
+                                .filter(caps -> !caps.isDestroyed())
+                                .collect(Collectors.toList());
+                }
+                Gdx.graphics.isContinuousRendering();
+
                 triggerSidekicks();
                 grid.dropAll();
                 multiplier++;
@@ -229,6 +252,9 @@ public class Level implements Renderable {
           victory = grid.remainingGerms() <= 0;
         if (defeat || victory) {
             play(defeat ? "game_over" : "cleared");
+            render();
+            Gdx.graphics.requestRendering();
+
             try {
                 Thread.sleep(1500);
             } catch (InterruptedException e) {

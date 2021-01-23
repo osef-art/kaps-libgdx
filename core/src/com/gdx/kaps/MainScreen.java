@@ -43,19 +43,13 @@ public class MainScreen extends ApplicationAdapter {
 		sra = new ShapeRendererAdaptor();
 		tra = new TextRendererAdaptor(25, new Color(1, 1, 1, 1));
 
-//		var sidekicks = Sidekick.randomSetOf(2, Arrays.stream(args)
-//												.map(Sidekick::ofName)
-//												.collect(Collectors.toSet()));
-
-		var sidekicks = Sidekick.randomSetOf(2,
-			Arrays.stream(args)
-				.map(SidekickRecord::ofName)
-				.collect(Collectors.toSet())
-		);
+		var sidekicks = Arrays.stream(args)
+						.map(SidekickRecord::ofName)
+						.collect(Collectors.toSet());
 
 		level = new Level(
-			Path.of("android/assets/levels/level" + new Random().nextInt(21)),
-			sidekicks
+			Path.of("android/assets/levels/level" + new Random().nextInt(1)),
+			Sidekick.randomSetOf(2, sidekicks)
 		);
 
 		controller = new InputHandler(level);
