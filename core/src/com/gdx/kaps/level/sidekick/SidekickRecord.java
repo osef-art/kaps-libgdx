@@ -5,20 +5,25 @@ import com.gdx.kaps.level.grid.Color;
 import com.gdx.kaps.level.grid.Grid;
 import com.gdx.kaps.level.grid.caps.Gelule;
 
+import java.util.Collections;
 import java.util.function.Consumer;
 import java.util.stream.IntStream;
 
+import static com.gdx.kaps.Utils.getRandomFrom;
+import static java.util.stream.Collectors.toList;
+
 public enum SidekickRecord {
-    SEAN("Sean", Color.COLOR_1, "fire", (lvl) -> {}, 20),              // INFO: Hits a tile then its neighbors
-    ZYRAME("Zyrame", Color.COLOR_2, "slice", (lvl) -> {}, 20, 2),   // INFO: Hits 2 random germs
-    RED("Red", Color.COLOR_3, "slice", (lvl) -> hitRandomColumn(lvl.grid()), 20, 2),
-    MIMAPS("Mimaps", Color.COLOR_4, "fire", (lvl) -> {}, 15, 2),   // INFO: Hits 3 random.tiles
-    PAINT("Paint", Color.COLOR_5, "paint", (lvl) -> {}, 10),             // INFO: Paints 5 tiles in mate's color
-    XERETH("Xereth", Color.COLOR_6, "slice", (lvl) -> {}, 25),            // INFO: Slices two.diagonals
-    JIM("Jim", Color.COLOR_10, "slice", (lvl) -> hitRandomLine(lvl.grid()), 25),
+    SEAN("Sean", Color.COLOR_1, "fire", (lvl) -> lvl.applyToGrid(SidekickRecord::hitRandomTileAndAdjacents), 20),
+    ZYRAME("Zyrame", Color.COLOR_2, "slice", (lvl) -> lvl.applyToGrid(SidekickRecord::hitTwoRandomGerms), 20),
+    RED("Red", Color.COLOR_3, "slice", (lvl) -> lvl.applyToGrid(SidekickRecord::sliceRandomColumn), 20),
+    MIMAPS("Mimaps", Color.COLOR_4, "fire", (lvl) -> lvl.applyToGrid(SidekickRecord::hitThreeRandomTiles), 15),
+    PAINT("Paint", Color.COLOR_5, "paint", SidekickRecord::repaintFiveTiles, 10),
+    XERETH("Xereth", Color.COLOR_6, "slice", (lvl) -> lvl.applyToGrid(SidekickRecord::sliceRandomDiagonals), 25),
+    JIM("Jim", Color.COLOR_10, "slice", (lvl) -> lvl.applyToGrid(SidekickRecord::sliceRandomLine), 25),
     COLOR("Color", Color.COLOR_11,"gen", SidekickRecord::generateSingleColoredGelule, -5),
     // TODO: sidekick that generates a single Caps ?
     ;
+
 
     private final Consumer<Level> power;
     private final Color type;
@@ -26,20 +31,14 @@ public enum SidekickRecord {
     private final String sound;
     private final int cooldown;
     private final int maxMana;
-    private final int damage;
 
-    SidekickRecord(String name, Color type, String soundName, Consumer<Level> power, int max) {
-        this(name, type, soundName, power, max, 1);
-    }
-
-    SidekickRecord(String name, Color type, String soundName, Consumer<Level> power, int max, int dmg) {
+    SidekickRecord(String name, Color type, String soundName, Consumer<Level> power, int mana) {
         this.power = power;
         this.name = name;
         this.type = type;
-        // INFO: negative max = cooldown
-        maxMana = Math.max(max, 0);
-        cooldown = -Math.min(max, 0);
-        damage = dmg;
+        // INFO: negative mana = cooldown
+        maxMana = Math.max(mana, 0);
+        cooldown = -Math.min(mana, 0);
         sound = soundName;
     }
 
@@ -67,10 +66,6 @@ public enum SidekickRecord {
         return cooldown;
     }
 
-    public int damage() {
-        return damage;
-    }
-
     public String sound() {
         return sound;
     }
@@ -81,17 +76,76 @@ public enum SidekickRecord {
         lvl.setNext(2, new Gelule(lvl, Color.random(lvl)));
     }
 
-    private static void hitRandomLine(Grid grid) {
+    private static void repaintFiveTiles(Level lvl) {
+        for (int i = 0; i < 5; i++) {
+            lvl.applyToGrid(grid -> {
+                var color = getRandomFrom(
+                  lvl.colors().stream()
+                    .filter(c -> c != PAINT.color())
+                    .collect(toList())
+                ).orElse(PAINT.color());
+
+                getRandomFrom(
+                  grid.everyObjectInGrid()
+                    .filter(obj -> !obj.isGerm())
+                    .collect(toList())
+                ).ifPresent(caps -> caps.paint(color));
+            });
+        }
+    }
+
+    private static void sliceRandomLine(Grid grid) {
         grid.pickRandomObject().ifPresent(
           obj -> IntStream.range(0, grid.width())
                    .forEach(n -> grid.hit(n, obj.y()))
         );
     }
 
-    private static void hitRandomColumn(Grid grid) {
+    private static void sliceRandomColumn(Grid grid) {
         grid.pickRandomObject().ifPresent(
           obj -> IntStream.range(0, grid.height())
-                   .forEach(n -> grid.hit(obj.x(), n))
+                   .forEach(n -> grid.hit(obj.x(), n, 2))
         );
+    }
+
+    private static void sliceRandomDiagonals(Grid grid) {
+        grid.pickRandomObject().ifPresent(
+          obj -> {
+              grid.hit(obj.x(), obj.y());
+              for (int i = 0; i < grid.width(); i++) {
+                  grid.hit(obj.x() - 1, obj.y() - 1);
+                  grid.hit(obj.x() - 1, obj.y() + 1);
+                  grid.hit(obj.x() + 1, obj.y() - 1);
+                  grid.hit(obj.x() + 1, obj.y() + 1);
+              }
+          }
+        );
+    }
+
+    private static void hitRandomTileAndAdjacents(Grid grid) {
+        grid.pickRandomObject().ifPresent(
+          obj -> {
+              grid.hit(obj.x(), obj.y());
+              grid.hit(obj.x() - 1, obj.y());
+              grid.hit(obj.x() + 1, obj.y());
+              grid.hit(obj.x(), obj.y() + 1);
+              grid.hit(obj.x(), obj.y() - 1);
+          }
+        );
+    }
+
+    private static void hitThreeRandomTiles(Grid grid) {
+        var objects = grid.everyObjectInGrid().collect(toList());
+        Collections.shuffle(objects);
+        objects.stream()
+          .limit(3)
+          .forEach(obj -> grid.hit(obj.x(), obj.y(), 2));
+    }
+
+    private static void hitTwoRandomGerms(Grid grid) {
+        for (int i = 0; i < 2; i++) {
+            grid.pickRandomGerm()
+              .ifPresent(germ -> grid.hit(germ.x(), germ.y(), 2));
+        }
     }
 }

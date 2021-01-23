@@ -9,8 +9,8 @@ import static java.util.Objects.requireNonNull;
 
 public abstract class GridObject implements GridObjectInterface {
     private final Position position;
-    private final Color color;
     private Sprite sprite;
+    private Color color;
 
     public GridObject(int x, int y, Color color) {
         requireNonNull(color);
@@ -65,5 +65,9 @@ public abstract class GridObject implements GridObjectInterface {
 
     public void render(float x, float y, float width, float height, float alpha) {
         spra.render(sprite, x, y, width, height, alpha);
+    }
+
+    public void paint(Color color) {
+        this.color = color;
     }
 }

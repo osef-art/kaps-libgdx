@@ -107,6 +107,18 @@ public class Grid implements Renderable {
         return Utils.getRandomFrom(everyObjectInGrid().collect(toList()));
     }
 
+    public Optional<GridObject> pickRandomGerm() {
+        return Utils.getRandomFrom(everyObjectInGrid()
+                                     .filter(GridObjectInterface::isGerm)
+                                     .collect(toList()));
+    }
+
+    public Optional<GridObject> pickRandomCaps() {
+        return Utils.getRandomFrom(everyObjectInGrid()
+                                     .filter(obj -> !obj.isGerm())
+                                     .collect(toList()));
+    }
+
     public int remainingGerms() {
         return (int) everyObjectInGrid()
           .filter(GridObject::isGerm)
@@ -204,10 +216,16 @@ public class Grid implements Renderable {
     }
 
     public void hit(int x, int y) {
-        get(x, y).ifPresent(o -> {
-            o.hit();
-            if (o.isDestroyed()) pop(o);
-        });
+        hit(x, y, 1);
+    }
+
+    public void hit(int x, int y, int damage) {
+        for (int i = 0; i < damage; i++) {
+            get(x, y).ifPresent(o -> {
+                o.hit();
+                if (o.isDestroyed()) pop(o);
+            });
+        }
     }
 
     /**
@@ -329,7 +347,7 @@ public class Grid implements Renderable {
     /**
      * @return a flatmap collecting every obj of each {@link Column} of the grid.
      */
-    private Stream<GridObject> everyObjectInGrid() {
+    public Stream<GridObject> everyObjectInGrid() {
         return Arrays.stream(columns)
           .flatMap(col -> Arrays.stream(col.tiles))
           .filter(Objects::nonNull);

@@ -13,6 +13,7 @@ import com.gdx.kaps.time.Timer;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -61,10 +62,6 @@ public class Level implements Renderable {
     }
 
     // getters
-
-    public Grid grid() {
-        return grid;
-    }
 
     public int gridWidth() {
         return grid.width();
@@ -134,6 +131,10 @@ public class Level implements Renderable {
     }
 
     // operations
+
+    public void applyToGrid(Consumer<Grid> function) {
+        function.accept(grid);
+    }
 
     public void setNext(int n, Gelule gelule) {
         next[n-1] = gelule;
