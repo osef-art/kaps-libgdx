@@ -3,6 +3,7 @@ package com.gdx.kaps.level.sidekick;
 import com.gdx.kaps.level.Level;
 import com.gdx.kaps.level.grid.Color;
 import com.gdx.kaps.level.grid.Grid;
+import com.gdx.kaps.level.grid.caps.EffectAnim;
 import com.gdx.kaps.level.grid.caps.Gelule;
 
 import java.util.Collections;
@@ -10,6 +11,7 @@ import java.util.function.Consumer;
 import java.util.stream.IntStream;
 
 import static com.gdx.kaps.Utils.getRandomFrom;
+import static com.gdx.kaps.level.grid.caps.EffectAnim.EffectType.*;
 import static java.util.stream.Collectors.toList;
 
 public enum SidekickRecord {
@@ -36,7 +38,7 @@ public enum SidekickRecord {
         this.name = name;
         this.type = type;
         // INFO: negative mana = cooldown
-        maxMana = Math.max(mana, 0);
+        maxMana = mana > 0 ? 4 : 0; //TODO: <- testing purposes: Math.max(mana, 0);
         cooldown = -Math.min(mana, 0);
         sound = soundName;
     }
@@ -89,33 +91,36 @@ public enum SidekickRecord {
                 .filter(obj -> !obj.color().equals(color))
                 .filter(obj -> !obj.isGerm())
                 .collect(toList())
-            ).ifPresent(caps -> caps.paint(color)));
+            ).ifPresent(caps -> {
+                caps.paint(color);
+                grid.addEffect(EffectAnim.EffectType.PAINT, caps);
+            }));
         }
     }
 
     private static void sliceRandomLine(Grid grid) {
         grid.pickRandomObject().ifPresent(
           obj -> IntStream.range(0, grid.width())
-                   .forEach(n -> grid.hit(n, obj.y()))
+                   .forEach(n -> grid.hit(n, obj.y(), SLICE))
         );
     }
 
     private static void sliceRandomColumn(Grid grid) {
         grid.pickRandomObject().ifPresent(
           obj -> IntStream.range(0, grid.height())
-                   .forEach(n -> grid.hit(obj.x(), n, 2))
+                   .forEach(n -> grid.hit(obj.x(), n, SLICE, 2))
         );
     }
 
     private static void sliceRandomDiagonals(Grid grid) {
         grid.pickRandomObject().ifPresent(
           obj -> {
-              grid.hit(obj.x(), obj.y());
+              grid.hit(obj.x(), obj.y(), SLICE);
               for (int i = 0; i < grid.width(); i++) {
-                  grid.hit(obj.x() - 1, obj.y() - 1);
-                  grid.hit(obj.x() - 1, obj.y() + 1);
-                  grid.hit(obj.x() + 1, obj.y() - 1);
-                  grid.hit(obj.x() + 1, obj.y() + 1);
+                  grid.hit(obj.x() - i, obj.y() - i, SLICE);
+                  grid.hit(obj.x() - i, obj.y() + i, SLICE);
+                  grid.hit(obj.x() + i, obj.y() - i, SLICE);
+                  grid.hit(obj.x() + i, obj.y() + i, SLICE);
               }
           }
         );
@@ -124,11 +129,11 @@ public enum SidekickRecord {
     private static void hitRandomTileAndAdjacents(Grid grid) {
         grid.pickRandomObject().ifPresent(
           obj -> {
-              grid.hit(obj.x(), obj.y());
-              grid.hit(obj.x() - 1, obj.y());
-              grid.hit(obj.x() + 1, obj.y());
-              grid.hit(obj.x(), obj.y() + 1);
-              grid.hit(obj.x(), obj.y() - 1);
+              grid.hit(obj.x(), obj.y(), FIRE);
+              grid.hit(obj.x() - 1, obj.y(), CORE);
+              grid.hit(obj.x() + 1, obj.y(), CORE);
+              grid.hit(obj.x(), obj.y() + 1, CORE);
+              grid.hit(obj.x(), obj.y() - 1, CORE);
           }
         );
     }
@@ -138,13 +143,14 @@ public enum SidekickRecord {
         Collections.shuffle(objects);
         objects.stream()
           .limit(3)
-          .forEach(obj -> grid.hit(obj.x(), obj.y(), 2));
+          .forEach(obj -> grid.hit(obj.x(), obj.y(), FIRE, 2));
     }
 
     private static void hitTwoRandomGerms(Grid grid) {
         for (int i = 0; i < 2; i++) {
             grid.pickRandomGerm()
-              .ifPresent(germ -> grid.hit(germ.x(), germ.y(), 2));
+              .ifPresent(germ -> grid.hit(germ.x(), germ.y(), SLICE, 2));
         }
+        // TODO: powers: add deleted to matching sidekick
     }
 }

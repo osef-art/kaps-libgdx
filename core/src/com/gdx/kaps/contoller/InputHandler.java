@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.stream.IntStream;
 
 public class InputHandler implements InputProcessor {
+    // TODO: handle mouse inputs
     private final HashMap<Integer, Boolean> pressed = new HashMap<>();
     private final static double UPDATE_SPEED = 75_000_000;
     private final Timer moveSpeed;

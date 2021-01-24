@@ -173,6 +173,7 @@ public class Level implements StaticRenderable {
     }
 
     private void spawnNewGelule() {
+        // TODO: find a way to spawn it only when anims are done
         if (gelule != null || isOver()) return;
         gelule = next[0].copy();
 
@@ -196,10 +197,12 @@ public class Level implements StaticRenderable {
     }
 
     private void triggerSidekicks() {
+        // TODO: animation focus when sidekicks are triggered
         sidekicks.forEach(sdk -> sdk.triggerIfReady(this));
     }
 
     private void decreaseCooldowns() {
+        // TODO: match of 5 = decrease cooldown !
         sidekicks.forEach(sdk -> {
             sdk.decreaseCooldown();
             sdk.triggerIfReady(this);
@@ -254,9 +257,10 @@ public class Level implements StaticRenderable {
     }
 
     public void end() {
-        play(grid.remainingGerms() == 0 ? "cleared" : "game_over");
+        boolean victory = grid.remainingGerms() == 0;
+        play(victory ? "cleared" : "game_over");
 
-        System.out.println("GAME OVER");
+        System.out.println(victory ? "LEVEL CLEARED!" : "GAME OVER");
         try {
             Thread.sleep(1500);
         } catch (InterruptedException e) {
@@ -268,6 +272,7 @@ public class Level implements StaticRenderable {
     // rendering
 
     private void renderBackGround() {
+        // timer
         sra.drawRect(
           dim.gridMargin,
           dim.gridMargin + dim.get(Zone.GRID).height + 10,
@@ -283,6 +288,7 @@ public class Level implements StaticRenderable {
           new Color(0.6f, 0.6f, 0.75f, 1)
         );
 
+        // side panel
         sra.drawRect(
           dim.get(Zone.SIDE_PANEL),
           new Color(0.4f, 0.45f, 0.55f, 1)
@@ -300,9 +306,10 @@ public class Level implements StaticRenderable {
         );
         tra.drawText("HOLD", dim.get(Zone.HOLD_BOX).x, dim.get(Zone.HOLD_BOX).y + dim.get(Zone.HOLD_BOX).height + 10);
 
+        // bottom panel
         sra.drawRect(
           dim.get(Zone.BOTTOM_PANEL),
-          new Color(0.6f, 0.45f, 0.85f, 1)
+          sidekicks.get(0).color().value()
         );
 
         tra.drawText(score + "", dim.get(Zone.BOTTOM_PANEL));
@@ -345,11 +352,10 @@ public class Level implements StaticRenderable {
         renderBackGround();
         renderSidekicks();
 
-        // level
         grid.render();
         Optional.ofNullable(gelule).ifPresent(g -> {
-            g.render();
             preview.render();
+            g.render();
         });
 
         next[0].render(dim.get(Zone.NEXT_GELULE));

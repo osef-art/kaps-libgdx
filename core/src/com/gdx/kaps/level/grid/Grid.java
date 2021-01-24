@@ -2,10 +2,9 @@ package com.gdx.kaps.level.grid;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.gdx.kaps.Utils;
 import com.gdx.kaps.level.Level;
 import com.gdx.kaps.level.grid.caps.Gelule;
-import com.gdx.kaps.level.grid.caps.PoppingCaps;
+import com.gdx.kaps.level.grid.caps.EffectAnim;
 import com.gdx.kaps.level.grid.germ.Germ;
 import com.gdx.kaps.renderer.Dimensions;
 import com.gdx.kaps.renderer.Renderable;
@@ -24,6 +23,7 @@ import java.util.stream.Stream;
 
 import static com.gdx.kaps.MainScreen.dim;
 import static com.gdx.kaps.MainScreen.sra;
+import static com.gdx.kaps.Utils.getRandomFrom;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.*;
 
@@ -34,7 +34,8 @@ public class Grid implements StaticRenderable {
             tiles = new GridObject[size];
         }
     }
-    private final List<PoppingCaps> popping = new ArrayList<>();
+    private final List<EffectAnim> popping = new ArrayList<>();
+    private final List<EffectAnim> effects = new ArrayList<>();
     private final Column[] columns;
 
     // init
@@ -103,17 +104,18 @@ public class Grid implements StaticRenderable {
      * The optional is empty if there's no element.
      */
     public Optional<GridObject> get(int x, int y) {
+        if (!isInGrid(x, y)) return Optional.empty();
         return Optional.ofNullable(columns[x].tiles[y]);
     }
 
     public Optional<GridObject> pickRandomObject() {
-        return Utils.getRandomFrom(everyObjectInGrid().collect(toList()));
+        return getRandomFrom(everyObjectInGrid().collect(toList()));
     }
 
     public Optional<GridObject> pickRandomGerm() {
-        return Utils.getRandomFrom(everyObjectInGrid()
-                                     .filter(GridObjectInterface::isGerm)
-                                     .collect(toList()));
+        return getRandomFrom(everyObjectInGrid()
+                               .filter(GridObjectInterface::isGerm)
+                               .collect(toList()));
     }
 
     public int remainingGerms() {
@@ -216,17 +218,34 @@ public class Grid implements StaticRenderable {
         hit(obj.x(), obj.y());
     }
 
+    public void hit(int x, int y, EffectAnim.EffectType type) {
+        hit(x, y, type, 1);
+    }
+
     public void hit(int x, int y) {
         hit(x, y, 1);
     }
 
+    public void hit(int x, int y, EffectAnim.EffectType type, int damage) {
+        for (int i = 0; i < damage; i++) {
+            //IMPL: replace 'type' with a consumer of 'additional effect'
+            get(x, y).ifPresent(o -> {
+                o.hit();
+                addEffect(type, o);
+                if (o.isDestroyed()) {
+                    pop(o);
+                    popping.add(EffectAnim.ofPopping(o));
+                }
+            });
+        }
+    }
     public void hit(int x, int y, int damage) {
         for (int i = 0; i < damage; i++) {
             get(x, y).ifPresent(o -> {
                 o.hit();
                 if (o.isDestroyed()) {
                     pop(o);
-                    popping.add(new PoppingCaps(o));
+                    popping.add(EffectAnim.ofPopping(o));
                 }
             });
         }
@@ -357,14 +376,24 @@ public class Grid implements StaticRenderable {
           .filter(Objects::nonNull);
     }
 
+    public void addEffect(EffectAnim.EffectType type, GridObject o) {
+        effects.add(new EffectAnim(type, o.x(), o.y()));
+    }
+
     @Override
     public void update() {
         everyObjectInGrid().forEach(Renderable::update);
+        //IMPL: stream of all effects.
         popping.forEach(caps -> {
             caps.update();
             caps.render();
         });
-        popping.removeIf(PoppingCaps::isDestroyed);
+        popping.removeIf(EffectAnim::isOver);
+        effects.forEach(caps -> {
+            caps.update();
+            caps.render();
+        });
+        effects.removeIf(EffectAnim::isOver);
     }
 
     private void renderBackground() {
@@ -393,6 +422,16 @@ public class Grid implements StaticRenderable {
                 get(x, y).ifPresent(obj -> obj.render(finalX, finalY));
             }
         }
-        popping.forEach(PoppingCaps::render);
+        popping.forEach(EffectAnim::render);
+        if (!effects.isEmpty()) {
+            sra.drawRect(
+              dim.gridMargin,
+              dim.gridMargin,
+              dim.get(Zone.GRID).width,
+              dim.get(Zone.GRID).height,
+              new Color(0, 0, 0, 0.15f)
+            );
+        }
+        effects.forEach(EffectAnim::render);
     }
 }

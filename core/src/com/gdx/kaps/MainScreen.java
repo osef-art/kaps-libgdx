@@ -48,7 +48,7 @@ public class MainScreen extends ApplicationAdapter {
 						.collect(Collectors.toSet());
 
 		level = new Level(
-			Path.of("android/assets/levels/level" + new Random().nextInt(1)),
+			Path.of("android/assets/levels/level" + new Random().nextInt(21)),
 			Sidekick.randomSetOf(2, sidekicks)
 		);
 
