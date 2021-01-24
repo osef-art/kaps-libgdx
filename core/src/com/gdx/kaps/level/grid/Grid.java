@@ -9,6 +9,7 @@ import com.gdx.kaps.level.grid.caps.PoppingCaps;
 import com.gdx.kaps.level.grid.germ.Germ;
 import com.gdx.kaps.renderer.Dimensions;
 import com.gdx.kaps.renderer.Renderable;
+import com.gdx.kaps.renderer.StaticRenderable;
 import com.gdx.kaps.renderer.Zone;
 
 import java.io.BufferedReader;
@@ -26,7 +27,7 @@ import static com.gdx.kaps.MainScreen.sra;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.*;
 
-public class Grid implements Renderable {
+public class Grid implements StaticRenderable {
     static class Column {
         private final GridObject[] tiles;
         Column(int size) {
@@ -158,6 +159,10 @@ public class Grid implements Renderable {
 
     private boolean containsMatches() {
         return !matchingObjects().isEmpty();
+    }
+
+    public boolean hasPoppingCaps() {
+        return !popping.isEmpty();
     }
 
     // transactions
@@ -389,10 +394,5 @@ public class Grid implements Renderable {
             }
         }
         popping.forEach(PoppingCaps::render);
-    }
-
-    @Override
-    public void render(float x, float y, float width, float height) {
-
     }
 }

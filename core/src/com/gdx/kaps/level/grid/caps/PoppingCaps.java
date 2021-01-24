@@ -11,9 +11,9 @@ public class PoppingCaps extends Caps {
 
     public PoppingCaps(GridObject o) {
         super(o.x(), o.y(), o.color());
-        sprite = new AnimatedSprite(
+        sprite = AnimatedSprite.oneShot(
           "android/assets/img/" + color().id() + "/caps/pop_",
-          0, 8, 100_000_000
+          8, 100_000_000
         );
     }
 

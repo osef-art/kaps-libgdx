@@ -9,8 +9,12 @@ public class Timer {
         this.limit = limit;
     }
 
+    public boolean isExceeded() {
+        return chrono.exceeds(limit);
+    }
+
     public boolean resetIfExceeds() {
-        if (chrono.exceeds(limit)) {
+        if (isExceeded()) {
             chrono.reset();
             return true;
         }
@@ -28,4 +32,5 @@ public class Timer {
     public double ratio() {
         return chrono.value() / limit;
     }
+
 }

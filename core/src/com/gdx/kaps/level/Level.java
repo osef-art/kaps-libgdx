@@ -1,15 +1,13 @@
 package com.gdx.kaps.level;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
 import com.gdx.kaps.level.grid.Grid;
 import com.gdx.kaps.level.grid.GridObject;
 import com.gdx.kaps.level.grid.caps.Gelule;
-import com.gdx.kaps.level.grid.caps.PoppingCaps;
 import com.gdx.kaps.level.grid.caps.PreviewGelule;
 import com.gdx.kaps.level.sidekick.Sidekick;
 import com.gdx.kaps.renderer.Renderable;
+import com.gdx.kaps.renderer.StaticRenderable;
 import com.gdx.kaps.renderer.Zone;
 import com.gdx.kaps.time.Timer;
 
@@ -23,7 +21,7 @@ import java.util.stream.Stream;
 import static com.gdx.kaps.MainScreen.*;
 import static com.gdx.kaps.Sound.play;
 
-public class Level implements Renderable {
+public class Level implements StaticRenderable {
     public final static int MIN_MATCH_RANGE = 4;
     private int updateSpeed = 1_000_000_000;
     private final Timer updateTimer;
@@ -88,32 +86,59 @@ public class Level implements Renderable {
                  .findAny();
     }
 
+    private Optional<Gelule> currentGelule() {
+        return Optional.ofNullable(gelule);
+    }
+
+    private boolean isOver() {
+        boolean defeat = currentGelule()
+                           .map(g -> !g.isAtValidEmplacement(grid))
+                           .orElse(false);
+        boolean victory = grid.remainingGerms() <= 0;
+        boolean noMoreAnims = !grid.hasPoppingCaps();
+        return (defeat || victory) && noMoreAnims;
+    }
+
     // control
 
+    private void doIfPresent(Consumer<Gelule> action) {
+        currentGelule().ifPresent(action);
+    }
+
     public void moveGeluleLeft() {
-        if (!gelule.moveLeftIfPossible(grid)) play("cant");
-        updatePreview();
+        doIfPresent(gelule -> {
+            if (!gelule.moveLeftIfPossible(grid)) play("cant");
+            updatePreview();
+        });
     }
 
     public void moveGeluleRight() {
-        if (!gelule.moveRightIfPossible(grid)) play("cant");
-        updatePreview();
+        doIfPresent(gelule -> {
+            if (!gelule.moveRightIfPossible(grid)) play("cant");
+            updatePreview();
+        });
     }
 
     public void dipGelule() {
-        if (!gelule.dipIfPossible(grid)) acceptGelule();
+        doIfPresent(gelule -> {
+            if (!gelule.dipIfPossible(grid)) acceptGelule();
+        });
     }
 
     public void flipGelule() {
-        var sound = gelule.flipIfPossible(grid) ? "flip" : "cant";
-        play(sound);
-        updatePreview();
+        doIfPresent(gelule -> {
+            var sound = gelule.flipIfPossible(grid) ? "flip" : "cant";
+            play(sound);
+            updatePreview();
+        });
     }
 
     public void dropGelule() {
-        play("drop");
-        while (gelule.dipIfPossible(grid));
-        acceptGelule();
+        doIfPresent(gelule -> {
+            play("drop");
+            while (gelule.dipIfPossible(grid));
+            acceptGelule();
+        });
     }
 
     public void togglePause() {
@@ -148,16 +173,14 @@ public class Level implements Renderable {
     }
 
     private void spawnNewGelule() {
-        if (gelule != null) return;
+        if (gelule != null || isOver()) return;
         gelule = next[0].copy();
+
         updateNext();
         updatePreview();
 
         canHold = true;
         multiplier = 1;
-        // TODO: display gelule when game over. maybe in main loop ?
-
-        checkGameOver();
     }
 
     private void acceptGelule() {
@@ -198,6 +221,7 @@ public class Level implements Renderable {
         if (updateTimer.resetIfExceeds()) dipGelule();
         grid.update();
         sidekicks.forEach(Renderable::update);
+        if (isOver()) end();
     }
 
     private void updateNext() {
@@ -229,22 +253,16 @@ public class Level implements Renderable {
         } while (!matches.isEmpty());
     }
 
-    public void checkGameOver() {
-        boolean defeat = !gelule.isAtValidEmplacement(grid),
-          victory = grid.remainingGerms() <= 0;
-        if (defeat || victory) {
-            play(defeat ? "game_over" : "cleared");
-            render();
-            Gdx.graphics.requestRendering();
+    public void end() {
+        play(grid.remainingGerms() == 0 ? "cleared" : "game_over");
 
-            try {
-                Thread.sleep(1500);
-            } catch (InterruptedException e) {
-                throw new AssertionError(e);
-            }
-            System.out.println("GAME OVER");
-            System.exit(0);
+        System.out.println("GAME OVER");
+        try {
+            Thread.sleep(1500);
+        } catch (InterruptedException e) {
+            throw new AssertionError(e);
         }
+        System.exit(0);
     }
 
     // rendering
@@ -329,14 +347,12 @@ public class Level implements Renderable {
 
         // level
         grid.render();
-        Optional.ofNullable(preview).ifPresent(Gelule::render);
-        Optional.ofNullable(gelule).ifPresent(Gelule::render);
+        Optional.ofNullable(gelule).ifPresent(g -> {
+            g.render();
+            preview.render();
+        });
 
         next[0].render(dim.get(Zone.NEXT_GELULE));
         Optional.ofNullable(hold).ifPresent(hold -> hold.render(dim.get(Zone.HOLD_GELULE)));
-    }
-
-    @Override
-    public void render(float x, float y, float width, float height) {
     }
 }

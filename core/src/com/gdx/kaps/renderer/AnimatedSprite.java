@@ -10,24 +10,29 @@ import java.util.Random;
 import static com.gdx.kaps.MainScreen.spra;
 
 public class AnimatedSprite implements Renderable {
-    // TODO: looping or not ? subclass ?
     private final Timer updateTimer;
-    private final int nbFrames;
     private final Sprite[] sprites;
+    private final boolean looping;
+    private final int nbFrames;
     private Path path;
     private int frame;
 
     public AnimatedSprite(String path, int frames, double speed) {
-        this(path, new Random().nextInt(frames), frames, speed);
+        this(path, new Random().nextInt(frames), frames, speed, true);
     }
 
-    public AnimatedSprite(String path, int startingFrame, int frames, double speed) {
-        frame = startingFrame;
+    public AnimatedSprite(String path, int startingFrame, int frames, double speed, boolean looping) {
+        this.looping = looping;
         updateTimer = new Timer(speed);
         sprites = new Sprite[frames];
+        frame = startingFrame;
         nbFrames = frames;
 
         updatePath(path);
+    }
+
+    public static AnimatedSprite oneShot(String path, int frame, double speed) {
+        return new AnimatedSprite(path, 0, frame, speed, false);
     }
 
     private Sprite currentSprite() {
@@ -49,6 +54,7 @@ public class AnimatedSprite implements Renderable {
 
     @Override
     public void update() {
+        if (frame == nbFrames -1 && !looping) return;
         if (updateTimer.resetIfExceeds()) frame = (frame + 1) % nbFrames;
     }
 
@@ -63,6 +69,6 @@ public class AnimatedSprite implements Renderable {
     }
 
     public boolean isOver() {
-        return frame == nbFrames - 1;
+        return frame == nbFrames - 1 && updateTimer.isExceeded();
     }
 }
