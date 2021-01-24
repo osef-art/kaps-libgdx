@@ -21,7 +21,7 @@ public class SpriteRendererAdaptor implements RendererAdaptor {
     }
 
     public void render(Sprite sprite) {
-        sprite.draw(batch);
+        draw(() -> sprite.draw(batch));
     }
 
     public void render(Sprite sprite, float x, float y, float width, float height) {

@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.gdx.kaps.Utils;
 import com.gdx.kaps.level.Level;
 import com.gdx.kaps.level.grid.caps.Gelule;
+import com.gdx.kaps.level.grid.caps.PoppingCaps;
 import com.gdx.kaps.level.grid.germ.Germ;
 import com.gdx.kaps.renderer.Dimensions;
 import com.gdx.kaps.renderer.Renderable;
@@ -32,6 +33,7 @@ public class Grid implements Renderable {
             tiles = new GridObject[size];
         }
     }
+    private final List<PoppingCaps> popping = new ArrayList<>();
     private final Column[] columns;
 
     // init
@@ -217,7 +219,10 @@ public class Grid implements Renderable {
         for (int i = 0; i < damage; i++) {
             get(x, y).ifPresent(o -> {
                 o.hit();
-                if (o.isDestroyed()) pop(o);
+                if (o.isDestroyed()) {
+                    pop(o);
+                    popping.add(new PoppingCaps(o));
+                }
             });
         }
     }
@@ -350,10 +355,14 @@ public class Grid implements Renderable {
     @Override
     public void update() {
         everyObjectInGrid().forEach(Renderable::update);
+        popping.forEach(caps -> {
+            caps.update();
+            caps.render();
+        });
+        popping.removeIf(PoppingCaps::isDestroyed);
     }
 
-    @Override
-    public void render() {
+    private void renderBackground() {
         for (int x = 0; x < width(); x++) {
             for (int y = 0; y < height(); y++) {
                 float shift = (x + y) %2 == 0 ? 0.0175f : 0;
@@ -368,13 +377,18 @@ public class Grid implements Renderable {
                 );
             }
         }
+    }
+
+    @Override
+    public void render() {
+        renderBackground();
         for (int x = 0; x < width(); x++) {
             for (int y = 0; y < height(); y++) {
-                int finalX = x;
-                int finalY = y;
+                int finalX = x, finalY = y;
                 get(x, y).ifPresent(obj -> obj.render(finalX, finalY));
             }
         }
+        popping.forEach(PoppingCaps::render);
     }
 
     @Override
