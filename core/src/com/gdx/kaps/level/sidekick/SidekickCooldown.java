@@ -34,7 +34,7 @@ class SidekickCooldown extends Sidekick {
 
     void trigger(Level level) {
         Sound.play(type.sound());
-        type.power().accept(level);
+        type.power().accept(level, type);
     }
 
     public void triggerIfReady(Level lvl) {

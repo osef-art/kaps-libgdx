@@ -16,14 +16,15 @@ import com.gdx.kaps.time.Timer;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Random;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class MainScreen extends ApplicationAdapter {
-	private InputHandler controller;
-	private final String[] args;
-	private Vector2 cameraPos;
+	private final Set<SidekickRecord> sidekicks;
 	private static Vector2 shaking;
 	private static Timer timer;
+	private InputHandler controller;
+	private Vector2 cameraPos;
 	private Level level;
 
 	public static OrthographicCamera camera;
@@ -33,7 +34,9 @@ public class MainScreen extends ApplicationAdapter {
 	public static Dimensions dim;
 
 	public MainScreen(String ... sdks) {
-		args = sdks;
+		sidekicks = Arrays.stream(sdks)
+					.map(SidekickRecord::ofName)
+					.collect(Collectors.toSet());
 	}
 
 	public static void shake() {
@@ -68,10 +71,6 @@ public class MainScreen extends ApplicationAdapter {
 		spra = new SpriteRendererAdaptor();
 		sra = new ShapeRendererAdaptor();
 		tra = new TextRendererAdaptor(25, new Color(1, 1, 1, 1));
-
-		var sidekicks = Arrays.stream(args)
-						.map(SidekickRecord::ofName)
-						.collect(Collectors.toSet());
 
 		level = new Level(
 			Path.of("android/assets/levels/level" + new Random().nextInt(21)),

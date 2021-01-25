@@ -82,7 +82,7 @@ public class Sidekick implements Renderable {
     void trigger(Level level) {
         MainScreen.shake();
         Sound.play(type.sound());
-        type.power().accept(level);
+        type.power().accept(level, type);
     }
 
     public void triggerIfReady(Level lvl) {

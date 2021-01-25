@@ -218,15 +218,11 @@ public class Grid implements StaticRenderable {
         hit(obj.x(), obj.y());
     }
 
-    public void hit(int x, int y, EffectAnim.EffectType type) {
-        hit(x, y, type, 1);
-    }
-
     public void hit(int x, int y) {
         hit(x, y, 1);
     }
 
-    public void hit(int x, int y, EffectAnim.EffectType type, int damage) {
+    public void hit(int x, int y, int damage, EffectAnim.EffectType type) {
         for (int i = 0; i < damage; i++) {
             //IMPL: replace 'type' with a consumer of 'additional effect'
             get(x, y).ifPresent(o -> {

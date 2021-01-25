@@ -6,6 +6,7 @@ import com.gdx.kaps.level.grid.GridObject;
 import com.gdx.kaps.level.grid.caps.Gelule;
 import com.gdx.kaps.level.grid.caps.PreviewGelule;
 import com.gdx.kaps.level.sidekick.Sidekick;
+import com.gdx.kaps.level.sidekick.SidekickRecord;
 import com.gdx.kaps.renderer.Renderable;
 import com.gdx.kaps.renderer.StaticRenderable;
 import com.gdx.kaps.renderer.Zone;
@@ -14,12 +15,15 @@ import com.gdx.kaps.time.Timer;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.gdx.kaps.MainScreen.*;
 import static com.gdx.kaps.Sound.play;
+import static com.gdx.kaps.Utils.getRandomFrom;
+import static java.util.stream.Collectors.toList;
 
 public class Level implements StaticRenderable {
     public final static int MIN_MATCH_RANGE = 4;
@@ -84,6 +88,14 @@ public class Level implements StaticRenderable {
         return sidekicks.stream()
                  .filter(sdk -> sdk.color() == Objects.requireNonNull(color))
                  .findAny();
+    }
+
+    public Sidekick sidekickExcept(SidekickRecord sidekick) {
+        return getRandomFrom(
+          sidekicks().stream()
+            .filter(sdk -> sdk.color() != sidekick.color())
+            .collect(toList())
+        ).orElse(sidekicks().get(0));
     }
 
     private Optional<Gelule> currentGelule() {
@@ -164,8 +176,8 @@ public class Level implements StaticRenderable {
 
     // operations
 
-    public void applyToGrid(Consumer<Grid> function) {
-        function.accept(grid);
+    public void applyToGrid(BiConsumer<Grid, SidekickRecord> function, SidekickRecord sidekick) {
+        function.accept(grid, sidekick);
     }
 
     public void setNext(int n, Gelule gelule) {
@@ -202,7 +214,6 @@ public class Level implements StaticRenderable {
     }
 
     private void decreaseCooldowns() {
-        // TODO: match of 5 = decrease cooldown !
         sidekicks.forEach(sdk -> {
             sdk.decreaseCooldown();
             sdk.triggerIfReady(this);
@@ -248,11 +259,11 @@ public class Level implements StaticRenderable {
                     sidekickOfColor(o.color()).ifPresent(Sidekick::increaseMana);
                     score += o.points() * multiplier;
                 });
-
                 triggerSidekicks();
                 grid.dropAll();
                 multiplier++;
             }
+            // TODO: match of 5 = decrease cooldown !
         } while (!matches.isEmpty());
     }
 

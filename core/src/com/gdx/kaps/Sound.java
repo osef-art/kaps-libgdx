@@ -43,6 +43,6 @@ public class Sound {
         currentSound = Gdx.audio.newSound(
           Gdx.files.internal(SoundRecord.pathOf(name))
         );
-        currentSound.setVolume(currentSound.play(), 0.05f);
+        currentSound.setVolume(currentSound.play(), 0.15f);
     }
 }
