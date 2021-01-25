@@ -39,29 +39,6 @@ public class MainScreen extends ApplicationAdapter {
 					.collect(Collectors.toSet());
 	}
 
-	public static void shake() {
-		timer.reset();
-		shaking.add(
-			new Random().nextBoolean() ? 5 : -5,
-			new Random().nextBoolean() ? 5 : -5
-		);
-	}
-
-	private void moveCamera() {
-		if (shaking.x != 0) {
-			if (timer.resetIfExceeds()) {
-				shaking.set(-shaking.x + Math.signum(shaking.x)*0.5f, -shaking.y + Math.signum(shaking.y)*0.5f);
-				camera.position.set(cameraPos.x + shaking.x, cameraPos.y + shaking.y, 0);
-				camera.update();
-			}
-		} else {
-			if (camera.position.y > cameraPos.y) {
-				camera.position.y -= (camera.position.y - cameraPos.y) / 12.5;
-				camera.update();
-			}
-		}
-	}
-
 	@Override
 	public void create () {
 		camera = new OrthographicCamera();
@@ -95,7 +72,30 @@ public class MainScreen extends ApplicationAdapter {
 		level.update();
 		level.render();
 	}
-	
+
+	public static void shake() {
+		timer.reset();
+		shaking.add(
+		new Random().nextBoolean() ? 5 : -5,
+		new Random().nextBoolean() ? 5 : -5
+		);
+	}
+
+	private void moveCamera() {
+		if (shaking.x != 0) {
+			if (timer.resetIfExceeds()) {
+				shaking.set(-shaking.x + Math.signum(shaking.x)*0.5f, -shaking.y + Math.signum(shaking.y)*0.5f);
+				camera.position.set(cameraPos.x + shaking.x, cameraPos.y + shaking.y, 0);
+				camera.update();
+			}
+		} else {
+			if (camera.position.y > cameraPos.y) {
+				camera.position.y -= (camera.position.y - cameraPos.y) / 12.5;
+				camera.update();
+			}
+		}
+	}
+
 	@Override
 	public void dispose () {
 		spra.dispose();

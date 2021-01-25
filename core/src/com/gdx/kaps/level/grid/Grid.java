@@ -6,6 +6,7 @@ import com.gdx.kaps.level.Level;
 import com.gdx.kaps.level.grid.caps.Gelule;
 import com.gdx.kaps.level.grid.caps.EffectAnim;
 import com.gdx.kaps.level.grid.germ.Germ;
+import com.gdx.kaps.level.sidekick.SidekickRecord;
 import com.gdx.kaps.renderer.Dimensions;
 import com.gdx.kaps.renderer.Renderable;
 import com.gdx.kaps.renderer.StaticRenderable;
@@ -219,26 +220,22 @@ public class Grid implements StaticRenderable {
     }
 
     public void hit(int x, int y) {
-        hit(x, y, 1);
+        hit(x, y, 1, (g) -> {});
+    }
+
+    public void hit(int x, int y, SidekickRecord sidekick) {
+        hit(x, y, sidekick.damage(), (g) -> g.addEffect(sidekick.effect(), x, y));
     }
 
     public void hit(int x, int y, int damage, EffectAnim.EffectType type) {
-        for (int i = 0; i < damage; i++) {
-            //IMPL: replace 'type' with a consumer of 'additional effect'
-            get(x, y).ifPresent(o -> {
-                o.hit();
-                addEffect(type, o);
-                if (o.isDestroyed()) {
-                    pop(o);
-                    popping.add(EffectAnim.ofPopping(o));
-                }
-            });
-        }
+        hit(x, y, damage, (g) -> g.addEffect(type, x, y));
     }
-    public void hit(int x, int y, int damage) {
+
+    private void hit(int x, int y, int damage, Consumer<Grid> action) {
         for (int i = 0; i < damage; i++) {
             get(x, y).ifPresent(o -> {
                 o.hit();
+                action.accept(this);
                 if (o.isDestroyed()) {
                     pop(o);
                     popping.add(EffectAnim.ofPopping(o));
@@ -373,7 +370,11 @@ public class Grid implements StaticRenderable {
     }
 
     public void addEffect(EffectAnim.EffectType type, GridObject o) {
-        effects.add(new EffectAnim(type, o.x(), o.y()));
+        addEffect(type, o.x(), o.y());
+    }
+
+    private void addEffect(EffectAnim.EffectType type, int x, int y) {
+        effects.add(new EffectAnim(type, x, y));
     }
 
     @Override
