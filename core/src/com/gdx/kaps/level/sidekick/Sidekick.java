@@ -9,14 +9,18 @@ import com.gdx.kaps.renderer.AnimatedSprite;
 import com.gdx.kaps.renderer.Renderable;
 import com.gdx.kaps.renderer.Zone;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Random;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.gdx.kaps.MainScreen.*;
+import static com.gdx.kaps.MainScreen.dim;
+import static com.gdx.kaps.MainScreen.tra;
 
 public class Sidekick implements Renderable {
     private final AnimatedSprite sprite;
-    private final SidekickRecord type;
+    final SidekickRecord type;
     final Gauge gauge;
 
     // init

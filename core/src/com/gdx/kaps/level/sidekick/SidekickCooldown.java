@@ -5,13 +5,13 @@ import com.gdx.kaps.level.Gauge;
 import com.gdx.kaps.level.Level;
 import com.gdx.kaps.renderer.Zone;
 
-import static com.gdx.kaps.MainScreen.*;
+import static com.gdx.kaps.MainScreen.dim;
+import static com.gdx.kaps.MainScreen.tra;
 
 class SidekickCooldown extends Sidekick {
     SidekickCooldown(SidekickRecord record) {
         super(record, new Gauge(record.cooldown(), record.cooldown()));
     }
-
 
     @Override
     public void increaseMana() {
@@ -30,6 +30,11 @@ class SidekickCooldown extends Sidekick {
     @Override
     public void reset() {
         gauge.fill();
+    }
+
+    void trigger(Level level) {
+        Sound.play(type.sound());
+        type.power().accept(level);
     }
 
     public void triggerIfReady(Level lvl) {

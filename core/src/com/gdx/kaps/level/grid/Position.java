@@ -3,18 +3,9 @@ package com.gdx.kaps.level.grid;
 public class Position {
     private int x, y;
 
-    public Position(float x, float y) {
-        // IMPL: vector...
-        this((int) x, (int) y);
-    }
-
     public Position(int x, int y) {
         this.x = x;
         this.y = y;
-    }
-
-    public Position() {
-        this(0, 0);
     }
 
     public int x() {

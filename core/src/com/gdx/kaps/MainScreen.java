@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
 import com.gdx.kaps.contoller.InputHandler;
 import com.gdx.kaps.level.Level;
-import com.gdx.kaps.level.grid.Position;
 import com.gdx.kaps.level.sidekick.Sidekick;
 import com.gdx.kaps.level.sidekick.SidekickRecord;
 import com.gdx.kaps.renderer.*;
@@ -23,7 +22,7 @@ public class MainScreen extends ApplicationAdapter {
 	private InputHandler controller;
 	private final String[] args;
 	private Vector2 cameraPos;
-	private static Position shaking;
+	private static Vector2 shaking;
 	private static Timer timer;
 	private Level level;
 
@@ -40,9 +39,24 @@ public class MainScreen extends ApplicationAdapter {
 	public static void shake() {
 		timer.reset();
 		shaking.add(
-			new Random().nextBoolean() ? 25 : -25,
-			new Random().nextBoolean() ? 25 : -25
+			new Random().nextBoolean() ? 5 : -5,
+			new Random().nextBoolean() ? 5 : -5
 		);
+	}
+
+	private void moveCamera() {
+		if (shaking.x != 0) {
+			if (timer.resetIfExceeds()) {
+				shaking.set(-shaking.x + Math.signum(shaking.x)*0.5f, -shaking.y + Math.signum(shaking.y)*0.5f);
+				camera.position.set(cameraPos.x + shaking.x, cameraPos.y + shaking.y, 0);
+				camera.update();
+			}
+		} else {
+			if (camera.position.y > cameraPos.y) {
+				camera.position.y -= (camera.position.y - cameraPos.y) / 12.5;
+				camera.update();
+			}
+		}
 	}
 
 	@Override
@@ -67,8 +81,8 @@ public class MainScreen extends ApplicationAdapter {
 		controller = new InputHandler(level);
 		Gdx.input.setInputProcessor(controller);
 
-		shaking = new Position();
-		timer = new Timer(10_000_000);
+		shaking = new Vector2();
+		timer = new Timer(25_000_000);
 	}
 
 	@Override
@@ -76,16 +90,7 @@ public class MainScreen extends ApplicationAdapter {
 		Gdx.gl.glClearColor(0.3f, 0.3f, 0.4f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-		if (camera.position.y > cameraPos.y) {
-			camera.position.y -= (camera.position.y - cameraPos.y) / 12.5;
-			camera.update();
-		}
-		// TODO: finish
-		if (timer.resetIfExceeds() && shaking.x() != 0) {
-			shaking.add((int) Math.signum(-shaking.x()), (int) Math.signum(-shaking.y()));
-			camera.position.set(cameraPos.x + shaking.x(), cameraPos.y + shaking.y(), 0);
-			camera.update();
-		}
+		moveCamera();
 
 		controller.update();
 		level.update();
