@@ -12,13 +12,10 @@ import static com.gdx.kaps.MainScreen.camera;
 public class ShapeRendererAdaptor implements RendererAdaptor {
     private final ShapeRenderer rd = new ShapeRenderer();
 
-    public ShapeRendererAdaptor() {
-        rd.setProjectionMatrix(camera.combined);
-    }
-
     private void draw(Runnable action, Color c) {
         Gdx.gl.glEnable(GL20.GL_BLEND);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+        rd.setProjectionMatrix(camera.combined);
         rd.begin(ShapeType.Filled);
         rd.setColor(c.r, c.g, c.b, c.a);
         action.run();

@@ -10,11 +10,8 @@ import static com.gdx.kaps.MainScreen.camera;
 public class SpriteRendererAdaptor implements RendererAdaptor {
     private final SpriteBatch batch = new SpriteBatch();
 
-    public SpriteRendererAdaptor() {
-        batch.setProjectionMatrix(camera.combined);
-    }
-
     private void draw(Runnable action) {
+        batch.setProjectionMatrix(camera.combined);
         batch.begin();
         action.run();
         batch.end();

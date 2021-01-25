@@ -39,7 +39,7 @@ public enum SidekickRecord {
         this.name = name;
         this.type = type;
         // INFO: negative mana = cooldown
-        maxMana = Math.max(mana, 0);
+        maxMana = mana > 0 ? 4:0;//TMP: Math.max(mana, 0);
         cooldown = -Math.min(mana, 0);
         sound = soundName;
     }

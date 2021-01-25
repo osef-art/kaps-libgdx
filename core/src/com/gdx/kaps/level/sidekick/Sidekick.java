@@ -1,5 +1,6 @@
 package com.gdx.kaps.level.sidekick;
 
+import com.gdx.kaps.MainScreen;
 import com.gdx.kaps.Sound;
 import com.gdx.kaps.level.Gauge;
 import com.gdx.kaps.level.Level;
@@ -75,6 +76,7 @@ public class Sidekick implements Renderable {
     }
 
     void trigger(Level level) {
+        MainScreen.shake();
         Sound.play(type.sound());
         type.power().accept(level);
     }

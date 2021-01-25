@@ -318,7 +318,6 @@ public class Level implements StaticRenderable {
           dim.get(Zone.BOTTOM_PANEL).y,
           dim.get(Zone.BOTTOM_PANEL).width,0
         );
-
     }
 
     private void renderSidekicks() {
