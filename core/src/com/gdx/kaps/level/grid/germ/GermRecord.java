@@ -3,10 +3,11 @@ package com.gdx.kaps.level.grid.germ;
 import java.util.Objects;
 
 public enum GermRecord {
-    BASIC("basic", 1, 0, 8),
-    WALL("wall", 4, 0, 4),
-    VIRUS("virus", 1, 7, 8),
-    THORN("thorn", 1, 5, 8),
+    // TODO: handle germ powers
+    BASIC("basic", 8, 1),
+    WALL("wall", 4, 4),
+    VIRUS("virus", 8, 1, 7),
+    THORN("thorn", 8, 1, 5),
     ;
 
     private final String name;
@@ -14,7 +15,11 @@ public enum GermRecord {
     private final int nbFrames;
     private final int maxHP;
 
-    GermRecord(String name, int maxHP, int cooldown, int frames) {
+    GermRecord(String name, int frames, int maxHP) {
+        this(name, frames, maxHP, 0);
+    }
+
+    GermRecord(String name, int frames, int maxHP, int cooldown) {
         Objects.requireNonNull(name);
         if (maxHP < 0) throw new IllegalArgumentException("Germ can't have a negative health (" + maxHP + ")");
         if (cooldown < 0) throw new IllegalArgumentException("Germ can't have a negative cooldown (" + cooldown + ")");
@@ -25,15 +30,19 @@ public enum GermRecord {
         this.name = name;
     }
 
-    public String type() {
-        return name;
-    }
-
     public int maxHP() {
         return maxHP;
     }
 
+    public String type() {
+        return name;
+    }
+
     public int nbFrames() {
         return nbFrames;
+    }
+
+    public int cooldown() {
+        return cooldown;
     }
 }

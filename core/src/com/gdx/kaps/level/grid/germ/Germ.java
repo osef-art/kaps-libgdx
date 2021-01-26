@@ -1,5 +1,6 @@
 package com.gdx.kaps.level.grid.germ;
 
+import com.gdx.kaps.level.Gauge;
 import com.gdx.kaps.level.grid.Color;
 import com.gdx.kaps.level.grid.Grid;
 import com.gdx.kaps.level.grid.GridObject;
@@ -13,10 +14,10 @@ import static com.gdx.kaps.MainScreen.dim;
 import static java.util.Objects.requireNonNull;
 
 public abstract class Germ extends GridObject {
-    // TODO: handle cooldown
     private final AnimatedSprite sprite;
+    private final boolean hasHealth;
     private final GermRecord type;
-    private int health;
+    private final Gauge health;
 
     Germ(int x, int y, Color color, GermRecord type) {
         this(x, y, color, type, type.maxHP());
@@ -35,7 +36,8 @@ public abstract class Germ extends GridObject {
           type.nbFrames(),
           100_000_000
         );
-        this.health = health;
+        this.health = new Gauge(health, type.maxHP());
+        hasHealth = type.maxHP() > 1;
         this.type = type;
     }
 
@@ -91,14 +93,18 @@ public abstract class Germ extends GridObject {
 
     @Override
     public boolean isDestroyed() {
-        return health <= 0;
+        return health.isEmpty();
     }
 
     @Override
     public void hit() {
-        health--;
+        health.decrease();
         if (!isDestroyed()) {
-            sprite.updatePath("android/assets/img/" + color().id() + "/germs/" + type.type() + (type.maxHP() == 1 ? "" : health) + "/idle_");
+            sprite.updatePath(
+              "android/assets/img/" + color().id() +
+                "/germs/" + type.type() +
+                (hasHealth ? health.value() : "") + "/idle_"
+            );
         }
     }
 
@@ -128,8 +134,13 @@ public abstract class Germ extends GridObject {
     }
 
     public void render(float x, float y, float width, float height) {
-        // TODO: render HP & cooldown
         sprite.render(x, y, width, height);
+        if (hasHealth) {
+            health.render(x, y, width, height/10,
+              new com.badlogic.gdx.graphics.Color(1, 1, 1, 0.25f),
+              new com.badlogic.gdx.graphics.Color(1, 1, 1, 1)
+            );
+        }
     }
 }
 

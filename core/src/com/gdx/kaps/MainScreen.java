@@ -50,7 +50,7 @@ public class MainScreen extends ApplicationAdapter {
 		tra = new TextRendererAdaptor(25, new Color(1, 1, 1, 1));
 
 		level = new Level(
-			Path.of("android/assets/levels/level" + new Random().nextInt(21)),
+			Path.of("android/assets/levels/level" + 14), //TEST: new Random().nextInt(21)),
 			Sidekick.randomSetOf(2, sidekicks)
 		);
 		camera.translate(0, dim.get(Zone.WINDOW).height);
