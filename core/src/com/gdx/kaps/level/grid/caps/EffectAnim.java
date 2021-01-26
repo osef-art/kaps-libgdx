@@ -33,6 +33,7 @@ public class EffectAnim implements StaticRenderable {
     public EffectAnim(EffectType type, int x, int y) {
         this(type.path, type.frames, x, y, 1.5f);
     }
+
     // IMPL: coherent args order ?
     private EffectAnim(String path, int frames, int x, int y, float scale) {
         sprite = AnimatedSprite.oneShot(path, frames, 100_000_000);

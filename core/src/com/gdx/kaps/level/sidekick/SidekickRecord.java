@@ -92,25 +92,20 @@ public enum SidekickRecord {
     // powers
 
     private static void generateSingleColoredGelule(Level lvl, SidekickRecord sidekick) {
-        lvl.setNext(2, new Gelule(lvl, lvl.sidekickExcept(COLOR).color()));
+        lvl.setNext(2, new Gelule(lvl, lvl.getSidekickExcept(COLOR).color()));
     }
 
     private static void repaintFiveTiles(Level lvl, SidekickRecord sidekick) {
-        for (int i = 0; i < 5; i++) {
-            lvl.applyToGrid(SidekickRecord::repaintRandomTile, sidekick);
-        }
-    }
+        var color = lvl.getSidekickExcept(sidekick).color();
 
-    private static void repaintRandomTile(Grid grid, SidekickRecord sidekick) {
-        getRandomFrom(
-          grid.everyObjectInGrid()
-            .filter(obj -> !obj.color().equals(sidekick.color()))
-            .filter(obj -> !obj.isGerm())
-            .collect(toList())
-        ).ifPresent(caps -> {
-            caps.paint(sidekick.color());
-            grid.addEffect(EffectAnim.EffectType.PAINT, caps);
-        });
+        for (int i = 0; i < 5; i++) {
+            lvl.applyToGrid((grid, sdk) -> getRandomFrom(
+              grid.everyObjectInGrid()
+                .filter(obj -> !obj.color().equals(sidekick.color()))
+                .filter(obj -> !obj.isGerm())
+                .collect(toList())
+            ).ifPresent(caps -> grid.paint(caps.x(), caps.y(), color)), sidekick);
+        }
     }
 
     private static void sliceRandomLine(Grid grid, SidekickRecord sidekick) {
@@ -145,10 +140,14 @@ public enum SidekickRecord {
         grid.pickRandomObject().ifPresent(
           obj -> {
               grid.hit(obj.x(), obj.y(), sidekick);
-              grid.hit(obj.x() - 1, obj.y(), 1, CORE);
-              grid.hit(obj.x() + 1, obj.y(), 1, CORE);
-              grid.hit(obj.x(), obj.y() + 1, 1, CORE);
-              grid.hit(obj.x(), obj.y() - 1, 1, CORE);
+              grid.hit(obj.x() - 1, obj.y());
+              grid.hit(obj.x() + 1, obj.y());
+              grid.hit(obj.x(), obj.y() + 1);
+              grid.hit(obj.x(), obj.y() - 1);
+              grid.addEffect(CORE, obj.x() - 1, obj.y());
+              grid.addEffect(CORE, obj.x() + 1, obj.y());
+              grid.addEffect(CORE, obj.x(), obj.y() + 1);
+              grid.addEffect(CORE, obj.x(), obj.y() - 1);
           }
         );
     }

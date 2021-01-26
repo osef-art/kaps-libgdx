@@ -227,10 +227,6 @@ public class Grid implements StaticRenderable {
         hit(x, y, sidekick.damage(), (g) -> g.addEffect(sidekick.effect(), x, y));
     }
 
-    public void hit(int x, int y, int damage, EffectAnim.EffectType type) {
-        hit(x, y, damage, (g) -> g.addEffect(type, x, y));
-    }
-
     private void hit(int x, int y, int damage, Consumer<Grid> action) {
         for (int i = 0; i < damage; i++) {
             get(x, y).ifPresent(o -> {
@@ -242,6 +238,13 @@ public class Grid implements StaticRenderable {
                 }
             });
         }
+    }
+
+    public void paint(int x, int y, com.gdx.kaps.level.grid.Color color) {
+        get(x, y).ifPresent(caps -> {
+            caps.paint(color);
+            effects.add(EffectAnim.ofPopping(caps));
+        });
     }
 
     /**
@@ -373,7 +376,7 @@ public class Grid implements StaticRenderable {
         addEffect(type, o.x(), o.y());
     }
 
-    private void addEffect(EffectAnim.EffectType type, int x, int y) {
+    public void addEffect(EffectAnim.EffectType type, int x, int y) {
         effects.add(new EffectAnim(type, x, y));
     }
 

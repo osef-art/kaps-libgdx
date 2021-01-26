@@ -90,7 +90,7 @@ public class Level implements StaticRenderable {
                  .findAny();
     }
 
-    public Sidekick sidekickExcept(SidekickRecord sidekick) {
+    public Sidekick getSidekickExcept(SidekickRecord sidekick) {
         return getRandomFrom(
           sidekicks().stream()
             .filter(sdk -> sdk.color() != sidekick.color())
