@@ -228,6 +228,8 @@ public class Grid implements StaticRenderable {
     }
 
     private void hit(int x, int y, int damage, Consumer<Grid> action) {
+        // TODO: add directly to sidekick's gauge if deleted
+        //  -> not deleted germs are not added
         for (int i = 0; i < damage; i++) {
             get(x, y).ifPresent(o -> {
                 o.hit();
@@ -370,10 +372,6 @@ public class Grid implements StaticRenderable {
         return Arrays.stream(columns)
           .flatMap(col -> Arrays.stream(col.tiles))
           .filter(Objects::nonNull);
-    }
-
-    public void addEffect(EffectAnim.EffectType type, GridObject o) {
-        addEffect(type, o.x(), o.y());
     }
 
     public void addEffect(EffectAnim.EffectType type, int x, int y) {

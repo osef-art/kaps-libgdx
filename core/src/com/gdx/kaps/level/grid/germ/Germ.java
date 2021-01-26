@@ -13,6 +13,7 @@ import static com.gdx.kaps.MainScreen.dim;
 import static java.util.Objects.requireNonNull;
 
 public abstract class Germ extends GridObject {
+    // TODO: handle cooldown
     private final AnimatedSprite sprite;
     private final GermRecord type;
     private int health;
@@ -127,6 +128,7 @@ public abstract class Germ extends GridObject {
     }
 
     public void render(float x, float y, float width, float height) {
+        // TODO: render HP & cooldown
         sprite.render(x, y, width, height);
     }
 }
