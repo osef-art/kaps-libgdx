@@ -3,8 +3,8 @@ package com.gdx.kaps.level.grid;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.gdx.kaps.level.Level;
-import com.gdx.kaps.level.grid.caps.Gelule;
 import com.gdx.kaps.level.grid.caps.EffectAnim;
+import com.gdx.kaps.level.grid.caps.Gelule;
 import com.gdx.kaps.level.grid.germ.Germ;
 import com.gdx.kaps.level.sidekick.SidekickRecord;
 import com.gdx.kaps.renderer.Dimensions;
@@ -320,7 +320,6 @@ public class Grid implements StaticRenderable {
         );
     }
 
-
     public Set<GridObject> deleteMatches() {
         var matches = matchingObjects();
         matches.forEach(this::hit);
@@ -409,6 +408,17 @@ public class Grid implements StaticRenderable {
                 );
             }
         }
+    }
+
+    public void decreaseCooldowns() {
+        everyObjectInGrid()
+          .filter(GridObject::isGerm)
+          .map(o -> (Germ) o)
+          .filter(Germ::hasCooldown)
+          .forEach(g -> {
+              g.decreaseCooldown();
+              g.triggerIfReady(this);
+          });
     }
 
     @Override

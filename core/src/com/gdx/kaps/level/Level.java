@@ -218,6 +218,8 @@ public class Level implements StaticRenderable {
             sdk.decreaseCooldown();
             sdk.triggerIfReady(this);
         });
+        grid.decreaseCooldowns();
+
     }
 
     private void speedUp() {
@@ -255,6 +257,8 @@ public class Level implements StaticRenderable {
             if (!matches.isEmpty()) {
                 play(matches.size() > 4 ? "match_five" : "plop0");
 
+                // TODO: match of 5 = decrease cooldown !
+
                 matches.forEach(o -> {
                     sidekickOfColor(o.color()).ifPresent(Sidekick::increaseMana);
                     score += o.points() * multiplier;
@@ -263,7 +267,6 @@ public class Level implements StaticRenderable {
                 grid.dropAll();
                 multiplier++;
             }
-            // TODO: match of 5 = decrease cooldown !
         } while (!matches.isEmpty());
     }
 

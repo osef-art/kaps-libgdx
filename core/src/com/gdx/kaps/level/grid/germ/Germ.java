@@ -96,6 +96,10 @@ public abstract class Germ extends GridObject {
         return health.isEmpty();
     }
 
+    public boolean hasCooldown() {
+        return false;
+    }
+
     @Override
     public void hit() {
         health.decrease();
@@ -112,7 +116,14 @@ public abstract class Germ extends GridObject {
     public void dipIfPossible(Grid grid) {
     }
 
-    // update
+    public void triggerIfReady(Grid lvl) {
+
+    }
+
+    public void decreaseCooldown() {
+    }
+
+        // update
     @Override
     public void update() {
         sprite.update();
