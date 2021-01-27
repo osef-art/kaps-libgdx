@@ -3,6 +3,7 @@ package com.gdx.kaps.level.grid.germ;
 import com.gdx.kaps.Utils;
 import com.gdx.kaps.level.Level;
 import com.gdx.kaps.level.grid.Grid;
+import com.gdx.kaps.level.grid.caps.EffectAnim;
 
 import java.util.Objects;
 import java.util.function.BiConsumer;
@@ -12,7 +13,7 @@ public enum GermRecord {
     BASIC("basic", 8, 1),
     WALL("wall", 4, 4),
     VIRUS("virus", 8, 1, 7, (lvl, gm) -> lvl.applyToGrid(GermRecord::contamineRandomCaps, gm), "virus"),
-    THORN("thorn", 8, 1, 2/*5*/, (lvl, gm) -> lvl.applyToGrid(GermRecord::hitRandomCaps, gm), "slice"),
+    THORN("thorn", 8, 1, 5, (lvl, gm) -> lvl.applyToGrid(GermRecord::hitRandomCaps, gm), "slice"),
     ;
 
     private final BiConsumer<Level, Germ> power;
@@ -83,6 +84,9 @@ public enum GermRecord {
                            //.peek(System.out::println)
                            .filter(o -> !o.isGerm())
                            .collect(Collectors.toList());
-        Utils.getRandomFrom(capsAround).ifPresent(grid::hit);
+        Utils.getRandomFrom(capsAround).ifPresent(caps -> {
+            grid.hit(caps);
+            grid.addEffect(EffectAnim.EffectType.SLICE_FX, caps.x(), caps.y());
+        });
     }
 }

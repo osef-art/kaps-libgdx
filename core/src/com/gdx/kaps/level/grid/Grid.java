@@ -262,7 +262,7 @@ public class Grid implements StaticRenderable {
     public void paint(int x, int y, com.gdx.kaps.level.grid.Color color) {
         get(x, y).ifPresent(caps -> {
             caps.paint(color);
-            effects.add(EffectAnim.ofPopping(caps));
+            effects.add(EffectAnim.ofPainted(caps));
         });
     }
 
@@ -436,6 +436,7 @@ public class Grid implements StaticRenderable {
         }
         popping.forEach(EffectAnim::render);
         if (!effects.isEmpty()) {
+            // TODO: different focus for germs
             sra.drawRect(
               dim.gridMargin,
               dim.gridMargin,

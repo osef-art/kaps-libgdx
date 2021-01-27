@@ -47,5 +47,4 @@ public abstract class GermCooldown extends Germ {
     public void decreaseCooldown() {
         cooldown.decrease();
     }
-
 }

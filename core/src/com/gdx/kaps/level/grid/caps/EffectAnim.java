@@ -11,10 +11,10 @@ import static com.gdx.kaps.MainScreen.dim;
 public class EffectAnim implements StaticRenderable {
     // IMPL: intend to implement classic Renderable
     public enum EffectType {
-        FIRE("fire", 8),
-        SLICE("slice", 8),
-        PAINT("paint", 8),
-        CORE("pain", 8),
+        FIRE_FX("fire", 8),
+        SLICE_FX("slice", 8),
+        PAINT_FX("paint", 8),
+        CORE_FX("pain", 8),
         ;
 
         private final String path;
@@ -34,7 +34,6 @@ public class EffectAnim implements StaticRenderable {
         this(type.path, type.frames, x, y, 1.5f);
     }
 
-    // IMPL: coherent args order ?
     private EffectAnim(String path, int frames, int x, int y, float scale) {
         sprite = AnimatedSprite.oneShot(path, frames, 100_000_000);
         position = new Position(x, y);
@@ -43,6 +42,10 @@ public class EffectAnim implements StaticRenderable {
 
     public static EffectAnim ofPopping(GridObject o) {
         return new EffectAnim("android/assets/img/" + o.color().id() + "/caps/pop_", 8, o.x(), o.y(), 1);
+    }
+
+    public static EffectAnim ofPainted(GridObject o) {
+        return new EffectAnim("android/assets/img/" + o.color().id() + "/caps/pop_", 8, o.x(), o.y(), 1.5f);
     }
 
     public boolean isOver() {

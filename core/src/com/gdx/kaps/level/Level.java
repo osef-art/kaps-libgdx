@@ -2,10 +2,8 @@ package com.gdx.kaps.level;
 
 import com.badlogic.gdx.graphics.Color;
 import com.gdx.kaps.level.grid.Grid;
-import com.gdx.kaps.level.grid.GridObject;
 import com.gdx.kaps.level.grid.caps.Gelule;
 import com.gdx.kaps.level.grid.caps.PreviewGelule;
-import com.gdx.kaps.level.grid.germ.Germ;
 import com.gdx.kaps.level.sidekick.Sidekick;
 import com.gdx.kaps.level.sidekick.SidekickRecord;
 import com.gdx.kaps.renderer.Renderable;
@@ -25,7 +23,6 @@ import static com.gdx.kaps.MainScreen.*;
 import static com.gdx.kaps.Sound.play;
 import static com.gdx.kaps.Utils.getRandomFrom;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toUnmodifiableList;
 
 public class Level implements StaticRenderable {
     public final static int MIN_MATCH_RANGE = 4;
@@ -228,7 +225,7 @@ public class Level implements StaticRenderable {
     }
 
     private void speedUp() {
-        updateSpeed -= 2_500_000;
+        updateSpeed -= 5_000_000;
         updateTimer.updateLimit(updateSpeed);
         updateTimer.reset();
     }

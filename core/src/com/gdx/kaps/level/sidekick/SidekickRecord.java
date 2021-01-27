@@ -15,15 +15,15 @@ import static com.gdx.kaps.level.grid.caps.EffectAnim.EffectType.*;
 import static java.util.stream.Collectors.toList;
 
 public enum SidekickRecord {
-    SEAN("Sean", Color.COLOR_1, "fire", FIRE, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::hitRandomTileAndAdjacents, sdk), 20),
-    ZYRAME("Zyrame", Color.COLOR_2, "slice", SLICE, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::hitTwoRandomGerms, sdk), 20, 2),
-    RED("Red", Color.COLOR_3, "slice", SLICE, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::sliceRandomColumn, sdk), 20, 2),
-    MIMAPS("Mimaps", Color.COLOR_4, "fire", FIRE, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::hitThreeRandomTiles, sdk), 15, 2),
-    PAINT("Paint", Color.COLOR_5, "gen", EffectAnim.EffectType.PAINT, SidekickRecord::repaintFiveCaps, 10),
-    XERETH("Xereth", Color.COLOR_6, "slice", SLICE, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::sliceRandomDiagonals, sdk), 25),
-    JIM("Jim", Color.COLOR_10, "slice", SLICE, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::sliceRandomLine, sdk), 25),
-    COLOR("Color", Color.COLOR_11,"color", CORE, SidekickRecord::generateSingleColoredGelule, -5),
-    PUNCH("Punch", Color.COLOR_12,"paint", CORE, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::hitRandomGerm, sdk), 15, 3),
+    SEAN("Sean", Color.COLOR_1, "fire", FIRE_FX, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::hitRandomTileAndAdjacents, sdk), 20),
+    ZYRAME("Zyrame", Color.COLOR_2, "slice", SLICE_FX, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::hitTwoRandomGerms, sdk), 20, 2),
+    RED("Red", Color.COLOR_3, "slice", SLICE_FX, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::sliceRandomColumn, sdk), 20, 2),
+    MIMAPS("Mimaps", Color.COLOR_4, "fire", FIRE_FX, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::hitThreeRandomTiles, sdk), 15, 2),
+    PAINT("Paint", Color.COLOR_5, "gen", PAINT_FX, SidekickRecord::repaintFiveCaps, 10),
+    XERETH("Xereth", Color.COLOR_6, "slice", SLICE_FX, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::sliceRandomDiagonals, sdk), 25),
+    JIM("Jim", Color.COLOR_10, "slice", SLICE_FX, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::sliceRandomLine, sdk), 25),
+    COLOR("Color", Color.COLOR_11,"color", CORE_FX, SidekickRecord::generateSingleColoredGelule, -5),
+    PUNCH("Punch", Color.COLOR_12,"paint", CORE_FX, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::hitRandomGerm, sdk), 15, 3),
     // TODO: sidekick that generates a single Caps ?
     ;
 
@@ -185,10 +185,10 @@ public enum SidekickRecord {
               grid.hit(obj.x() + 1, obj.y());
               grid.hit(obj.x(), obj.y() + 1);
               grid.hit(obj.x(), obj.y() - 1);
-              grid.addEffect(CORE, obj.x() - 1, obj.y());
-              grid.addEffect(CORE, obj.x() + 1, obj.y());
-              grid.addEffect(CORE, obj.x(), obj.y() + 1);
-              grid.addEffect(CORE, obj.x(), obj.y() - 1);
+              grid.addEffect(CORE_FX, obj.x() - 1, obj.y());
+              grid.addEffect(CORE_FX, obj.x() + 1, obj.y());
+              grid.addEffect(CORE_FX, obj.x(), obj.y() + 1);
+              grid.addEffect(CORE_FX, obj.x(), obj.y() - 1);
           }
         );
     }
@@ -222,7 +222,7 @@ public enum SidekickRecord {
      * @param sidekick the attacking sidekick's {@link SidekickRecord}
      */
     private static void hitTwoRandomGerms(Grid grid, SidekickRecord sidekick) {
-        // TODO: make power methods unique, w/ their own damage and effects
+        // TODO: make power     methods unique, w/ their own damage and effects
         for (int i = 0; i < 2; i++) {
             hitRandomGerm(grid, sidekick);
         }
