@@ -6,6 +6,7 @@ import com.gdx.kaps.level.Level;
 import com.gdx.kaps.level.grid.caps.EffectAnim;
 import com.gdx.kaps.level.grid.caps.Gelule;
 import com.gdx.kaps.level.grid.germ.Germ;
+import com.gdx.kaps.level.sidekick.Sidekick;
 import com.gdx.kaps.level.sidekick.SidekickRecord;
 import com.gdx.kaps.renderer.Dimensions;
 import com.gdx.kaps.renderer.Renderable;
@@ -234,9 +235,12 @@ public class Grid implements StaticRenderable {
             get(x, y).ifPresent(o -> {
                 o.hit();
                 action.accept(this);
+                Level.increaseScore(o.points());
+
                 if (o.isDestroyed()) {
                     pop(o);
                     popping.add(EffectAnim.ofPopping(o));
+                    Level.sidekickOfColor(o.color()).ifPresent(Sidekick::increaseMana);
                 }
             });
         }

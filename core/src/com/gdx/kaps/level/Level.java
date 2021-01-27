@@ -29,9 +29,9 @@ public class Level implements StaticRenderable {
     public final static int MIN_MATCH_RANGE = 4;
     private int updateSpeed = 1_000_000_000;
     private final Timer updateTimer;
-    private int multiplier = 1;
-    private int score;
-    private final List<Sidekick> sidekicks;
+    private static int multiplier = 1;
+    private static int score;
+    private static List<Sidekick> sidekicks;
     private final Set<com.gdx.kaps.level.grid.Color> colors;
     private final Grid grid;
     private boolean paused;
@@ -40,15 +40,16 @@ public class Level implements StaticRenderable {
     private final Gelule[] next;
     private Gelule gelule;
     private Gelule hold;
+    // TODO: list of controllable Unlinked caps
 
     public Level(Path filePath, Set<Sidekick> sidekicks) {
         Objects.requireNonNull(sidekicks);
         Objects.requireNonNull(filePath);
 
-        this.sidekicks = new ArrayList<>(sidekicks);
+        Level.sidekicks = new ArrayList<>(sidekicks);
 
         colors = Stream.concat(
-          this.sidekicks.stream().map(Sidekick::color),
+          Level.sidekicks.stream().map(Sidekick::color),
           Stream.of(com.gdx.kaps.level.grid.Color.randomBlank())
         ).collect(Collectors.toUnmodifiableSet());
 
@@ -66,8 +67,8 @@ public class Level implements StaticRenderable {
         spawnNewGelule();
     }
 
-    // getters
 
+    // getters
     public int gridWidth() {
         return grid.width();
     }
@@ -84,7 +85,7 @@ public class Level implements StaticRenderable {
         return sidekicks;
     }
 
-    private Optional<Sidekick> sidekickOfColor(com.gdx.kaps.level.grid.Color color) {
+    public static Optional<Sidekick> sidekickOfColor(com.gdx.kaps.level.grid.Color color) {
         return sidekicks.stream()
                  .filter(sdk -> sdk.color() == Objects.requireNonNull(color))
                  .findAny();
@@ -111,8 +112,8 @@ public class Level implements StaticRenderable {
         return (defeat || victory) && noMoreAnims;
     }
 
-    // control
 
+    // control
     private void doIfPresent(Consumer<Gelule> action) {
         currentGelule().ifPresent(action);
     }
@@ -174,8 +175,8 @@ public class Level implements StaticRenderable {
         canHold = false;
     }
 
-    // operations
 
+    // operations
     public void applyToGrid(BiConsumer<Grid, SidekickRecord> function, SidekickRecord sidekick) {
         function.accept(grid, sidekick);
     }
@@ -228,8 +229,8 @@ public class Level implements StaticRenderable {
         updateTimer.reset();
     }
 
-    // update
 
+    // update
     @Override
     public void update() {
         if (paused) return;
@@ -252,22 +253,24 @@ public class Level implements StaticRenderable {
 
     private void updateGrid() {
         Set<GridObject> matches;
-        do {
-            matches = grid.deleteMatches();
-            if (!matches.isEmpty()) {
-                play(matches.size() > 4 ? "match_five" : "plop0");
-
-                // TODO: match of 5 = decrease cooldown !
-
-                matches.forEach(o -> {
-                    sidekickOfColor(o.color()).ifPresent(Sidekick::increaseMana);
-                    score += o.points() * multiplier;
-                });
-                triggerSidekicks();
-                grid.dropAll();
-                multiplier++;
+        while (!(matches = grid.deleteMatches()).isEmpty()) {
+            var sound = "plop0";
+            // IMPL: use a hashmap of Color -> num ? :/
+            for (var color : colors) {
+                long matchRange = matches.stream()
+                                    .filter(o -> o.color() == color)
+                                    .count();
+                if (matchRange > MIN_MATCH_RANGE) {
+                    sidekickOfColor(color).ifPresent(Sidekick::decreaseCooldown);
+                    sound = "match_five";
+                }
             }
-        } while (!matches.isEmpty());
+            play(sound);
+
+            triggerSidekicks();
+            grid.dropAll();
+            multiplier++;
+        }
     }
 
     public void end() {
@@ -283,6 +286,10 @@ public class Level implements StaticRenderable {
         System.exit(0);
     }
 
+
+    public static void increaseScore(int points) {
+        score += points * multiplier;
+    }
     // rendering
 
     private void renderBackGround() {
