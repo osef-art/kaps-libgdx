@@ -19,7 +19,7 @@ public enum SidekickRecord {
     ZYRAME("Zyrame", Color.COLOR_2, "slice", SLICE, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::hitTwoRandomGerms, sdk), 20, 2),
     RED("Red", Color.COLOR_3, "slice", SLICE, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::sliceRandomColumn, sdk), 20, 2),
     MIMAPS("Mimaps", Color.COLOR_4, "fire", FIRE, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::hitThreeRandomTiles, sdk), 15, 2),
-    PAINT("Paint", Color.COLOR_5, "gen", EffectAnim.EffectType.PAINT, SidekickRecord::repaintFiveTiles, 10),
+    PAINT("Paint", Color.COLOR_5, "gen", EffectAnim.EffectType.PAINT, SidekickRecord::repaintFiveCaps, 10),
     XERETH("Xereth", Color.COLOR_6, "slice", SLICE, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::sliceRandomDiagonals, sdk), 25),
     JIM("Jim", Color.COLOR_10, "slice", SLICE, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::sliceRandomLine, sdk), 25),
     COLOR("Color", Color.COLOR_11,"color", CORE, SidekickRecord::generateSingleColoredGelule, -5),
@@ -40,12 +40,22 @@ public enum SidekickRecord {
         this(name, type, soundName, effect, power, mana, 1);
     }
 
-    SidekickRecord(String name, Color type, String soundName, EffectAnim.EffectType effect, BiConsumer<Level, SidekickRecord> power, int mana, int dmg) {
+    /**
+     * Instantiates a sidekick record
+     * @param name its name, useful to find its path among img textures
+     * @param color its color from the Record of playable colors
+     * @param soundName the name of the sound played makes when it attacks      // IMPL: to be moved in effect anim ?
+     * @param effect the type of effect produced when it attacks
+     * @param power it's effect on the level/board when it attacks
+     * @param mana the number of consumed caps needed to trigger its power.
+     *             if the value is negative, stands for the number of turns (cooldown) until triggering.
+     * @param dmg the number of damage
+     */
+    SidekickRecord(String name, Color color, String soundName, EffectAnim.EffectType effect, BiConsumer<Level, SidekickRecord> power, int mana, int dmg) {
         this.effect = effect;
         this.power = power;
         this.name = name;
-        this.type = type;
-        // INFO: negative mana = cooldown (put in doc)
+        this.type = color;
         maxMana = Math.max(mana, 0);
         // TEST  maxMana = mana > 0 ? 4 : mana;
         cooldown = -Math.min(mana, 0);
@@ -91,11 +101,22 @@ public enum SidekickRecord {
 
     // powers
 
+    /**
+     * Sets the next upcoming gelule to a gelule with both caps of the same color.
+     * @param lvl the current level
+     * @param sidekick the attacking sidekick's {@link SidekickRecord}
+     */
     private static void generateSingleColoredGelule(Level lvl, SidekickRecord sidekick) {
         lvl.setNext(2, new Gelule(lvl, lvl.getSidekickExcept(sidekick).color()));
     }
 
-    private static void repaintFiveTiles(Level lvl, SidekickRecord sidekick) {
+    /**
+     * Paints (at most) five random caps of the color of one of
+     * the {@code sidekick}'s mates in the current {@code lvl}.
+     * @param lvl the current level
+     * @param sidekick the attacking sidekick's {@link SidekickRecord}
+     */
+    private static void repaintFiveCaps(Level lvl, SidekickRecord sidekick) {
         var color = lvl.getSidekickExcept(sidekick).color();
 
         for (int i = 0; i < 5; i++) {
@@ -108,6 +129,11 @@ public enum SidekickRecord {
         }
     }
 
+    /**
+     * Hits a random object from the grid and all objects on the same line.
+     * @param grid the affected grid
+     * @param sidekick the attacking sidekick's {@link SidekickRecord}
+     */
     private static void sliceRandomLine(Grid grid, SidekickRecord sidekick) {
         grid.pickRandomObject().ifPresent(
           obj -> IntStream.range(0, grid.width())
@@ -115,6 +141,11 @@ public enum SidekickRecord {
         );
     }
 
+    /**
+     * Hits a random object from the grid and all objects on the same column.
+     * @param grid the affected grid
+     * @param sidekick the attacking sidekick's {@link SidekickRecord}
+     */
     private static void sliceRandomColumn(Grid grid, SidekickRecord sidekick) {
         grid.pickRandomObject().ifPresent(
           obj -> IntStream.range(0, grid.height())
@@ -122,6 +153,11 @@ public enum SidekickRecord {
         );
     }
 
+    /**
+     * Hits a random object from the grid and all objects on the same diagonals (X)
+     * @param grid the affected grid
+     * @param sidekick the attacking sidekick's {@link SidekickRecord}
+     */
     private static void sliceRandomDiagonals(Grid grid, SidekickRecord sidekick) {
         grid.pickRandomObject().ifPresent(
           obj -> {
@@ -136,6 +172,11 @@ public enum SidekickRecord {
         );
     }
 
+    /**
+     * Hits a random object from the grid and the 4 objects at left, right, top and bottom.
+     * @param grid the affected grid
+     * @param sidekick the attacking sidekick's {@link SidekickRecord}
+     */
     private static void hitRandomTileAndAdjacents(Grid grid, SidekickRecord sidekick) {
         grid.pickRandomObject().ifPresent(
           obj -> {
@@ -152,6 +193,11 @@ public enum SidekickRecord {
         );
     }
 
+    /**
+     * Hits (at most) three random objects from the grid
+     * @param grid the affected grid
+     * @param sidekick the attacking sidekick's {@link SidekickRecord}
+     */
     private static void hitThreeRandomTiles(Grid grid, SidekickRecord sidekick) {
         var objects = grid.everyObjectInGrid().collect(toList());
         Collections.shuffle(objects);
@@ -160,11 +206,21 @@ public enum SidekickRecord {
           .forEach(obj -> grid.hit(obj.x(), obj.y(), sidekick));
     }
 
+    /**
+     * Hits a random germ from the grid
+     * @param grid the affected grid
+     * @param sidekick the attacking sidekick's {@link SidekickRecord}
+     */
     private static void hitRandomGerm(Grid grid, SidekickRecord sidekick) {
         grid.pickRandomGerm()
           .ifPresent(germ -> grid.hit(germ.x(), germ.y(), sidekick));
     }
 
+    /**
+     * Hits (at most) two random germs from the grid.
+     * @param grid the affected grid
+     * @param sidekick the attacking sidekick's {@link SidekickRecord}
+     */
     private static void hitTwoRandomGerms(Grid grid, SidekickRecord sidekick) {
         // TODO: make power methods unique, w/ their own damage and effects
         for (int i = 0; i < 2; i++) {
