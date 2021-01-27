@@ -127,6 +127,14 @@ public class Grid implements StaticRenderable {
                                .collect(toList()));
     }
 
+    public List<Germ> everyGermsWithCooldowns() {
+        return everyObjectInGrid()
+                 .filter(GridObject::isGerm)
+                 .map(o -> (Germ) o)
+                 .filter(Germ::hasCooldown)
+                 .collect(toUnmodifiableList());
+    }
+
     public int remainingGerms() {
         return (int) everyObjectInGrid()
           .filter(GridObject::isGerm)
@@ -390,18 +398,6 @@ public class Grid implements StaticRenderable {
 
     public void addEffect(EffectAnim.EffectType type, int x, int y) {
         effects.add(new EffectAnim(type, x, y));
-    }
-
-    public void decreaseCooldowns() {
-        everyObjectInGrid()
-          .filter(GridObject::isGerm)
-          .map(o -> (Germ) o)
-          .filter(Germ::hasCooldown)
-          .collect(toUnmodifiableList())
-          .forEach(g -> {
-              g.decreaseCooldown();
-              g.triggerIfReady(this);
-          });
     }
 
     @Override

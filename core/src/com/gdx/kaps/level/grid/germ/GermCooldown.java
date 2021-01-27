@@ -1,8 +1,8 @@
 package com.gdx.kaps.level.grid.germ;
 
 import com.gdx.kaps.level.Gauge;
+import com.gdx.kaps.level.Level;
 import com.gdx.kaps.level.grid.Color;
-import com.gdx.kaps.level.grid.Grid;
 import com.gdx.kaps.renderer.Zone;
 
 import static com.gdx.kaps.MainScreen.dim;
@@ -36,10 +36,11 @@ public abstract class GermCooldown extends Germ {
         cooldown.fill();
     }
 
-    public void triggerIfReady(Grid grid) {
+    public void triggerIfReady(Level lvl) {
         if (isReady()) {
-            trigger(grid);
+            trigger(lvl);
             reset();
+            lvl.updateGrid();
         }
     }
 

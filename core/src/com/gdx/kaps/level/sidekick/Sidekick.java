@@ -89,6 +89,7 @@ public class Sidekick implements Renderable {
         if (isReady()) {
             trigger(lvl);
             reset();
+            lvl.updateGrid();
         }
     }
 

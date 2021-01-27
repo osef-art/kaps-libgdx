@@ -5,6 +5,7 @@ import com.gdx.kaps.level.grid.Grid;
 import com.gdx.kaps.level.grid.GridObject;
 import com.gdx.kaps.level.grid.caps.Gelule;
 import com.gdx.kaps.level.grid.caps.PreviewGelule;
+import com.gdx.kaps.level.grid.germ.Germ;
 import com.gdx.kaps.level.sidekick.Sidekick;
 import com.gdx.kaps.level.sidekick.SidekickRecord;
 import com.gdx.kaps.renderer.Renderable;
@@ -24,6 +25,7 @@ import static com.gdx.kaps.MainScreen.*;
 import static com.gdx.kaps.Sound.play;
 import static com.gdx.kaps.Utils.getRandomFrom;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toUnmodifiableList;
 
 public class Level implements StaticRenderable {
     public final static int MIN_MATCH_RANGE = 4;
@@ -177,8 +179,8 @@ public class Level implements StaticRenderable {
 
 
     // operations
-    public void applyToGrid(BiConsumer<Grid, SidekickRecord> function, SidekickRecord sidekick) {
-        function.accept(grid, sidekick);
+    public <T> void applyToGrid(BiConsumer<Grid, ? super T> function, T actor) {
+        function.accept(grid, actor);
     }
 
     public void setNext(int n, Gelule gelule) {
@@ -204,8 +206,9 @@ public class Level implements StaticRenderable {
         gelule = null;
 
         updateGrid();
-        speedUp();
+        triggerSidekicks();
         decreaseCooldowns();
+        speedUp();
         spawnNewGelule();
     }
 
@@ -215,11 +218,13 @@ public class Level implements StaticRenderable {
     }
 
     private void decreaseCooldowns() {
-        grid.decreaseCooldowns();
-        sidekicks.forEach(sdk -> {
-            sdk.decreaseCooldown();
-            sdk.triggerIfReady(this);
-        });
+        sidekicks.forEach(Sidekick::decreaseCooldown);
+        triggerSidekicks();
+        grid.everyGermsWithCooldowns()
+          .forEach(g -> {
+              g.decreaseCooldown();
+              g.triggerIfReady(this);
+          });
     }
 
     private void speedUp() {
@@ -250,26 +255,29 @@ public class Level implements StaticRenderable {
         while (preview.dipIfPossible(grid));
     }
 
-    private void updateGrid() {
-        Set<GridObject> matches;
-        while (!(matches = grid.deleteMatches()).isEmpty()) {
-            var sound = "plop0";
-            // IMPL: use a hashmap of Color -> num ? :/
-            for (var color : colors) {
-                long matchRange = matches.stream()
-                                    .filter(o -> o.color() == color)
-                                    .count();
-                if (matchRange > MIN_MATCH_RANGE) {
-                    sidekickOfColor(color).ifPresent(Sidekick::decreaseCooldown);
-                    sound = "match_five";
-                }
-            }
-            play(sound);
-
-            triggerSidekicks();
+    public void updateGrid() {
+        boolean matchesWereFound;
+        do {
             grid.dropAll();
-            multiplier++;
-        }
+            var matches = grid.deleteMatches();
+            matchesWereFound = !matches.isEmpty();
+
+            if (matchesWereFound) {
+                var sound = "plop0";
+                // IMPL: use a hashmap of Color -> num ? :/
+                for (var color : colors) {
+                    long matchRange = matches.stream()
+                                        .filter(o -> o.color() == color)
+                                        .count();
+                    if (matchRange > MIN_MATCH_RANGE) {
+                        sidekickOfColor(color).ifPresent(Sidekick::decreaseCooldown);
+                        sound = "match_five";
+                    }
+                }
+                play(sound);
+                multiplier++;
+            }
+        } while (matchesWereFound);
     }
 
     public void end() {
