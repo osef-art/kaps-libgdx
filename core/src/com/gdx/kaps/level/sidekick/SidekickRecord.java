@@ -19,11 +19,11 @@ public enum SidekickRecord {
     ZYRAME("Zyrame", Color.COLOR_2, "slice", SLICE, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::hitTwoRandomGerms, sdk), 20, 2),
     RED("Red", Color.COLOR_3, "slice", SLICE, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::sliceRandomColumn, sdk), 20, 2),
     MIMAPS("Mimaps", Color.COLOR_4, "fire", FIRE, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::hitThreeRandomTiles, sdk), 15, 2),
-    PAINT("Paint", Color.COLOR_5, "paint", EffectAnim.EffectType.PAINT, SidekickRecord::repaintFiveTiles, 4), // TEST: 10),
+    PAINT("Paint", Color.COLOR_5, "gen", EffectAnim.EffectType.PAINT, SidekickRecord::repaintFiveTiles, 10),
     XERETH("Xereth", Color.COLOR_6, "slice", SLICE, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::sliceRandomDiagonals, sdk), 25),
     JIM("Jim", Color.COLOR_10, "slice", SLICE, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::sliceRandomLine, sdk), 25),
-    COLOR("Color", Color.COLOR_11,"gen", CORE, SidekickRecord::generateSingleColoredGelule, -5),
-    PUNCH("Punch", Color.COLOR_12,"paint", CORE, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::hitRandomGerm, sdk), 4/*15*/, 3),
+    COLOR("Color", Color.COLOR_11,"color", CORE, SidekickRecord::generateSingleColoredGelule, -5),
+    PUNCH("Punch", Color.COLOR_12,"paint", CORE, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::hitRandomGerm, sdk), 15, 3),
     // TODO: sidekick that generates a single Caps ?
     ;
 
@@ -160,19 +160,15 @@ public enum SidekickRecord {
           .forEach(obj -> grid.hit(obj.x(), obj.y(), sidekick));
     }
 
-
     private static void hitRandomGerm(Grid grid, SidekickRecord sidekick) {
         grid.pickRandomGerm()
           .ifPresent(germ -> grid.hit(germ.x(), germ.y(), sidekick));
     }
 
-
     private static void hitTwoRandomGerms(Grid grid, SidekickRecord sidekick) {
-        // TODO:  delete methods doing several times the same thing
-        //  and add it as a parameter to level's method
+        // TODO: make power methods unique, w/ their own damage and effects
         for (int i = 0; i < 2; i++) {
             hitRandomGerm(grid, sidekick);
         }
-        // TODO: powers: add deleted to matching sidekick
     }
 }

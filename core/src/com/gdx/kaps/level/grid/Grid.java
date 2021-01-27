@@ -6,6 +6,7 @@ import com.gdx.kaps.level.Level;
 import com.gdx.kaps.level.grid.caps.EffectAnim;
 import com.gdx.kaps.level.grid.caps.Gelule;
 import com.gdx.kaps.level.grid.germ.Germ;
+import com.gdx.kaps.level.grid.germ.VirusGerm;
 import com.gdx.kaps.level.sidekick.Sidekick;
 import com.gdx.kaps.level.sidekick.SidekickRecord;
 import com.gdx.kaps.renderer.Dimensions;
@@ -120,6 +121,12 @@ public class Grid implements StaticRenderable {
                                .collect(toList()));
     }
 
+    public Optional<GridObject> pickRandomCaps() {
+        return getRandomFrom(everyObjectInGrid()
+                               .filter(o -> !o.isGerm())
+                               .collect(toList()));
+    }
+
     public int remainingGerms() {
         return (int) everyObjectInGrid()
           .filter(GridObject::isGerm)
@@ -216,7 +223,7 @@ public class Grid implements StaticRenderable {
         doOnGridObjectAndLinkedIfExists(obj, c -> remove(c.x(), c.y()));
     }
 
-    private void hit(GridObject obj) {
+    public void hit(GridObject obj) {
         hit(obj.x(), obj.y());
     }
 
@@ -229,8 +236,6 @@ public class Grid implements StaticRenderable {
     }
 
     private void hit(int x, int y, int damage, Consumer<Grid> action) {
-        // TODO: add directly to sidekick's gauge if deleted
-        //  -> not deleted germs are not added
         for (int i = 0; i < damage; i++) {
             get(x, y).ifPresent(o -> {
                 o.hit();
@@ -308,6 +313,12 @@ public class Grid implements StaticRenderable {
         gelule.forEach(this::set);
     }
 
+    public void contamine(GridObject caps) {
+        pop(caps);
+        set(caps.x(), caps.y(), new VirusGerm(caps));
+    }
+
+
     // full grid operations
 
     /**
@@ -381,19 +392,23 @@ public class Grid implements StaticRenderable {
         effects.add(new EffectAnim(type, x, y));
     }
 
+    public void decreaseCooldowns() {
+        everyObjectInGrid()
+          .filter(GridObject::isGerm)
+          .map(o -> (Germ) o)
+          .filter(Germ::hasCooldown)
+          .collect(toUnmodifiableList())
+          .forEach(g -> {
+              g.decreaseCooldown();
+              g.triggerIfReady(this);
+          });
+    }
+
     @Override
     public void update() {
         everyObjectInGrid().forEach(Renderable::update);
-        //IMPL: stream of all effects.
-        popping.forEach(caps -> {
-            caps.update();
-            caps.render();
-        });
+        Stream.concat(popping.stream(), effects.stream()).forEach(EffectAnim::update);
         popping.removeIf(EffectAnim::isOver);
-        effects.forEach(caps -> {
-            caps.update();
-            caps.render();
-        });
         effects.removeIf(EffectAnim::isOver);
     }
 
@@ -412,17 +427,6 @@ public class Grid implements StaticRenderable {
                 );
             }
         }
-    }
-
-    public void decreaseCooldowns() {
-        everyObjectInGrid()
-          .filter(GridObject::isGerm)
-          .map(o -> (Germ) o)
-          .filter(Germ::hasCooldown)
-          .forEach(g -> {
-              g.decreaseCooldown();
-              g.triggerIfReady(this);
-          });
     }
 
     @Override

@@ -215,12 +215,11 @@ public class Level implements StaticRenderable {
     }
 
     private void decreaseCooldowns() {
+        grid.decreaseCooldowns();
         sidekicks.forEach(sdk -> {
             sdk.decreaseCooldown();
             sdk.triggerIfReady(this);
         });
-        grid.decreaseCooldowns();
-
     }
 
     private void speedUp() {

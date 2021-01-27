@@ -1,5 +1,6 @@
 package com.gdx.kaps.level.grid.germ;
 
+import com.gdx.kaps.Sound;
 import com.gdx.kaps.level.Gauge;
 import com.gdx.kaps.level.grid.Color;
 import com.gdx.kaps.level.grid.Grid;
@@ -116,8 +117,12 @@ public abstract class Germ extends GridObject {
     public void dipIfPossible(Grid grid) {
     }
 
-    public void triggerIfReady(Grid lvl) {
+    void trigger(Grid grid) {
+        Sound.play(type.sound());
+        type.power().accept(grid);
+    }
 
+    public void triggerIfReady(Grid lvl) {
     }
 
     public void decreaseCooldown() {

@@ -36,9 +36,6 @@ public abstract class GermCooldown extends Germ {
         cooldown.fill();
     }
 
-    private void trigger(Grid grid) {
-    }
-
     public void triggerIfReady(Grid grid) {
         if (isReady()) {
             trigger(grid);
@@ -49,4 +46,5 @@ public abstract class GermCooldown extends Germ {
     public void decreaseCooldown() {
         cooldown.decrease();
     }
+
 }
