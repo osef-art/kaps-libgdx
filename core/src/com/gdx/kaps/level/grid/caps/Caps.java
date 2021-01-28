@@ -50,6 +50,11 @@ public class Caps extends GridObject {
         return 20;
     }
 
+    @Override
+    public int mana() {
+        return 1;
+    }
+
     // predicates
 
     @Override

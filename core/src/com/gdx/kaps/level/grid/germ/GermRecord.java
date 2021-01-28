@@ -10,10 +10,10 @@ import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 public enum GermRecord {
-    BASIC("basic", 8, 1),
-    WALL("wall", 4, 4),
-    VIRUS("virus", 8, 1, 8, (lvl, gm) -> lvl.applyToGrid(GermRecord::contamineRandomCaps, gm), "virus"),
-    THORN("thorn", 8, 1, 5, (lvl, gm) -> lvl.applyToGrid(GermRecord::hitRandomCaps, gm), "slice"),
+    BASIC("basic", 8, 1, 1),
+    WALL("wall", 4, 4, 4),
+    VIRUS("virus", 8, 1, 3, 8, (lvl, gm) -> lvl.applyToGrid(GermRecord::contamineRandomCaps, gm), "virus"),
+    THORN("thorn", 8, 1, 2, 5, (lvl, gm) -> lvl.applyToGrid(GermRecord::hitRandomCaps, gm), "slice"),
     ;
 
     private final BiConsumer<Level, Germ> power;
@@ -22,12 +22,13 @@ public enum GermRecord {
     private final int cooldown;
     private final int nbFrames;
     private final int maxHP;
+    private final int mana;
 
-    GermRecord(String name, int frames, int maxHP) {
-        this(name, frames, maxHP, 0, (gd, gm) -> {}, "plop");
+    GermRecord(String name, int frames, int maxHP, int mana) {
+        this(name, frames, maxHP, mana, 0, (gd, gm) -> {}, "plop");
     }
 
-    GermRecord(String name, int frames, int maxHP, int cooldown, BiConsumer<Level, Germ> power, String sound) {
+    GermRecord(String name, int frames, int maxHP, int mana, int cooldown, BiConsumer<Level, Germ> power, String sound) {
         Objects.requireNonNull(name);
         if (maxHP < 0) throw new IllegalArgumentException("Germ can't have a negative health (" + maxHP + ")");
         if (cooldown < 0) throw new IllegalArgumentException("Germ can't have a negative cooldown (" + cooldown + ")");
@@ -37,11 +38,16 @@ public enum GermRecord {
         this.sound = sound;
         this.power = power;
         this.maxHP = maxHP;
+        this.mana = mana;
         this.name = name;
     }
 
     public BiConsumer<Level, Germ> power() {
         return power;
+    }
+
+    public int mana() {
+        return mana;
     }
 
     public int maxHP() {

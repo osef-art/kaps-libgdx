@@ -44,6 +44,8 @@ public abstract class GermCooldown extends Germ {
         super.render(x, y, width, height);
         cooldown.renderCircled(x + width, y + width, dim.get(Zone.TILE).width / 5, 10,
           new com.badlogic.gdx.graphics.Color(0, 0, 0, 0),
+          cooldown.value() < 3 ?
+          new com.badlogic.gdx.graphics.Color(1, 0.25f, 0.35f, 0.5f) :
           new com.badlogic.gdx.graphics.Color(1, 1, 1, 0.5f)
         );
         tra15.drawText(

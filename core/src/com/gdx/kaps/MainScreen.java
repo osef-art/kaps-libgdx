@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
-import com.gdx.kaps.contoller.InputHandler;
+import com.gdx.kaps.contoller.LevelController;
 import com.gdx.kaps.level.Level;
 import com.gdx.kaps.level.sidekick.Sidekick;
 import com.gdx.kaps.level.sidekick.SidekickRecord;
@@ -23,7 +23,7 @@ public class MainScreen extends ApplicationAdapter {
 	private final Set<SidekickRecord> sidekicks;
 	private static Vector2 shaking;
 	private static Timer timer;
-	private InputHandler controller;
+	private LevelController controller;
 	private Vector2 cameraPos;
 	private Level level;
 
@@ -56,7 +56,7 @@ public class MainScreen extends ApplicationAdapter {
 			Sidekick.randomSetOf(2, sidekicks)
 		);
 		camera.translate(0, dim.get(Zone.WINDOW).height);
-		controller = new InputHandler(level);
+		controller = new LevelController(level);
 		Gdx.input.setInputProcessor(controller);
 
 		shaking = new Vector2();

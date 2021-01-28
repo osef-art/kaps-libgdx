@@ -20,6 +20,7 @@ public abstract class Germ extends GridObject {
     private final boolean hasHealth;
     private final GermRecord type;
     private final Gauge health;
+    private final int mana;
 
     Germ(int x, int y, Color color, GermRecord type) {
         this(x, y, color, type, type.maxHP());
@@ -28,8 +29,8 @@ public abstract class Germ extends GridObject {
     Germ(int x, int y, Color color, GermRecord type, int health) {
         super(x, y, color);
         requireNonNull(type);
-        if (health > type.maxHP())
-            throw new IllegalArgumentException("Too much health given to " + type.name() + " (" + health + ")" );
+        if (0 >= health || health > type.maxHP())
+            throw new IllegalArgumentException("Invalid health given to " + type.name() + " (" + health + ")" );
 
         sprite = new AnimatedSprite(
           "android/assets/img/" + color().id() +
@@ -38,8 +39,9 @@ public abstract class Germ extends GridObject {
           type.nbFrames(),
           100_000_000
         );
-        this.health = new Gauge(health, type.maxHP());
         hasHealth = type.maxHP() > 1;
+        this.health = new Gauge(health, type.maxHP());
+        mana = hasHealth ? health : type.mana();
         this.type = type;
     }
 
@@ -79,6 +81,11 @@ public abstract class Germ extends GridObject {
     @Override
     public int points() {
         return isDestroyed() ? 50 : 10;
+    }
+
+    @Override
+    public int mana() {
+        return mana;
     }
 
     // predicates

@@ -65,9 +65,11 @@ public class Particles implements StaticRenderable {
           .forEach(this::add);
     }
 
-    private void add(GridObject o) {
+    public void add(GridObject o) {
         if (!order.containsKey(o.color())) return;
-        particles.add(new Particle(o, order.get(o.color())));
+        for (int n = 0; n < o.mana(); n++) {
+            particles.add(new Particle(o, order.get(o.color())));
+        }
     }
 
     @Override

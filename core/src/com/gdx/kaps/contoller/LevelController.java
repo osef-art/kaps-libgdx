@@ -7,14 +7,14 @@ import com.gdx.kaps.time.Timer;
 import java.util.HashMap;
 import java.util.stream.IntStream;
 
-public class InputHandler implements InputProcessor {
+public class LevelController implements InputProcessor {
     // TODO: handle mouse inputs
     private final HashMap<Integer, Boolean> pressed = new HashMap<>();
     private final static double UPDATE_SPEED = 75_000_000;
     private final Timer moveSpeed;
     private final Level level;
 
-    public InputHandler(Level lvl) {
+    public LevelController(Level lvl) {
         moveSpeed = new Timer(UPDATE_SPEED);
         level = lvl;
         IntStream.range(0, 100)
@@ -23,11 +23,20 @@ public class InputHandler implements InputProcessor {
 
     @Override
     public boolean keyDown (int keycode) {
-        if (level.isPaused()) return false;
         moveSpeed.reset();
         pressed.put(keycode, true);
 
-        // SINGLE SHOT
+        switch (keycode) {
+            case 44: // P
+                level.togglePause();
+                break;
+            case 45: // Q
+                System.exit(0);
+        }
+
+        // SINGLE SHOTS
+        if (level.isPaused()) return false;
+
         switch (keycode) {
             case 62: // SPACE
                 level.dropGelule();
@@ -35,11 +44,6 @@ public class InputHandler implements InputProcessor {
             case 36: // H
                 level.hold();
                 break;
-            case 44: // P
-                level.togglePause();
-                break;
-            case 45: // Q
-                System.exit(0);
         }
         return false;
     }

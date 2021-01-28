@@ -240,7 +240,10 @@ public class Grid implements StaticRenderable {
     }
 
     public void hit(int x, int y, SidekickRecord sidekick) {
-        get(x, y).ifPresent(o -> hit(o, sidekick.damage(), (g) -> g.addEffect(sidekick.effect(), x, y)));
+        get(x, y).ifPresent(o -> hit(o, sidekick.damage(), (g) -> {
+            g.addEffect(sidekick.effect(), x, y);
+            Level.addParticle(o);
+        }));
     }
 
     private void hit(GridObject o, int damage, Consumer<Grid> action) {

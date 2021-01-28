@@ -2,6 +2,7 @@ package com.gdx.kaps.level;
 
 import com.badlogic.gdx.graphics.Color;
 import com.gdx.kaps.level.grid.Grid;
+import com.gdx.kaps.level.grid.GridObject;
 import com.gdx.kaps.level.grid.Particles;
 import com.gdx.kaps.level.grid.caps.Gelule;
 import com.gdx.kaps.level.grid.caps.PreviewGelule;
@@ -33,7 +34,7 @@ public class Level implements StaticRenderable {
     private static int multiplier = 1;
     private static int score;
     private static List<Sidekick> sidekicks;
-    private final Particles particles;
+    private static Particles particles;
     private int updateSpeed = 1_000_000_000;
     private final Timer updateTimer;
     private final Set<com.gdx.kaps.level.grid.Color> colors;
@@ -69,6 +70,10 @@ public class Level implements StaticRenderable {
         updateTimer = new Timer(updateSpeed);
         particles = new Particles(sidekicks);
         spawnNewGelule();
+    }
+
+    public static void addParticle(GridObject o) {
+        particles.add(o);
     }
 
     // getters
