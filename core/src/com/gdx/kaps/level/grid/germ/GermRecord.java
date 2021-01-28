@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 public enum GermRecord {
     BASIC("basic", 8, 1),
     WALL("wall", 4, 4),
-    VIRUS("virus", 8, 1, 7, (lvl, gm) -> lvl.applyToGrid(GermRecord::contamineRandomCaps, gm), "virus"),
+    VIRUS("virus", 8, 1, 8, (lvl, gm) -> lvl.applyToGrid(GermRecord::contamineRandomCaps, gm), "virus"),
     THORN("thorn", 8, 1, 5, (lvl, gm) -> lvl.applyToGrid(GermRecord::hitRandomCaps, gm), "slice"),
     ;
 

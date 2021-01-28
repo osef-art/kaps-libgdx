@@ -3,11 +3,11 @@ package com.gdx.kaps.level.grid;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.gdx.kaps.level.Level;
+import com.gdx.kaps.level.Matches;
 import com.gdx.kaps.level.grid.caps.EffectAnim;
 import com.gdx.kaps.level.grid.caps.Gelule;
 import com.gdx.kaps.level.grid.germ.Germ;
 import com.gdx.kaps.level.grid.germ.VirusGerm;
-import com.gdx.kaps.level.sidekick.Sidekick;
 import com.gdx.kaps.level.sidekick.SidekickRecord;
 import com.gdx.kaps.renderer.Dimensions;
 import com.gdx.kaps.renderer.Renderable;
@@ -231,31 +231,28 @@ public class Grid implements StaticRenderable {
         doOnGridObjectAndLinkedIfExists(obj, c -> remove(c.x(), c.y()));
     }
 
-    public void hit(GridObject obj) {
-        hit(obj.x(), obj.y());
+    public void hit(GridObject o) {
+        hit(o, 1, (g) -> {});
     }
 
     public void hit(int x, int y) {
-        hit(x, y, 1, (g) -> {});
+        get(x, y).ifPresent(this::hit);
     }
 
     public void hit(int x, int y, SidekickRecord sidekick) {
-        hit(x, y, sidekick.damage(), (g) -> g.addEffect(sidekick.effect(), x, y));
+        get(x, y).ifPresent(o -> hit(o, sidekick.damage(), (g) -> g.addEffect(sidekick.effect(), x, y)));
     }
 
-    private void hit(int x, int y, int damage, Consumer<Grid> action) {
+    private void hit(GridObject o, int damage, Consumer<Grid> action) {
         for (int i = 0; i < damage; i++) {
-            get(x, y).ifPresent(o -> {
-                o.hit();
-                action.accept(this);
-                Level.increaseScore(o.points());
+            o.hit();
+            action.accept(this);
+            Level.increaseScore(o.points());
 
-                if (o.isDestroyed()) {
-                    pop(o);
-                    popping.add(EffectAnim.ofPopping(o));
-                    Level.sidekickOfColor(o.color()).ifPresent(Sidekick::increaseMana);
-                }
-            });
+            if (o.isDestroyed()) {
+                pop(o);
+                popping.add(EffectAnim.ofPopping(o));
+            }
         }
     }
 
@@ -271,7 +268,7 @@ public class Grid implements StaticRenderable {
      * @param obj the obj to pop.
      */
     private void pop(GridObject obj) {
-        get(obj.x(), obj.y()).flatMap(GridObject::linked).ifPresent(this::unlink);
+        obj.linked().flatMap(lk -> get(lk.x(), lk.y())).ifPresent(this::unlink);
         remove(obj.x(), obj.y());
     }
 
@@ -343,10 +340,8 @@ public class Grid implements StaticRenderable {
         );
     }
 
-    public Set<GridObject> deleteMatches() {
-        var matches = matchingObjects();
-        matches.forEach(this::hit);
-        return matches;
+    public Matches deleteMatches() {
+        return new Matches(matchingObjects()).peekObjects(this::hit);
     }
 
     private Set<GridObject> matchingObjects() {
@@ -411,8 +406,8 @@ public class Grid implements StaticRenderable {
     private void renderBackground() {
         for (int x = 0; x < width(); x++) {
             for (int y = 0; y < height(); y++) {
-                float shift = (x + y) %2 == 0 ? 0.0175f : 0;
-                Color color = new Color(0.45f + shift, 0.5f + shift, 0.6f + shift, 1);
+                float shift = (x + y) %2 == 0 ? 0.03f : 0;
+                Color color = new Color(0.5f + shift, 0.55f + shift, 0.7f + shift, 1);
 
                 sra.drawRect(
                   dim.gridMargin + x * dim.get(Zone.TILE).width,

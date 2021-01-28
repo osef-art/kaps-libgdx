@@ -1,6 +1,7 @@
 package com.gdx.kaps.level.grid;
 
 import com.badlogic.gdx.math.Vector2;
+import com.gdx.kaps.level.Level;
 import com.gdx.kaps.level.sidekick.Sidekick;
 import com.gdx.kaps.renderer.StaticRenderable;
 import com.gdx.kaps.renderer.Zone;
@@ -58,8 +59,10 @@ public class Particles implements StaticRenderable {
         }
     }
 
-    public void add(List<GridObject> list) {
-        list.stream().filter(GridObjectInterface::isDestroyed).forEach(this::add);
+    public void add(Set<GridObject> set) {
+        set.stream()
+          .filter(GridObjectInterface::isDestroyed)
+          .forEach(this::add);
     }
 
     private void add(GridObject o) {
@@ -69,7 +72,10 @@ public class Particles implements StaticRenderable {
 
     @Override
     public void update() {
-        particles.forEach(Particle::update);
+        particles.forEach(p -> {
+            p.update();
+            if (p.isArrived()) Level.sidekickOfColor(p.color).ifPresent(Sidekick::increaseMana);
+        });
         particles.removeIf(Particle::isArrived);
     }
 

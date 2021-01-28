@@ -29,8 +29,9 @@ public class MainScreen extends ApplicationAdapter {
 
 	public static OrthographicCamera camera;
 	public static SpriteRendererAdaptor spra;
+	public static TextRendererAdaptor tra25;
+	public static TextRendererAdaptor tra15;
 	public static ShapeRendererAdaptor sra;
-	public static TextRendererAdaptor tra;
 	public static Dimensions dim;
 
 	public MainScreen(String ... sdks) {
@@ -47,10 +48,11 @@ public class MainScreen extends ApplicationAdapter {
 
 		spra = new SpriteRendererAdaptor();
 		sra = new ShapeRendererAdaptor();
-		tra = new TextRendererAdaptor(25, Color.WHITE);
+		tra25 = new TextRendererAdaptor(25, Color.WHITE);
+		tra15 = new TextRendererAdaptor(15, Color.WHITE);
 
 		level = new Level(
-			Path.of("android/assets/levels/level" + new Random().nextInt(21)),
+			Path.of("android/assets/levels/level" + 14), //TEST: new Random().nextInt(21)),
 			Sidekick.randomSetOf(2, sidekicks)
 		);
 		camera.translate(0, dim.get(Zone.WINDOW).height);
@@ -102,6 +104,6 @@ public class MainScreen extends ApplicationAdapter {
 	public void dispose () {
 		spra.dispose();
 		sra.dispose();
-		tra.dispose();
+		tra25.dispose();
 	}
 }

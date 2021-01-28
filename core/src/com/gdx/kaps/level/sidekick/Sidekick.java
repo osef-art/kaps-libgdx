@@ -16,7 +16,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.gdx.kaps.MainScreen.dim;
-import static com.gdx.kaps.MainScreen.tra;
+import static com.gdx.kaps.MainScreen.tra25;
 
 public class Sidekick implements Renderable {
     private final AnimatedSprite sprite;
@@ -123,7 +123,7 @@ public class Sidekick implements Renderable {
           color().value()
         );
 
-        tra.drawText(
+        tra25.drawText(
           gauge.value() + " / " + gauge.max(),
           dim.get(Zone.SIDE_PANEL).x + 10 + dim.sidekickPanelHeight - 10,
           dim.gridMargin * (6 + n) + dim.get(Zone.NEXT_BOX).height * (2 + 0.5f * n) + 10

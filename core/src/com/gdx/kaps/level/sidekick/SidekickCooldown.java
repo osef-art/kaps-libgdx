@@ -1,12 +1,12 @@
 package com.gdx.kaps.level.sidekick;
 
+import com.badlogic.gdx.graphics.Color;
 import com.gdx.kaps.Sound;
 import com.gdx.kaps.level.Gauge;
 import com.gdx.kaps.level.Level;
 import com.gdx.kaps.renderer.Zone;
 
-import static com.gdx.kaps.MainScreen.dim;
-import static com.gdx.kaps.MainScreen.tra;
+import static com.gdx.kaps.MainScreen.*;
 
 class SidekickCooldown extends Sidekick {
     SidekickCooldown(SidekickRecord record) {
@@ -50,6 +50,7 @@ class SidekickCooldown extends Sidekick {
     }
 
     public void renderGauge(int n) {
+
         gauge.renderCircled(
           dim.get(Zone.SIDE_PANEL).x + dim.sidekickPanelHeight + (dim.sidekickPanelHeight - 10)/2,
           dim.gridMargin * (6 + n) + dim.get(Zone.NEXT_BOX).height  * (2 + 0.5f * n) + dim.sidekickPanelHeight - 30,
@@ -59,12 +60,12 @@ class SidekickCooldown extends Sidekick {
           color().value()
         );
 
-        tra.drawText(
+        tra25.drawText(
           gauge.value() + "",
-          dim.get(Zone.SIDE_PANEL).x + dim.sidekickPanelHeight,
-          dim.gridMargin * (6 + n) + dim.get(Zone.NEXT_BOX).height * (2 + 0.5f * n) + 5,
-          dim.sidekickPanelHeight - 10,
-          dim.sidekickPanelHeight / 2 - 10
+          dim.get(Zone.SIDE_PANEL).x + dim.sidekickPanelHeight + 5,
+          dim.gridMargin * (6 + n) + dim.get(Zone.NEXT_BOX).height * (2 + 0.5f * n) + 10,
+          dim.sidekickPanelHeight - 20,
+          dim.sidekickPanelHeight - 20
         );
     }
 }

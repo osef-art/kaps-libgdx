@@ -23,6 +23,7 @@ public class InputHandler implements InputProcessor {
 
     @Override
     public boolean keyDown (int keycode) {
+        if (level.isPaused()) return false;
         moveSpeed.reset();
         pressed.put(keycode, true);
 
@@ -80,6 +81,7 @@ public class InputHandler implements InputProcessor {
     }
 
     public void update() {
+        if (level.isPaused()) return;
         if (moveSpeed.resetIfExceeds()) {
             // CONTINUOUS INPUT
             if (pressed.get(21)) level.moveGeluleLeft();

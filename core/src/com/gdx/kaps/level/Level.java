@@ -115,6 +115,9 @@ public class Level implements StaticRenderable {
         return (defeat || victory) && noMoreAnims;
     }
 
+    public boolean isPaused() {
+        return paused;
+    }
 
     // control
     private void doIfPresent(Consumer<Gelule> action) {
@@ -229,7 +232,7 @@ public class Level implements StaticRenderable {
     }
 
     private void speedUp() {
-        updateSpeed -= 5_000_000;
+        updateSpeed *= 0.999;
         updateTimer.updateLimit(updateSpeed);
         updateTimer.reset();
     }
@@ -258,29 +261,24 @@ public class Level implements StaticRenderable {
     }
 
     public void updateGrid() {
-        boolean matchesWereFound;
+        Matches matches;
         do {
             grid.dropAll();
-            var matches = grid.deleteMatches();
-            matchesWereFound = !matches.isEmpty();
-
-            if (matchesWereFound) {
-                var sound = "plop0";
-                // IMPL: use a hashmap of Color -> num ? :/
-                for (var color : colors) {
-                    var matchRange = matches.stream()
-                                        .filter(o -> o.color() == color)
-                                        .collect(toList());
-                    particles.add(matchRange);
-                    if (matchRange.size() > MIN_MATCH_RANGE) {
-                        sidekickOfColor(color).ifPresent(Sidekick::decreaseCooldown);
-                        sound = "match_five";
-                    }
-                }
-                play(sound);
-                multiplier++;
-            }
-        } while (matchesWereFound);
+            matches = grid.deleteMatches()
+                        .peek((color, set) -> {
+                            var sound = "plop0";
+                            if (set.size() > MIN_MATCH_RANGE) {
+                                particles.add(set);
+                                sidekickOfColor(color).ifPresent(Sidekick::decreaseCooldown);
+                                sound = "match_five";
+                            }
+                            else if (!sidekickOfColor(color).map(Sidekick::hasCooldown).orElse(true)) {
+                                particles.add(set);
+                            }
+                            play(sound);
+                        });
+            multiplier++;
+        } while (!matches.isEmpty());
     }
 
     public void end() {
@@ -329,13 +327,13 @@ public class Level implements StaticRenderable {
           dim.get(Zone.NEXT_BOX),
           new Color(0.45f, 0.5f, 0.6f, 1)
         );
-        tra.drawText("NEXT", dim.get(Zone.NEXT_BOX).x, dim.get(Zone.NEXT_BOX).y + dim.get(Zone.NEXT_BOX).height + 10);
+        tra25.drawText("NEXT", dim.get(Zone.NEXT_BOX).x, dim.get(Zone.NEXT_BOX).y + dim.get(Zone.NEXT_BOX).height + 10);
 
         sra.drawRect(
           dim.get(Zone.HOLD_BOX),
           new Color(0.45f, 0.5f, 0.6f, 1)
         );
-        tra.drawText("HOLD", dim.get(Zone.HOLD_BOX).x, dim.get(Zone.HOLD_BOX).y + dim.get(Zone.HOLD_BOX).height + 10);
+        tra25.drawText("HOLD", dim.get(Zone.HOLD_BOX).x, dim.get(Zone.HOLD_BOX).y + dim.get(Zone.HOLD_BOX).height + 10);
 
         for (int n = 0; n < sidekicks.size(); n++) {
             // fond
@@ -354,8 +352,8 @@ public class Level implements StaticRenderable {
           sidekicks.get(0).color().value()
         );
 
-        tra.drawText(score + "", dim.get(Zone.BOTTOM_PANEL));
-        tra.drawText( "score:",
+        tra25.drawText(score + "", dim.get(Zone.BOTTOM_PANEL));
+        tra25.drawText( "score:",
           dim.get(Zone.BOTTOM_PANEL).x,
           dim.get(Zone.BOTTOM_PANEL).y,
           dim.get(Zone.BOTTOM_PANEL).width,0

@@ -23,7 +23,7 @@ public enum SidekickRecord {
     XERETH("Xereth", Color.COLOR_6, "slice", SLICE_FX, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::sliceRandomDiagonals, sdk), 25),
     JIM("Jim", Color.COLOR_10, "slice", SLICE_FX, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::sliceRandomLine, sdk), 25),
     COLOR("Color", Color.COLOR_11,"color", CORE_FX, SidekickRecord::generateSingleColoredGelule, -5),
-    PUNCH("Punch", Color.COLOR_12,"paint", CORE_FX, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::hitRandomGerm, sdk), 15, 3),
+    SNIPER("Punch", Color.COLOR_12,"paint", CORE_FX, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::hitRandomGerm, sdk), 15, 3),
     // TODO: sidekick that generates a single Caps ?
     ;
 
