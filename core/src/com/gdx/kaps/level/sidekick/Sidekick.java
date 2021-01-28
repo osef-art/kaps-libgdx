@@ -66,6 +66,10 @@ public class Sidekick implements Renderable {
         return gauge.isFull();
     }
 
+    public boolean hasCooldown() {
+        return false;
+    }
+
     // actions
 
     public void increaseMana() {
@@ -112,7 +116,7 @@ public class Sidekick implements Renderable {
     public void renderGauge(int n) {
         gauge.render(
           dim.get(Zone.SIDE_PANEL).x + dim.sidekickPanelHeight,
-          dim.gridMargin * (6 + n) + dim.get(Zone.NEXT_BOX).height  * (2 + 0.5f * n) + dim.sidekickPanelHeight - 30,
+          dim.gridMargin * (6 + n) + dim.get(Zone.NEXT_BOX).height * (2 + 0.5f * n) + dim.sidekickPanelHeight - 30,
           dim.get(Zone.SIDE_PANEL).width - (dim.sidekickPanelHeight - 10) - 15,
           20,
           new com.badlogic.gdx.graphics.Color(0.5f, 0.55f, 0.65f, 1),

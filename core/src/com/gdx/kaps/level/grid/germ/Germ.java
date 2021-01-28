@@ -155,7 +155,7 @@ public abstract class Germ extends GridObject {
         if (hasHealth) {
             health.render(x, y, width, height/10,
               new com.badlogic.gdx.graphics.Color(1, 1, 1, 0.25f),
-              new com.badlogic.gdx.graphics.Color(1, 1, 1, 1)
+              com.badlogic.gdx.graphics.Color.WHITE
             );
         }
     }

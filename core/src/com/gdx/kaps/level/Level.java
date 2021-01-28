@@ -2,6 +2,7 @@ package com.gdx.kaps.level;
 
 import com.badlogic.gdx.graphics.Color;
 import com.gdx.kaps.level.grid.Grid;
+import com.gdx.kaps.level.grid.Particles;
 import com.gdx.kaps.level.grid.caps.Gelule;
 import com.gdx.kaps.level.grid.caps.PreviewGelule;
 import com.gdx.kaps.level.sidekick.Sidekick;
@@ -13,7 +14,10 @@ import com.gdx.kaps.time.Timer;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -26,29 +30,30 @@ import static java.util.stream.Collectors.toList;
 
 public class Level implements StaticRenderable {
     public final static int MIN_MATCH_RANGE = 4;
-    private int updateSpeed = 1_000_000_000;
-    private final Timer updateTimer;
     private static int multiplier = 1;
     private static int score;
     private static List<Sidekick> sidekicks;
+    private final Particles particles;
+    private int updateSpeed = 1_000_000_000;
+    private final Timer updateTimer;
     private final Set<com.gdx.kaps.level.grid.Color> colors;
     private final Grid grid;
     private boolean paused;
     private boolean canHold;
     private PreviewGelule preview;
-    private final Gelule[] next;
+    private final Gelule[] next = new Gelule[2];
     private Gelule gelule;
     private Gelule hold;
     // TODO: list of controllable Unlinked caps
 
-    public Level(Path filePath, Set<Sidekick> sidekicks) {
-        Objects.requireNonNull(sidekicks);
+    public Level(Path filePath, Set<Sidekick> sdks) {
+        Objects.requireNonNull(sdks);
         Objects.requireNonNull(filePath);
 
-        Level.sidekicks = new ArrayList<>(sidekicks);
+        sidekicks = List.copyOf(sdks);
 
         colors = Stream.concat(
-          Level.sidekicks.stream().map(Sidekick::color),
+          sidekicks.stream().map(Sidekick::color),
           Stream.of(com.gdx.kaps.level.grid.Color.randomBlank())
         ).collect(Collectors.toUnmodifiableSet());
 
@@ -58,14 +63,13 @@ public class Level implements StaticRenderable {
             throw new AssertionError("Error when parsing file " + filePath + ": " + e);
         }
 
-        next = new Gelule[2];
         for (int i = 0; i < next.length; i++) {
             next[i] = new Gelule(this);
         }
         updateTimer = new Timer(updateSpeed);
+        particles = new Particles(sidekicks);
         spawnNewGelule();
     }
-
 
     // getters
     public int gridWidth() {
@@ -238,6 +242,7 @@ public class Level implements StaticRenderable {
         // FIXME: update on pause (récup remaining time)
         if (updateTimer.resetIfExceeds()) dipGelule();
         grid.update();
+        particles.update();
         sidekicks.forEach(Renderable::update);
         if (isOver()) end();
     }
@@ -263,10 +268,11 @@ public class Level implements StaticRenderable {
                 var sound = "plop0";
                 // IMPL: use a hashmap of Color -> num ? :/
                 for (var color : colors) {
-                    long matchRange = matches.stream()
+                    var matchRange = matches.stream()
                                         .filter(o -> o.color() == color)
-                                        .count();
-                    if (matchRange > MIN_MATCH_RANGE) {
+                                        .collect(toList());
+                    particles.add(matchRange);
+                    if (matchRange.size() > MIN_MATCH_RANGE) {
                         sidekickOfColor(color).ifPresent(Sidekick::decreaseCooldown);
                         sound = "match_five";
                     }
@@ -290,10 +296,10 @@ public class Level implements StaticRenderable {
         System.exit(0);
     }
 
-
     public static void increaseScore(int points) {
         score += points * multiplier;
     }
+
     // rendering
 
     private void renderBackGround() {
@@ -331,6 +337,17 @@ public class Level implements StaticRenderable {
         );
         tra.drawText("HOLD", dim.get(Zone.HOLD_BOX).x, dim.get(Zone.HOLD_BOX).y + dim.get(Zone.HOLD_BOX).height + 10);
 
+        for (int n = 0; n < sidekicks.size(); n++) {
+            // fond
+            sra.drawRect(
+              dim.get(Zone.SIDE_PANEL).x,
+              dim.gridMargin * (6 + n) + dim.get(Zone.NEXT_BOX).height * (2 + 0.5f * n),
+              dim.get(Zone.SIDE_PANEL).width,
+              dim.sidekickPanelHeight,
+              new com.badlogic.gdx.graphics.Color(0.45f, 0.5f, 0.6f, 1)
+            );
+        }
+
         // bottom panel
         sra.drawRect(
           dim.get(Zone.BOTTOM_PANEL),
@@ -348,16 +365,6 @@ public class Level implements StaticRenderable {
     private void renderSidekicks() {
         for (int n = 0; n < sidekicks.size(); n++) {
             var sdk = sidekicks.get(n);
-
-            // fond
-            sra.drawRect(
-              dim.get(Zone.SIDE_PANEL).x,
-              dim.gridMargin * (6 + n) + dim.get(Zone.NEXT_BOX).height * (2 + 0.5f * n),
-              dim.get(Zone.SIDE_PANEL).width,
-              dim.sidekickPanelHeight,
-              new com.badlogic.gdx.graphics.Color(0.45f, 0.5f, 0.6f, 1)
-            );
-
             // head
             sdk.render(
               dim.get(Zone.SIDE_PANEL).x + 5,
@@ -374,7 +381,6 @@ public class Level implements StaticRenderable {
     @Override
     public void render() {
         renderBackGround();
-        renderSidekicks();
 
         grid.render();
         Optional.ofNullable(gelule).ifPresent(g -> {
@@ -384,5 +390,8 @@ public class Level implements StaticRenderable {
 
         next[0].render(dim.get(Zone.NEXT_GELULE));
         Optional.ofNullable(hold).ifPresent(hold -> hold.render(dim.get(Zone.HOLD_GELULE)));
+
+        particles.render();
+        renderSidekicks();
     }
 }

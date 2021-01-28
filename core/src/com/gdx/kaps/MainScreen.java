@@ -47,7 +47,7 @@ public class MainScreen extends ApplicationAdapter {
 
 		spra = new SpriteRendererAdaptor();
 		sra = new ShapeRendererAdaptor();
-		tra = new TextRendererAdaptor(25, new Color(1, 1, 1, 1));
+		tra = new TextRendererAdaptor(25, Color.WHITE);
 
 		level = new Level(
 			Path.of("android/assets/levels/level" + new Random().nextInt(21)),
@@ -83,12 +83,14 @@ public class MainScreen extends ApplicationAdapter {
 
 	private void moveCamera() {
 		if (shaking.x != 0) {
+			// shake
 			if (timer.resetIfExceeds()) {
 				shaking.set(-shaking.x + Math.signum(shaking.x)*0.5f, -shaking.y + Math.signum(shaking.y)*0.5f);
 				camera.position.set(cameraPos.x + shaking.x, cameraPos.y + shaking.y, 0);
 				camera.update();
 			}
 		} else {
+			// slide
 			if (camera.position.y > cameraPos.y) {
 				camera.position.y -= (camera.position.y - cameraPos.y) / 12.5;
 				camera.update();

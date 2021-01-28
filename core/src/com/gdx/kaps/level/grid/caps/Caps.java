@@ -124,11 +124,9 @@ public class Caps extends GridObject {
 
     @Override
     public void update() {
-
     }
 
     public String toString() {
         return "(" + x() + "," + y() + ")";
     }
-
 }

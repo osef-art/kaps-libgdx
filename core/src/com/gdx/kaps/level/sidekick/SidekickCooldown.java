@@ -14,6 +14,15 @@ class SidekickCooldown extends Sidekick {
     }
 
     @Override
+    public boolean isReady() {
+        return gauge.isEmpty();
+    }
+
+    public boolean hasCooldown() {
+        return true;
+    }
+
+    @Override
     public void increaseMana() {
     }
 
@@ -22,10 +31,6 @@ class SidekickCooldown extends Sidekick {
         gauge.decrease();
     }
 
-    @Override
-    public boolean isReady() {
-        return gauge.isEmpty();
-    }
 
     @Override
     public void reset() {
