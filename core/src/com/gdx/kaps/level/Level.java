@@ -304,7 +304,7 @@ public class Level implements Animated {
 
     // rendering
     public static void addEffect(EffectAnim.EffectType type, int x, int y) {
-        effects.add(new EffectAnim(type, x, y));
+        effects.add(EffectAnim.onTile(type, x, y));
     }
 
     public static void addEffect(EffectAnim effect) {

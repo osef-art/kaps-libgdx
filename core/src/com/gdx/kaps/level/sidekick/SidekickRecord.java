@@ -111,7 +111,7 @@ public enum SidekickRecord {
      */
     private static void generateSingleColoredGelule(Level lvl, SidekickRecord sidekick) {
         lvl.setNext(2, new Gelule(lvl, lvl.getSidekickExcept(sidekick).color()));
-        Level.addEffect(new EffectAnim(CORE_FX, dim.get(Zone.NEXT_BOX)));
+        Level.addEffect(new EffectAnim.EffectAnimBuilder(CORE_FX, dim.get(Zone.NEXT_BOX)).withSpeed(50_000_000).build());
     }
 
     /**
