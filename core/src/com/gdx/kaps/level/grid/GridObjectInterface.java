@@ -5,6 +5,8 @@ import com.gdx.kaps.renderer.NonStatic;
 
 import java.util.Optional;
 
+import static com.gdx.kaps.MainScreen.dim;
+
 public interface GridObjectInterface extends Animated, NonStatic {
     int x();
     int y();
@@ -23,8 +25,13 @@ public interface GridObjectInterface extends Animated, NonStatic {
     void dipIfPossible(Grid grid);
     void hit();
 
-    void render(int x, int y);
-    default void render(float x, float y, float width, float height) {
+    default void render() {
         render(x(), y());
+    }
+    default void render(int x, int y) {
+        render(dim.getTile(x, y));
+    }
+    default void render(float x, float y, float width, float height) {
+        render();
     }
 }

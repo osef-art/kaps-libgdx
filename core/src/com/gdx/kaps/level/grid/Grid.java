@@ -1,7 +1,6 @@
 package com.gdx.kaps.level.grid;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.gdx.kaps.level.Level;
 import com.gdx.kaps.level.Matches;
 import com.gdx.kaps.level.grid.caps.EffectAnim;
@@ -35,7 +34,6 @@ public class Grid implements Animated {
         }
     }
     private final List<EffectAnim> popping = new ArrayList<>();
-    private final List<EffectAnim> effects = new ArrayList<>();
     private final Column[] columns;
 
     // init
@@ -52,7 +50,7 @@ public class Grid implements Animated {
         }
     }
 
-    public static Grid parseLevel(Path path, Set<com.gdx.kaps.level.grid.Color> colors) throws IOException {
+    public static Grid parseLevel(Path path, Set<Color> colors) throws IOException {
         BufferedReader reader = Files.newBufferedReader(path);
         var charGrid = new ArrayList<List<Character>>();
         String line;
@@ -229,7 +227,7 @@ public class Grid implements Animated {
     }
 
     public void hit(GridObject o) {
-        hit(o, 1, (g) -> {});
+        hit(o, 1, () -> {});
     }
 
     public void hit(int x, int y) {
@@ -237,16 +235,16 @@ public class Grid implements Animated {
     }
 
     public void hit(int x, int y, SidekickRecord sidekick) {
-        get(x, y).ifPresent(o -> hit(o, sidekick.damage(), (g) -> {
-            g.addEffect(sidekick.effect(), x, y);
+        get(x, y).ifPresent(o -> hit(o, sidekick.damage(), () -> {
+            Level.addEffect(sidekick.effect(), x, y);
             Level.addParticle(o);
         }));
     }
 
-    private void hit(GridObject o, int damage, Consumer<Grid> action) {
+    private void hit(GridObject o, int damage, Runnable action) {
         for (int i = 0; i < damage; i++) {
             o.hit();
-            action.accept(this);
+            action.run();
             Level.increaseScore(o.points());
 
             if (o.isDestroyed()) {
@@ -259,7 +257,7 @@ public class Grid implements Animated {
     public void paint(int x, int y, com.gdx.kaps.level.grid.Color color) {
         get(x, y).ifPresent(caps -> {
             caps.paint(color);
-            effects.add(EffectAnim.ofPainted(caps));
+            Level.addEffect(EffectAnim.ofPainted(caps));
         });
     }
 
@@ -390,31 +388,19 @@ public class Grid implements Animated {
           .filter(Objects::nonNull);
     }
 
-    public void addEffect(EffectAnim.EffectType type, int x, int y) {
-        effects.add(new EffectAnim(type, x, y));
-    }
-
     @Override
     public void update() {
         everyObjectInGrid().forEach(Animated::update);
-        Stream.concat(popping.stream(), effects.stream()).forEach(EffectAnim::update);
+        popping.forEach(EffectAnim::update);
         popping.removeIf(EffectAnim::isOver);
-        effects.removeIf(EffectAnim::isOver);
     }
 
     private void renderBackground() {
         for (int x = 0; x < width(); x++) {
             for (int y = 0; y < height(); y++) {
                 float shift = (x + y) %2 == 0 ? 0.03f : 0;
-                Color color = new Color(0.5f + shift, 0.55f + shift, 0.7f + shift, 1);
 
-                sra.drawRect(
-                  dim.gridMargin + x * dim.get(Zone.TILE).width,
-                  dim.gridMargin + y * dim.get(Zone.TILE).height,
-                  dim.get(Zone.TILE).width,
-                  dim.get(Zone.TILE).height,
-                  color
-                );
+                sra.drawRect(dim.getTile(x, y), new com.badlogic.gdx.graphics.Color(0.5f + shift, 0.55f + shift, 0.7f + shift, 1));
             }
         }
     }
@@ -429,16 +415,5 @@ public class Grid implements Animated {
             }
         }
         popping.forEach(EffectAnim::render);
-        if (!effects.isEmpty()) {
-            // TODO: different focus for germs
-            sra.drawRect(
-              dim.gridMargin,
-              dim.gridMargin,
-              dim.get(Zone.GRID).width,
-              dim.get(Zone.GRID).height,
-              new Color(0, 0, 0, 0.15f)
-            );
-        }
-        effects.forEach(EffectAnim::render);
     }
 }

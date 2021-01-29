@@ -5,11 +5,13 @@ import com.gdx.kaps.level.grid.Color;
 import com.gdx.kaps.level.grid.Grid;
 import com.gdx.kaps.level.grid.caps.EffectAnim;
 import com.gdx.kaps.level.grid.caps.Gelule;
+import com.gdx.kaps.renderer.Zone;
 
 import java.util.Collections;
 import java.util.function.BiConsumer;
 import java.util.stream.IntStream;
 
+import static com.gdx.kaps.MainScreen.dim;
 import static com.gdx.kaps.Utils.getRandomFrom;
 import static com.gdx.kaps.level.grid.caps.EffectAnim.EffectType.*;
 import static java.util.stream.Collectors.toList;
@@ -109,6 +111,7 @@ public enum SidekickRecord {
      */
     private static void generateSingleColoredGelule(Level lvl, SidekickRecord sidekick) {
         lvl.setNext(2, new Gelule(lvl, lvl.getSidekickExcept(sidekick).color()));
+        Level.addEffect(new EffectAnim(CORE_FX, dim.get(Zone.NEXT_BOX)));
     }
 
     /**
@@ -186,10 +189,10 @@ public enum SidekickRecord {
               grid.hit(obj.x() + 1, obj.y());
               grid.hit(obj.x(), obj.y() + 1);
               grid.hit(obj.x(), obj.y() - 1);
-              grid.addEffect(CORE_FX, obj.x() - 1, obj.y());
-              grid.addEffect(CORE_FX, obj.x() + 1, obj.y());
-              grid.addEffect(CORE_FX, obj.x(), obj.y() + 1);
-              grid.addEffect(CORE_FX, obj.x(), obj.y() - 1);
+              Level.addEffect(CORE_FX, obj.x() - 1, obj.y());
+              Level.addEffect(CORE_FX, obj.x() + 1, obj.y());
+              Level.addEffect(CORE_FX, obj.x(), obj.y() + 1);
+              Level.addEffect(CORE_FX, obj.x(), obj.y() - 1);
           }
         );
     }

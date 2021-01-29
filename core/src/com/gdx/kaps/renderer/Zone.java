@@ -3,7 +3,6 @@ package com.gdx.kaps.renderer;
 public enum Zone {
     WINDOW,
     GRID,
-    TILE,
     GRID_PANEL,
     SIDE_PANEL,
     BOTTOM_PANEL,

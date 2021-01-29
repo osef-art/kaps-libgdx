@@ -2,9 +2,9 @@ package com.gdx.kaps.level.grid;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.gdx.kaps.renderer.Zone;
+import com.badlogic.gdx.math.Rectangle;
 
-import static com.gdx.kaps.MainScreen.*;
+import static com.gdx.kaps.MainScreen.spra;
 import static java.util.Objects.requireNonNull;
 
 public abstract class GridObject implements GridObjectInterface {
@@ -48,23 +48,12 @@ public abstract class GridObject implements GridObjectInterface {
         sprite.flip(false, true);
     }
 
-    @Override
-    public void render() {
-        render(x(), y());
-    }
-
-    @Override
-    public void render(int x, int y) {
-        render(
-          dim.gridMargin + x * dim.get(Zone.TILE).height,
-          dim.topTile(y),
-          dim.get(Zone.TILE).width,
-          dim.get(Zone.TILE).height
-        );
-    }
-
     public void render(float x, float y, float width, float height) {
         render(x, y, width, height, 1);
+    }
+
+    public void render(Rectangle rect, float alpha) {
+        render(rect.x, rect.y, rect.width, rect.height, alpha);
     }
 
     public void render(float x, float y, float width, float height, float alpha) {

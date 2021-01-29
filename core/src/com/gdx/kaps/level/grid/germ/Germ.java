@@ -7,12 +7,10 @@ import com.gdx.kaps.level.grid.Color;
 import com.gdx.kaps.level.grid.Grid;
 import com.gdx.kaps.level.grid.GridObject;
 import com.gdx.kaps.renderer.AnimatedSprite;
-import com.gdx.kaps.renderer.Zone;
 
 import java.util.Optional;
 import java.util.Set;
 
-import static com.gdx.kaps.MainScreen.dim;
 import static java.util.Objects.requireNonNull;
 
 public abstract class Germ extends GridObject {
@@ -147,16 +145,6 @@ public abstract class Germ extends GridObject {
     @Override
     public String toString() {
         return "{" + x() + ',' + y() + '}';
-    }
-
-    @Override
-    public void render(int x, int y) {
-        render(
-          dim.gridMargin + x * dim.get(Zone.TILE).height,
-          dim.topTile(y),
-          dim.get(Zone.TILE).width,
-          dim.get(Zone.TILE).height
-        );
     }
 
     public void render(float x, float y, float width, float height) {

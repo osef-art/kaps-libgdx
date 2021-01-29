@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.gdx.kaps.level.grid.Grid;
 import com.gdx.kaps.level.grid.GridObject;
 import com.gdx.kaps.level.grid.Particles;
+import com.gdx.kaps.level.grid.caps.EffectAnim;
 import com.gdx.kaps.level.grid.caps.Gelule;
 import com.gdx.kaps.level.grid.caps.PreviewGelule;
 import com.gdx.kaps.level.sidekick.Sidekick;
@@ -14,10 +15,7 @@ import com.gdx.kaps.time.Timer;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -29,14 +27,15 @@ import static com.gdx.kaps.Utils.getRandomFrom;
 import static java.util.stream.Collectors.toList;
 
 public class Level implements Animated {
+    private int updateSpeed = 1_000_000_000;
     public final static int MIN_MATCH_RANGE = 4;
-    private static int multiplier = 1;
-    private static int score;
     private static List<Sidekick> sidekicks;
     private static Particles particles;
-    private int updateSpeed = 1_000_000_000;
+    private static int multiplier = 1;
+    private static int score;
     private final Timer updateTimer;
     private final Set<com.gdx.kaps.level.grid.Color> colors;
+    private static final List<EffectAnim> effects = new ArrayList<>();
     private final Grid grid;
     private boolean paused;
     private boolean canHold;
@@ -250,6 +249,8 @@ public class Level implements Animated {
         grid.update();
         particles.update();
         sidekicks.forEach(Animated::update);
+        effects.forEach(EffectAnim::update);
+        effects.removeIf(EffectAnim::isOver);
         if (isOver()) end();
     }
 
@@ -302,6 +303,14 @@ public class Level implements Animated {
     }
 
     // rendering
+    public static void addEffect(EffectAnim.EffectType type, int x, int y) {
+        effects.add(new EffectAnim(type, x, y));
+    }
+
+    public static void addEffect(EffectAnim effect) {
+        effects.add(effect);
+    }
+
 
     private void renderBackGround() {
         // timer
@@ -379,6 +388,14 @@ public class Level implements Animated {
         }
     }
 
+    private void renderEffects() {
+        if (!effects.isEmpty()) {
+            // TODO: different focus for germs
+            sra.drawRect(dim.get(Zone.GRID), new Color(0, 0, 0, 0.15f));
+        }
+        effects.forEach(EffectAnim::render);
+    }
+
     @Override
     public void render() {
         renderBackGround();
@@ -392,6 +409,7 @@ public class Level implements Animated {
         next[0].render(dim.get(Zone.NEXT_GELULE));
         Optional.ofNullable(hold).ifPresent(hold -> hold.render(dim.get(Zone.HOLD_GELULE)));
 
+        renderEffects();
         particles.render();
         renderSidekicks();
     }

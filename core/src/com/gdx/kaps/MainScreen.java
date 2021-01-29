@@ -21,8 +21,6 @@ import java.util.stream.Collectors;
 
 public class MainScreen extends ApplicationAdapter {
 	private final Set<SidekickRecord> sidekicks;
-	private static Vector2 shaking;
-	private static Timer timer;
 	private LevelController controller;
 	private Vector2 cameraPos;
 	private Level level;
@@ -32,7 +30,10 @@ public class MainScreen extends ApplicationAdapter {
 	public static TextRendererAdaptor tra25;
 	public static TextRendererAdaptor tra15;
 	public static ShapeRendererAdaptor sra;
+	//IMPL: move to Level
 	public static Dimensions dim;
+	private static Vector2 shaking;
+	private static Timer timer;
 
 	public MainScreen(String ... sdks) {
 		sidekicks = Arrays.stream(sdks)

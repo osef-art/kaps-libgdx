@@ -22,8 +22,8 @@ public class Particles implements Animated {
         public Particle(GridObject o, int n) {
             this.color = o.color();
             pos = new Vector2(
-              dim.gridMargin + o.x() * dim.get(Zone.TILE).width + dim.get(Zone.TILE).width / 2,
-              dim.topTile(o.y()) + dim.get(Zone.TILE).height / 2
+              dim.getTile(o).x + dim.getTile(o).width / 2,
+              dim.getTile(o).y + dim.getTile(o).height / 2
             );
             dest = new Vector2(
               dim.get(Zone.SIDE_PANEL).x + dim.sidekickPanelHeight / 2,

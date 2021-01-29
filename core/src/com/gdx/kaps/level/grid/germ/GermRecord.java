@@ -93,7 +93,7 @@ public enum GermRecord {
                            .collect(Collectors.toList());
         Utils.getRandomFrom(capsAround).ifPresent(caps -> {
             grid.hit(caps);
-            grid.addEffect(EffectAnim.EffectType.SLICE_FX, caps.x(), caps.y());
+            Level.addEffect(EffectAnim.EffectType.SLICE_FX, caps.x(), caps.y());
         });
     }
 }
