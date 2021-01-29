@@ -31,6 +31,10 @@ public class Gauge {
         return (float) value / max;
     }
 
+    public float ratioLeft() {
+        return 1 - ratio();
+    }
+
     // predicates
 
     public boolean isEmpty() {
@@ -59,11 +63,15 @@ public class Gauge {
         value = Math.max(value - 1, 0);
     }
 
+    public void renderBoxed(float x, float y, float width, float height, Color back, Color main, boolean inverted) {
+        sra.drawRect(x, y, width, height, back);
+        sra.drawRect(x, y, width * (inverted ? ratioLeft() : ratio()), height, main);
+    }
+
     public void render(float x, float y, float width, float height, Color back, Color main) {
-        sra.drawRect(x + height/2, y, width - height, height, back);
+        renderBoxed(x + height/2, y, width - height, height, back, main, false);
         sra.drawCircle(x + width - height/2, y + height/2, height/2, back);
 
-        sra.drawRect(x + height/2, y, (width - height) * ratio(), height, main);
         sra.drawCircle(x + height/2, y + height/2, height/2, main);
         sra.drawCircle(x + height/2 + (width - height) * ratio(), y + height/2, height/2, main);
     }

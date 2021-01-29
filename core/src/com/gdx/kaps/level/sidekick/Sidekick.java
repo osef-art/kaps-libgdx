@@ -25,16 +25,13 @@ public class Sidekick implements Animated, NonStatic {
     final Gauge gauge;
 
     // init
-    Sidekick(SidekickRecord record) {
-        this(record, new Gauge(record.maxMana()));
-    }
 
-    Sidekick(SidekickRecord record, Gauge gauge) {
+    Sidekick(SidekickRecord record) {
         sprite = new AnimatedSprite(
           "android/assets/img/sidekicks/" + record + "_",
           4, 200_000_000
         );
-        this.gauge = gauge;
+        this.gauge = new Gauge(record.maxMana());
         type = record;
     }
 

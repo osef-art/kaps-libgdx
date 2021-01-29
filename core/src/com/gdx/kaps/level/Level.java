@@ -353,6 +353,8 @@ public class Level implements Animated {
               dim.gridMargin * (6 + n) + dim.get(Zone.NEXT_BOX).height * (2 + 0.5f * n),
               dim.get(Zone.SIDE_PANEL).width,
               dim.sidekickPanelHeight,
+              sidekicks.get(n).hasCooldown() ?
+              new com.badlogic.gdx.graphics.Color(0.35f, 0.4f, 0.5f, 1) :
               new com.badlogic.gdx.graphics.Color(0.45f, 0.5f, 0.6f, 1)
             );
         }
