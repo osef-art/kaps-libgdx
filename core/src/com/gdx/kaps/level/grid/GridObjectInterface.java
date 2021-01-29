@@ -1,10 +1,11 @@
 package com.gdx.kaps.level.grid;
 
-import com.gdx.kaps.renderer.Renderable;
+import com.gdx.kaps.renderer.Animated;
+import com.gdx.kaps.renderer.NonStatic;
 
 import java.util.Optional;
 
-public interface GridObjectInterface extends Renderable {
+public interface GridObjectInterface extends Animated, NonStatic {
     int x();
     int y();
     Color color();

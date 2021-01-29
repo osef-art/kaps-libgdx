@@ -15,15 +15,16 @@ import static com.gdx.kaps.level.grid.caps.EffectAnim.EffectType.*;
 import static java.util.stream.Collectors.toList;
 
 public enum SidekickRecord {
-    SEAN("Sean", Color.COLOR_1, "fire", FIRE_FX, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::hitRandomTileAndAdjacents, sdk), 15),
+    SEAN("Sean", Color.COLOR_1, "fire", FIRE_FX, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::hitRandomTileAndAdjacents, sdk), 20),
     ZYRAME("Zyrame", Color.COLOR_2, "slice", SLICE_FX, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::hitTwoRandomGerms, sdk), 20, 2),
     RED("Red", Color.COLOR_3, "slice", SLICE_FX, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::sliceRandomColumn, sdk), 20, 2),
-    MIMAPS("Mimaps", Color.COLOR_4, "fire", FIRE_FX, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::hitThreeRandomTiles, sdk), 10, 2),
+    MIMAPS("Mimaps", Color.COLOR_4, "fire", FIRE_FX, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::hitThreeRandomTiles, sdk), 15, 2),
     PAINT("Paint", Color.COLOR_5, "gen", PAINT_FX, SidekickRecord::repaintFiveCaps, 10),
     XERETH("Xereth", Color.COLOR_6, "slice", SLICE_FX, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::sliceRandomDiagonals, sdk), 25),
     JIM("Jim", Color.COLOR_10, "slice", SLICE_FX, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::sliceRandomLine, sdk), 20),
-    COLOR("Color", Color.COLOR_11,"color", CORE_FX, SidekickRecord::generateSingleColoredGelule, -3),
+    COLOR("Color", Color.COLOR_11,"color", CORE_FX, SidekickRecord::generateSingleColoredGelule, -4),
     SNIPER("Punch", Color.COLOR_12,"paint", CORE_FX, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::hitRandomGerm, sdk), 15, 3),
+    // TODO: sidekick that generates a bombed gelule (10 turns)
     // TODO: sidekick that generates a single Caps ?
     ;
 
@@ -57,7 +58,6 @@ public enum SidekickRecord {
         this.name = name;
         this.type = color;
         maxMana = Math.max(mana, 0);
-        // TEST  maxMana = mana > 0 ? 4 : mana;
         cooldown = -Math.min(mana, 0);
         sound = soundName;
         damage = dmg;
@@ -87,16 +87,17 @@ public enum SidekickRecord {
         return damage;
     }
 
-    public String path() {
-        return name;
-    }
-
     public Color color() {
         return type;
     }
 
     public String sound() {
         return sound;
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 
     // powers
@@ -222,7 +223,7 @@ public enum SidekickRecord {
      * @param sidekick the attacking sidekick's {@link SidekickRecord}
      */
     private static void hitTwoRandomGerms(Grid grid, SidekickRecord sidekick) {
-        // TODO: make power     methods unique, w/ their own damage and effects
+        // IMPL: make power methods unique, w/ their own damage and effects ?
         for (int i = 0; i < 2; i++) {
             hitRandomGerm(grid, sidekick);
         }

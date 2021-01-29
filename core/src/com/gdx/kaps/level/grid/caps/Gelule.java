@@ -146,7 +146,6 @@ public class Gelule implements Iterable<LinkedCaps> {
 
     public boolean flipIfPossible(Grid grid) {
         if (!canFlip(grid)) return false;
-        // TODO: prevent flip if a caps bothers
         flip();
 
         // TODO: a 'helpFlip' method that replaces flipped thing

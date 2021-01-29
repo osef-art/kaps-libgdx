@@ -3,7 +3,7 @@ package com.gdx.kaps.level.grid;
 import com.badlogic.gdx.math.Vector2;
 import com.gdx.kaps.level.Level;
 import com.gdx.kaps.level.sidekick.Sidekick;
-import com.gdx.kaps.renderer.StaticRenderable;
+import com.gdx.kaps.renderer.Animated;
 import com.gdx.kaps.renderer.Zone;
 import com.gdx.kaps.time.Timer;
 
@@ -12,8 +12,8 @@ import java.util.*;
 import static com.gdx.kaps.MainScreen.dim;
 import static com.gdx.kaps.MainScreen.sra;
 
-public class Particles implements StaticRenderable {
-    private static class Particle implements StaticRenderable {
+public class Particles implements Animated {
+    private static class Particle implements Animated {
         private final Timer updateTimer = new Timer(2_500_000 + new Random().nextInt(15_000_000));
         private final Vector2 dest;
         private final Vector2 pos;

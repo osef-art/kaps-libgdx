@@ -5,8 +5,9 @@ import com.gdx.kaps.Sound;
 import com.gdx.kaps.level.Gauge;
 import com.gdx.kaps.level.Level;
 import com.gdx.kaps.level.grid.Color;
+import com.gdx.kaps.renderer.Animated;
 import com.gdx.kaps.renderer.AnimatedSprite;
-import com.gdx.kaps.renderer.Renderable;
+import com.gdx.kaps.renderer.NonStatic;
 import com.gdx.kaps.renderer.Zone;
 
 import java.util.ArrayList;
@@ -18,7 +19,7 @@ import java.util.stream.Collectors;
 import static com.gdx.kaps.MainScreen.dim;
 import static com.gdx.kaps.MainScreen.tra25;
 
-public class Sidekick implements Renderable {
+public class Sidekick implements Animated, NonStatic {
     private final AnimatedSprite sprite;
     final SidekickRecord type;
     final Gauge gauge;
@@ -30,7 +31,7 @@ public class Sidekick implements Renderable {
 
     Sidekick(SidekickRecord record, Gauge gauge) {
         sprite = new AnimatedSprite(
-          "android/assets/img/sidekicks/" + record.path() + "_",
+          "android/assets/img/sidekicks/" + record + "_",
           4, 200_000_000
         );
         this.gauge = gauge;

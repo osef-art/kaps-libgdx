@@ -9,7 +9,7 @@ import java.util.Random;
 
 import static com.gdx.kaps.MainScreen.spra;
 
-public class AnimatedSprite implements Renderable {
+public class AnimatedSprite implements Animated, NonStatic {
     private final Timer updateTimer;
     private final Sprite[] sprites;
     private final boolean looping;

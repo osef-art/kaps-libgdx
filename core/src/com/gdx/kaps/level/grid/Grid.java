@@ -9,10 +9,7 @@ import com.gdx.kaps.level.grid.caps.Gelule;
 import com.gdx.kaps.level.grid.germ.Germ;
 import com.gdx.kaps.level.grid.germ.VirusGerm;
 import com.gdx.kaps.level.sidekick.SidekickRecord;
-import com.gdx.kaps.renderer.Dimensions;
-import com.gdx.kaps.renderer.Renderable;
-import com.gdx.kaps.renderer.StaticRenderable;
-import com.gdx.kaps.renderer.Zone;
+import com.gdx.kaps.renderer.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -30,7 +27,7 @@ import static com.gdx.kaps.Utils.getRandomFrom;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.*;
 
-public class Grid implements StaticRenderable {
+public class Grid implements Animated {
     static class Column {
         private final GridObject[] tiles;
         Column(int size) {
@@ -399,7 +396,7 @@ public class Grid implements StaticRenderable {
 
     @Override
     public void update() {
-        everyObjectInGrid().forEach(Renderable::update);
+        everyObjectInGrid().forEach(Animated::update);
         Stream.concat(popping.stream(), effects.stream()).forEach(EffectAnim::update);
         popping.removeIf(EffectAnim::isOver);
         effects.removeIf(EffectAnim::isOver);

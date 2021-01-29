@@ -8,8 +8,7 @@ import com.gdx.kaps.level.grid.caps.Gelule;
 import com.gdx.kaps.level.grid.caps.PreviewGelule;
 import com.gdx.kaps.level.sidekick.Sidekick;
 import com.gdx.kaps.level.sidekick.SidekickRecord;
-import com.gdx.kaps.renderer.Renderable;
-import com.gdx.kaps.renderer.StaticRenderable;
+import com.gdx.kaps.renderer.Animated;
 import com.gdx.kaps.renderer.Zone;
 import com.gdx.kaps.time.Timer;
 
@@ -29,7 +28,7 @@ import static com.gdx.kaps.Sound.play;
 import static com.gdx.kaps.Utils.getRandomFrom;
 import static java.util.stream.Collectors.toList;
 
-public class Level implements StaticRenderable {
+public class Level implements Animated {
     public final static int MIN_MATCH_RANGE = 4;
     private static int multiplier = 1;
     private static int score;
@@ -237,11 +236,10 @@ public class Level implements StaticRenderable {
     }
 
     private void speedUp() {
-        updateSpeed *= 0.999;
+        updateSpeed *= 0.996;
         updateTimer.updateLimit(updateSpeed);
         updateTimer.reset();
     }
-
 
     // update
     @Override
@@ -251,7 +249,7 @@ public class Level implements StaticRenderable {
         if (updateTimer.resetIfExceeds()) dipGelule();
         grid.update();
         particles.update();
-        sidekicks.forEach(Renderable::update);
+        sidekicks.forEach(Animated::update);
         if (isOver()) end();
     }
 
