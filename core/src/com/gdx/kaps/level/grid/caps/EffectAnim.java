@@ -40,7 +40,7 @@ public class EffectAnim implements Animated {
         this(path, frames, dim.getTile(x, y), scale);
     }
 
-    public EffectAnim(String path, int frames, Rectangle zone, float scale) {
+    private EffectAnim(String path, int frames, Rectangle zone, float scale) {
         this(path, frames,
           new Rectangle(
             zone.x + (zone.width - zone.width * scale) / 2,
@@ -51,7 +51,7 @@ public class EffectAnim implements Animated {
         );
     }
 
-    public EffectAnim(String path, int frames, Rectangle zone) {
+    private EffectAnim(String path, int frames, Rectangle zone) {
         sprite = AnimatedSprite.oneShot(path, frames, 100_000_000);
         this.zone = zone;
     }
@@ -62,11 +62,11 @@ public class EffectAnim implements Animated {
                      (o.isGerm() ? "germs/" + ((Germ) o).typeName() : "caps") +
                      "/pop_";
 
-        return new EffectAnim(path, 8, dim.getTile(o.x(), o.y()), 1);
+        return new EffectAnim(path, 8, dim.getTile(o));
     }
 
     public static EffectAnim ofPainted(GridObject o) {
-        return new EffectAnim("android/assets/img/" + o.color().id() + "/caps/pop_", 8, o.x(), o.y(), 1.5f);
+        return new EffectAnim("android/assets/img/" + o.color().id() + "/caps/pop_", 8, dim.getTile(o), 1.5f);
     }
 
     public boolean isOver() {

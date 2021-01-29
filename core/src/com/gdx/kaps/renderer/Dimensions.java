@@ -22,10 +22,11 @@ public class Dimensions {
 
         // grid
         map.put(Zone.GRID_PANEL, new Rectangle(0, 0, map.get(Zone.WINDOW).width*2/3, map.get(Zone.WINDOW).height));
-        map.put(Zone.GRID, new Rectangle(gridMargin, gridMargin,
+        map.put(Zone.GRID, new Rectangle(
+          gridMargin, gridMargin,
           map.get(Zone.GRID_PANEL).width - 2 * gridMargin,
-          map.get(Zone.GRID_PANEL).width - 2 * gridMargin / grid.width() * grid.height())
-        );
+          ((map.get(Zone.GRID_PANEL).width - 2 * gridMargin) / grid.width()) * grid.height()
+        ));
         map.get(Zone.GRID_PANEL).height = map.get(Zone.GRID).height + 2* gridMargin;
 
         // tiles

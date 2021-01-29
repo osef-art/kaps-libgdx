@@ -311,7 +311,6 @@ public class Level implements Animated {
         effects.add(effect);
     }
 
-
     private void renderBackGround() {
         // timer
         sra.drawRect(
@@ -389,10 +388,9 @@ public class Level implements Animated {
     }
 
     private void renderEffects() {
-        if (!effects.isEmpty()) {
+        if (effects.isEmpty()) return;
             // TODO: different focus for germs
-            sra.drawRect(dim.get(Zone.GRID), new Color(0, 0, 0, 0.15f));
-        }
+        sra.drawRect(dim.get(Zone.GRID), new Color(0, 0.1f, 0.2f, 0.15f));
         effects.forEach(EffectAnim::render);
     }
 

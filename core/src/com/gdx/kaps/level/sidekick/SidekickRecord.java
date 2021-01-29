@@ -185,14 +185,10 @@ public enum SidekickRecord {
         grid.pickRandomObject().ifPresent(
           obj -> {
               grid.hit(obj.x(), obj.y(), sidekick);
-              grid.hit(obj.x() - 1, obj.y());
-              grid.hit(obj.x() + 1, obj.y());
-              grid.hit(obj.x(), obj.y() + 1);
-              grid.hit(obj.x(), obj.y() - 1);
-              Level.addEffect(CORE_FX, obj.x() - 1, obj.y());
-              Level.addEffect(CORE_FX, obj.x() + 1, obj.y());
-              Level.addEffect(CORE_FX, obj.x(), obj.y() + 1);
-              Level.addEffect(CORE_FX, obj.x(), obj.y() - 1);
+              grid.hit(obj.x() - 1, obj.y(), CORE_FX);
+              grid.hit(obj.x() + 1, obj.y(), CORE_FX);
+              grid.hit(obj.x(), obj.y() + 1, CORE_FX);
+              grid.hit(obj.x(), obj.y() - 1, CORE_FX);
           }
         );
     }

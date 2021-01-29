@@ -25,6 +25,7 @@ public class MainScreen extends ApplicationAdapter {
 	private Vector2 cameraPos;
 	private Level level;
 
+	// IMPL: different sound streams for: sidekicks, grid (pop)
 	public static OrthographicCamera camera;
 	public static SpriteRendererAdaptor spra;
 	public static TextRendererAdaptor tra25;

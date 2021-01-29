@@ -230,8 +230,8 @@ public class Grid implements Animated {
         hit(o, 1, () -> {});
     }
 
-    public void hit(int x, int y) {
-        get(x, y).ifPresent(this::hit);
+    public void hit(int x, int y, EffectAnim.EffectType effect) {
+        get(x, y).ifPresent(o -> hit(o, 1, () -> Level.addEffect(effect, x, y)));
     }
 
     public void hit(int x, int y, SidekickRecord sidekick) {
@@ -399,7 +399,6 @@ public class Grid implements Animated {
         for (int x = 0; x < width(); x++) {
             for (int y = 0; y < height(); y++) {
                 float shift = (x + y) %2 == 0 ? 0.03f : 0;
-
                 sra.drawRect(dim.getTile(x, y), new com.badlogic.gdx.graphics.Color(0.5f + shift, 0.55f + shift, 0.7f + shift, 1));
             }
         }
@@ -411,7 +410,7 @@ public class Grid implements Animated {
         for (int x = 0; x < width(); x++) {
             for (int y = 0; y < height(); y++) {
                 int finalX = x, finalY = y;
-                get(x, y).ifPresent(obj -> obj.render(finalX, finalY));
+                get(x, y).ifPresent(o -> o.render(finalX, finalY));
             }
         }
         popping.forEach(EffectAnim::render);
