@@ -326,7 +326,6 @@ public class Grid implements StaticRenderable {
         set(caps.x(), caps.y(), new VirusGerm(caps));
     }
 
-
     // full grid operations
 
     /**
@@ -343,23 +342,23 @@ public class Grid implements StaticRenderable {
         );
     }
 
-    public Matches deleteMatches() {
-        return new Matches(matchingObjects()).peekObjects(this::hit);
+    public Matches hitMatches() {
+        return matchingObjects().peekObjects(this::hit);
     }
 
-    private Set<GridObject> matchingObjects() {
-        return everyObjectInGrid()
-                 .flatMap(obj -> {
-                     var toDelete = new HashSet<GridObject>();
-                     if (obj.x() >= Level.MIN_MATCH_RANGE - 1) {
-                         toDelete.addAll(matchingObjectsFrom(n -> get(obj.x() - n, obj.y())));
-                     }
-                     if (obj.y() >= Level.MIN_MATCH_RANGE - 1) {
-                         toDelete.addAll(matchingObjectsFrom(n -> get(obj.x(), obj.y() - n)));
-                     }
-                     return toDelete.stream();
-                 })
-                 .collect(toUnmodifiableSet());
+    private Matches matchingObjects() {
+        return new Matches(
+          everyObjectInGrid().flatMap(obj -> {
+              var toDelete = new HashSet<GridObject>();
+              if (obj.x() >= Level.MIN_MATCH_RANGE - 1) {
+                  toDelete.addAll(matchingObjectsFrom(n -> get(obj.x() - n, obj.y())));
+              }
+              if (obj.y() >= Level.MIN_MATCH_RANGE - 1) {
+                  toDelete.addAll(matchingObjectsFrom(n -> get(obj.x(), obj.y() - n)));
+              }
+              return toDelete.stream();
+          }).collect(toUnmodifiableSet())
+        );
     }
 
     /**

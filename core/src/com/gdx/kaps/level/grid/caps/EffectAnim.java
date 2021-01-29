@@ -2,6 +2,7 @@ package com.gdx.kaps.level.grid.caps;
 
 import com.gdx.kaps.level.grid.GridObject;
 import com.gdx.kaps.level.grid.Position;
+import com.gdx.kaps.level.grid.germ.Germ;
 import com.gdx.kaps.renderer.AnimatedSprite;
 import com.gdx.kaps.renderer.StaticRenderable;
 import com.gdx.kaps.renderer.Zone;
@@ -41,7 +42,10 @@ public class EffectAnim implements StaticRenderable {
     }
 
     public static EffectAnim ofPopping(GridObject o) {
-        return new EffectAnim("android/assets/img/" + o.color().id() + "/caps/pop_", 8, o.x(), o.y(), 1);
+        var path = "android/assets/img/" + o.color().id() + "/"+
+                     (o.isGerm() ? "germs/" + ((Germ) o).typeName() : "caps") +
+                     "/pop_";
+        return new EffectAnim(path, 8, o.x(), o.y(), 1);
     }
 
     public static EffectAnim ofPainted(GridObject o) {

@@ -32,17 +32,16 @@ public abstract class Germ extends GridObject {
         if (0 >= health || health > type.maxHP())
             throw new IllegalArgumentException("Invalid health given to " + type.name() + " (" + health + ")" );
 
-        sprite = new AnimatedSprite(
-          "android/assets/img/" + color().id() +
-            "/germs/" + type.type() +
-            (type.maxHP() == 1 ? "" : health) + "/idle_",
-          type.nbFrames(),
-          100_000_000
-        );
+        this.type = type;
         hasHealth = type.maxHP() > 1;
         this.health = new Gauge(health, type.maxHP());
         mana = hasHealth ? health : type.mana();
-        this.type = type;
+        sprite = new AnimatedSprite(
+          "android/assets/img/" + color().id() +
+            "/germs/" + typeName() + "/idle_",
+          type.nbFrames(),
+          100_000_000
+        );
     }
 
     public static Germ of(int x, int y, char symbol, Set<Color> colors) {
@@ -88,6 +87,10 @@ public abstract class Germ extends GridObject {
         return mana;
     }
 
+    public String typeName() {
+        return type.toString() + (hasHealth ? Math.max(health.value(), 1) : "");
+    }
+
     // predicates
 
     @Override
@@ -115,8 +118,7 @@ public abstract class Germ extends GridObject {
         if (!isDestroyed()) {
             sprite.updatePath(
               "android/assets/img/" + color().id() +
-                "/germs/" + type.type() +
-                (hasHealth ? health.value() : "") + "/idle_"
+                "/germs/" + typeName() + "/idle_"
             );
         }
     }

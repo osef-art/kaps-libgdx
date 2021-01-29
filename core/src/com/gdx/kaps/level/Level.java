@@ -269,7 +269,7 @@ public class Level implements StaticRenderable {
         Matches matches;
         do {
             grid.dropAll();
-            matches = grid.deleteMatches()
+            matches = grid.hitMatches()
                         .peek((color, set) -> {
                             var sound = "plop0";
                             if (set.size() > MIN_MATCH_RANGE) {

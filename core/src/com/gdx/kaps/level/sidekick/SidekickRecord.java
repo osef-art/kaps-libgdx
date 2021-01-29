@@ -15,14 +15,14 @@ import static com.gdx.kaps.level.grid.caps.EffectAnim.EffectType.*;
 import static java.util.stream.Collectors.toList;
 
 public enum SidekickRecord {
-    SEAN("Sean", Color.COLOR_1, "fire", FIRE_FX, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::hitRandomTileAndAdjacents, sdk), 20),
+    SEAN("Sean", Color.COLOR_1, "fire", FIRE_FX, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::hitRandomTileAndAdjacents, sdk), 15),
     ZYRAME("Zyrame", Color.COLOR_2, "slice", SLICE_FX, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::hitTwoRandomGerms, sdk), 20, 2),
     RED("Red", Color.COLOR_3, "slice", SLICE_FX, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::sliceRandomColumn, sdk), 20, 2),
-    MIMAPS("Mimaps", Color.COLOR_4, "fire", FIRE_FX, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::hitThreeRandomTiles, sdk), 15, 2),
+    MIMAPS("Mimaps", Color.COLOR_4, "fire", FIRE_FX, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::hitThreeRandomTiles, sdk), 10, 2),
     PAINT("Paint", Color.COLOR_5, "gen", PAINT_FX, SidekickRecord::repaintFiveCaps, 10),
     XERETH("Xereth", Color.COLOR_6, "slice", SLICE_FX, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::sliceRandomDiagonals, sdk), 25),
-    JIM("Jim", Color.COLOR_10, "slice", SLICE_FX, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::sliceRandomLine, sdk), 25),
-    COLOR("Color", Color.COLOR_11,"color", CORE_FX, SidekickRecord::generateSingleColoredGelule, -5),
+    JIM("Jim", Color.COLOR_10, "slice", SLICE_FX, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::sliceRandomLine, sdk), 20),
+    COLOR("Color", Color.COLOR_11,"color", CORE_FX, SidekickRecord::generateSingleColoredGelule, -3),
     SNIPER("Punch", Color.COLOR_12,"paint", CORE_FX, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::hitRandomGerm, sdk), 15, 3),
     // TODO: sidekick that generates a single Caps ?
     ;

@@ -54,10 +54,6 @@ public enum GermRecord {
         return maxHP;
     }
 
-    public String type() {
-        return name;
-    }
-
     public int nbFrames() {
         return nbFrames;
     }
@@ -68,6 +64,11 @@ public enum GermRecord {
 
     public String sound() {
         return sound;
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 
     /**
