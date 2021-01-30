@@ -24,7 +24,7 @@ public enum SidekickRecord {
     MIMAPS("Mimaps", Color.COLOR_4, "fire", FIRE_FX, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::hitThreeRandomTiles, sdk), 15, 2),
     PAINT("Paint", Color.COLOR_5, "gen", PAINT_FX, SidekickRecord::repaintFiveCaps, 10),
     XERETH("Xereth", Color.COLOR_6, "slice", SLICE_FX, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::sliceRandomDiagonals, sdk), 25),
-    BOMBER("Bomb", Color.COLOR_7, "color", CORE_FX, SidekickRecord::generateBombedGelule, -10),
+    BOMBER("Bomb", Color.COLOR_7, "color", CORE_FX, SidekickRecord::generateBombedGelule, -12),
     JIM("Jim", Color.COLOR_10, "slice", SLICE_FX, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::sliceRandomLine, sdk), 20),
     COLOR("Color", Color.COLOR_11,"color", CORE_FX, SidekickRecord::generateSingleColoredGelule, -4),
     SNIPER("Punch", Color.COLOR_12,"paint", CORE_FX, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::hitRandomGerm, sdk), 15, 3),
@@ -117,6 +117,8 @@ public enum SidekickRecord {
 
     private static void generateBombedGelule(Level lvl, SidekickRecord sidekick) {
         lvl.setNext(2, Gelule.withPower(lvl, Caps.Type.BOMB));
+        // TODO: replace setNext by "push/shiftNext"
+        //  -> doesn't replace the current next but move it to next2
         Level.addEffect(new EffectAnim.EffectAnimBuilder(CORE_FX, dim.get(Zone.NEXT_BOX)).withSpeed(50_000_000).build());
     }
 

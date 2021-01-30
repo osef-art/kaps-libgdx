@@ -372,7 +372,8 @@ public class Level implements Animated {
         tra25.drawText( "score:",
           dim.get(Zone.BOTTOM_PANEL).x,
           dim.get(Zone.BOTTOM_PANEL).y,
-          dim.get(Zone.BOTTOM_PANEL).width,0
+          dim.get(Zone.BOTTOM_PANEL).width,
+          dim.get(Zone.BOTTOM_PANEL).height/2
         );
     }
 
