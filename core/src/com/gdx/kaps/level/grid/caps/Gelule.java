@@ -7,6 +7,7 @@ import com.gdx.kaps.level.grid.Grid;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.Random;
 
 import static java.util.Objects.requireNonNull;
 
@@ -15,20 +16,30 @@ public class Gelule implements Iterable<LinkedCaps> {
     private final LinkedCaps main;
 
     public Gelule(Level lvl) {
+        // IMPL: remove level from arguments and set it position directly at spawning
+        this(lvl, lvl.randomColor(), lvl.randomColor());
+    }
+
+    private Gelule(Level lvl, Color color) {
+        this(lvl, color, color);
+    }
+
+    private Gelule(Level lvl, Color c1, Color c2) {
         requireNonNull(lvl);
         int x = lvl.gridWidth() /2 -1;
         int y = lvl.gridHeight() -1;
-        main = new LinkedCaps(x, y, Look.LEFT, lvl);
-        linked = new LinkedCaps(x+1, y, Look.RIGHT, lvl);
+        main = new LinkedCaps(x, y, Look.LEFT, c1);
+        linked = new LinkedCaps(x+1, y, Look.RIGHT, c2);
         linked.linkTo(main);
     }
 
-    public Gelule(Level lvl, Color color) {
+    private Gelule(Level lvl, Caps.Type type) {
         requireNonNull(lvl);
+        boolean left = new Random().nextBoolean();
         int x = lvl.gridWidth() /2 -1;
         int y = lvl.gridHeight() -1;
-        main = new LinkedCaps(x, y, Look.LEFT, color);
-        linked = new LinkedCaps(x+1, y, Look.RIGHT, color);
+        main = new LinkedCaps(x, y, Look.LEFT, lvl.randomColor(), left ? Caps.Type.BASIC : type);
+        linked = new LinkedCaps(x+1, y, Look.RIGHT, lvl.randomColor(), left ? type : Caps.Type.BASIC);
         linked.linkTo(main);
     }
 
@@ -55,6 +66,13 @@ public class Gelule implements Iterable<LinkedCaps> {
         linked.linkTo(this.main);
     }
 
+    public static Gelule singleColored(Level lvl, Color color) {
+        return new Gelule(lvl, color);
+    }
+
+    public static Gelule withPower(Level lvl, Caps.Type type) {
+        return new Gelule(lvl, type);
+    }
 
     // getters
 

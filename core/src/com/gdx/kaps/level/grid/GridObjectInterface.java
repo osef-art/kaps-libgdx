@@ -23,7 +23,7 @@ public interface GridObjectInterface extends Animated, NonStatic {
     boolean canDip(Grid grid);
 
     void dipIfPossible(Grid grid);
-    void hit();
+    void hit(Grid grid);
 
     default void render() {
         render(x(), y());

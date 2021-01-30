@@ -81,8 +81,8 @@ public class Level implements Animated {
         return grid.height();
     }
 
-    public Set<com.gdx.kaps.level.grid.Color> colors() {
-        return colors;
+    public com.gdx.kaps.level.grid.Color randomColor() {
+        return com.gdx.kaps.level.grid.Color.random(colors);
     }
 
     public List<Sidekick> sidekicks() {

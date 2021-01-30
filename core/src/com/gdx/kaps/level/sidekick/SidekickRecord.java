@@ -3,6 +3,7 @@ package com.gdx.kaps.level.sidekick;
 import com.gdx.kaps.level.Level;
 import com.gdx.kaps.level.grid.Color;
 import com.gdx.kaps.level.grid.Grid;
+import com.gdx.kaps.level.grid.caps.Caps;
 import com.gdx.kaps.level.grid.caps.EffectAnim;
 import com.gdx.kaps.level.grid.caps.Gelule;
 import com.gdx.kaps.renderer.Zone;
@@ -23,10 +24,10 @@ public enum SidekickRecord {
     MIMAPS("Mimaps", Color.COLOR_4, "fire", FIRE_FX, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::hitThreeRandomTiles, sdk), 15, 2),
     PAINT("Paint", Color.COLOR_5, "gen", PAINT_FX, SidekickRecord::repaintFiveCaps, 10),
     XERETH("Xereth", Color.COLOR_6, "slice", SLICE_FX, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::sliceRandomDiagonals, sdk), 25),
+    BOMBER("Bomb", Color.COLOR_7, "color", CORE_FX, SidekickRecord::generateBombedGelule, -10),
     JIM("Jim", Color.COLOR_10, "slice", SLICE_FX, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::sliceRandomLine, sdk), 20),
     COLOR("Color", Color.COLOR_11,"color", CORE_FX, SidekickRecord::generateSingleColoredGelule, -4),
     SNIPER("Punch", Color.COLOR_12,"paint", CORE_FX, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::hitRandomGerm, sdk), 15, 3),
-    // TODO: sidekick that generates a bombed gelule (10 turns)
     // TODO: sidekick that generates a single Caps ?
     ;
 
@@ -110,7 +111,12 @@ public enum SidekickRecord {
      * @param sidekick the attacking sidekick's {@link SidekickRecord}
      */
     private static void generateSingleColoredGelule(Level lvl, SidekickRecord sidekick) {
-        lvl.setNext(2, new Gelule(lvl, lvl.getSidekickExcept(sidekick).color()));
+        lvl.setNext(2, Gelule.singleColored(lvl, lvl.getSidekickExcept(sidekick).color()));
+        Level.addEffect(new EffectAnim.EffectAnimBuilder(CORE_FX, dim.get(Zone.NEXT_BOX)).withSpeed(50_000_000).build());
+    }
+
+    private static void generateBombedGelule(Level lvl, SidekickRecord sidekick) {
+        lvl.setNext(2, Gelule.withPower(lvl, Caps.Type.BOMB));
         Level.addEffect(new EffectAnim.EffectAnimBuilder(CORE_FX, dim.get(Zone.NEXT_BOX)).withSpeed(50_000_000).build());
     }
 

@@ -4,10 +4,13 @@ import com.gdx.kaps.Utils;
 import com.gdx.kaps.level.Level;
 import com.gdx.kaps.level.grid.Grid;
 import com.gdx.kaps.level.grid.caps.EffectAnim;
+import com.gdx.kaps.level.grid.caps.EffectAnim.EffectType;
 
 import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
+
+import static com.gdx.kaps.level.grid.caps.EffectAnim.EffectType.*;
 
 public enum GermRecord {
     BASIC("basic", 8, 1, 1),
@@ -91,9 +94,6 @@ public enum GermRecord {
                            //.peek(System.out::println)
                            .filter(o -> !o.isGerm())
                            .collect(Collectors.toList());
-        Utils.getRandomFrom(capsAround).ifPresent(caps -> {
-            grid.hit(caps);
-            Level.addEffect(EffectAnim.EffectType.SLICE_FX, caps.x(), caps.y());
-        });
+        Utils.getRandomFrom(capsAround).ifPresent(caps -> grid.hit(caps.x(), caps.y(), SLICE_FX));
     }
 }

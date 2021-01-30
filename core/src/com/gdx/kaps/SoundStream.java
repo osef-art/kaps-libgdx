@@ -16,7 +16,6 @@ public class SoundStream {
         SLICE("slice", 2),
         ;
 
-        private final static String SOUNDS_PATH = "android/assets/sounds/";
         private final String name;
         private final int set;
 
@@ -34,7 +33,7 @@ public class SoundStream {
         }
 
         public static String pathOf(String name) {
-            return SOUNDS_PATH + name + SoundRecord.randomIndex(name).orElse("") + ".wav";
+            return "android/assets/sounds/" + name + SoundRecord.randomIndex(name).orElse("") + ".wav";
         }
     }
     private Sound sound;

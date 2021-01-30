@@ -1,6 +1,5 @@
 package com.gdx.kaps.level.grid.germ;
 
-import com.gdx.kaps.SoundStream;
 import com.gdx.kaps.level.Gauge;
 import com.gdx.kaps.level.Level;
 import com.gdx.kaps.level.grid.Color;
@@ -111,7 +110,7 @@ public abstract class Germ extends GridObject {
     }
 
     @Override
-    public void hit() {
+    public void hit(Grid grid) {
         health.decrease();
         if (!isDestroyed()) {
             sprite.updatePath(

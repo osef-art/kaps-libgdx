@@ -5,14 +5,52 @@ import com.gdx.kaps.level.grid.Grid;
 import com.gdx.kaps.level.grid.GridObject;
 
 import java.util.Optional;
+import java.util.function.BiConsumer;
 
+import static com.gdx.kaps.level.grid.caps.EffectAnim.EffectType.FIRE_FX;
 import static java.util.Objects.requireNonNull;
 
 public class Caps extends GridObject {
-    private boolean destroyed;
+    public enum Type {
+        BASIC("", (g, c) -> {}),
+        BOMB("bomb_", Type::hitTilesAround),
+        ;
 
-    Caps(int x, int y, Color color) {
+        private final BiConsumer<Grid, Caps> power;
+        private final String path;
+
+        Type(String path, BiConsumer<Grid, Caps> power) {
+            this.power = power;
+            this.path = path;
+        }
+
+        public String path() {
+            return path;
+        }
+
+        private static void hitTilesAround(Grid grid, Caps caps) {
+            grid.hit(caps.x() - 1, caps.y() - 1, FIRE_FX);
+            grid.hit(caps.x() - 1, caps.y(), FIRE_FX);
+            grid.hit(caps.x() - 1, caps.y() + 1, FIRE_FX);
+            grid.hit(caps.x(), caps.y() + 1, FIRE_FX);
+            grid.hit(caps.x(), caps.y() - 1, FIRE_FX);
+            grid.hit(caps.x() + 1, caps.y() - 1, FIRE_FX);
+            grid.hit(caps.x() + 1, caps.y(), FIRE_FX);
+            grid.hit(caps.x() + 1, caps.y() + 1, FIRE_FX);
+            caps.playSound("fire");
+        }
+    }
+    private boolean destroyed;
+    final Type type;
+
+    Caps(LinkedCaps caps) {
+        this(caps.x(), caps.y(), caps.color(), caps.type);
+    }
+
+    Caps(int x, int y, Color color, Type type) {
         super(x, y, color);
+        requireNonNull(type);
+        this.type = type;
         updateSprite();
     }
 
@@ -20,6 +58,7 @@ public class Caps extends GridObject {
         super(caps.x(), caps.y(), caps.color());
         requireNonNull(caps);
         destroyed = false;
+        type = caps.type;
     }
 
     // getters
@@ -108,8 +147,9 @@ public class Caps extends GridObject {
     }
 
     @Override
-    public void hit() {
+    public void hit(Grid grid) {
         destroyed = true;
+        type.power.accept(grid, this);
     }
 
     @Override
@@ -118,14 +158,14 @@ public class Caps extends GridObject {
         updateSprite();
     }
 
+// update
+
     private void updateSprite() {
         super.updateSprite(
           "android/assets/img/" + color().id() +
-            "/caps/" + Look.NONE + ".png"
+            "/caps/" + type.path + Look.NONE + ".png"
         );
     }
-
-    // update
 
     @Override
     public void update() {

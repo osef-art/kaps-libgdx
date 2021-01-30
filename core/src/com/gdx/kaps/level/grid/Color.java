@@ -1,10 +1,10 @@
 package com.gdx.kaps.level.grid;
 
 import com.gdx.kaps.Utils;
-import com.gdx.kaps.level.Level;
 import com.gdx.kaps.level.sidekick.SidekickRecord;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public enum Color {
@@ -19,7 +19,7 @@ public enum Color {
     COLOR_9  (new java.awt.Color(180, 200, 220)),
     COLOR_10 (new java.awt.Color(100, 110, 170)),
     COLOR_11 (new java.awt.Color(50,  180, 180)),
-    COLOR_12 (new java.awt.Color(235, 150, 130)),
+    COLOR_12 (new java.awt.Color(235, 150, 140)),
     COLOR_13 (new java.awt.Color(70,  50,  130));
 
     private final com.badlogic.gdx.graphics.Color gdxColor;
@@ -42,10 +42,6 @@ public enum Color {
 
         return Utils.getRandomFrom(blankColors)
                  .orElseThrow(() -> new IllegalStateException("Create a color not associated with a sidekick."));
-    }
-
-    public static Color random(Level lvl) {
-        return random(lvl.colors());
     }
 
     public static Color random(Set<Color> colors) {

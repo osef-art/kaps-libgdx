@@ -1,6 +1,5 @@
 package com.gdx.kaps.level.grid.caps;
 
-import com.gdx.kaps.level.Level;
 import com.gdx.kaps.level.grid.Color;
 import com.gdx.kaps.level.grid.GridObject;
 
@@ -12,12 +11,12 @@ public class LinkedCaps extends Caps {
     private LinkedCaps linked;
     private Look look;
 
-    LinkedCaps(int x, int y, Look look, Level lvl) {
-        this(x, y, look, Color.random(requireNonNull(lvl)));
+    LinkedCaps(int x, int y, Look look, Color color) {
+        this(x, y, look, color, Type.BASIC);
     }
 
-    LinkedCaps(int x, int y, Look look, Color color) {
-        super(x, y, color);
+    LinkedCaps(int x, int y, Look look, Color color, Type type) {
+        super(x, y, color, type);
         requireNonNull(look);
         this.look = look;
         updateSprite();
@@ -44,7 +43,7 @@ public class LinkedCaps extends Caps {
 
     @Override
     public Caps unlinked() {
-        return new Caps(x(), y(), color());
+        return new Caps(this);
     }
 
     LinkedCaps copy() {
@@ -80,7 +79,7 @@ public class LinkedCaps extends Caps {
     private void updateSprite() {
         updateSprite(
           "android/assets/img/" + color().id() +
-            "/caps/" + look + ".png"
+            "/caps/" + type.path() + look + ".png"
         );
     }
 
