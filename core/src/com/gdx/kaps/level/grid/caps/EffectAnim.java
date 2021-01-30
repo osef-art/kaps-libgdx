@@ -29,7 +29,7 @@ public class EffectAnim implements Animated {
     public static class EffectAnimBuilder {
         private final String path;
         private Rectangle zone;
-        private double speed = 100_000_000;
+        private double speed = 90_000_000;
         private int frames = 8;
 
         public EffectAnimBuilder(EffectType type, Rectangle zone) {
@@ -66,7 +66,7 @@ public class EffectAnim implements Animated {
         public EffectAnim build() {
             if (speed <= 0) throw new IllegalArgumentException("Invalid animation speed: " + speed);
             if (frames <= 1) throw new IllegalArgumentException("Invalid number of frames for '" + path + "': " + speed);
-            return new EffectAnim(requireNonNull(path), frames, speed, requireNonNull(zone));
+            return new EffectAnim(requireNonNull(path), requireNonNull(zone), frames, speed);
         }
     }
     private final AnimatedSprite sprite;
@@ -74,7 +74,7 @@ public class EffectAnim implements Animated {
 
     // init
 
-    private EffectAnim(String path, int frames, double speed, Rectangle zone) {
+    private EffectAnim(String path, Rectangle zone, int frames, double speed) {
         sprite = AnimatedSprite.oneShot(path, frames, speed);
         this.zone = zone;
     }

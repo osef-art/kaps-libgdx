@@ -3,11 +3,13 @@ package com.gdx.kaps.level.grid;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Rectangle;
+import com.gdx.kaps.SoundStream;
 
 import static com.gdx.kaps.MainScreen.spra;
 import static java.util.Objects.requireNonNull;
 
 public abstract class GridObject implements GridObjectInterface {
+    private final SoundStream attacks = new SoundStream();
     private final Position position;
     private Sprite sprite;
     private Color color;
@@ -39,6 +41,10 @@ public abstract class GridObject implements GridObjectInterface {
 
     public void paint(Color color) {
         this.color = color;
+    }
+
+    public void playSound(String path) {
+        attacks.play(path);
     }
 
     // update

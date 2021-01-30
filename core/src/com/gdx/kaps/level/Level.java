@@ -1,6 +1,7 @@
 package com.gdx.kaps.level;
 
 import com.badlogic.gdx.graphics.Color;
+import com.gdx.kaps.SoundStream;
 import com.gdx.kaps.level.grid.Grid;
 import com.gdx.kaps.level.grid.GridObject;
 import com.gdx.kaps.level.grid.Particles;
@@ -22,7 +23,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.gdx.kaps.MainScreen.*;
-import static com.gdx.kaps.Sound.play;
 import static com.gdx.kaps.Utils.getRandomFrom;
 import static java.util.stream.Collectors.toList;
 
@@ -34,6 +34,7 @@ public class Level implements Animated {
     private static int multiplier = 1;
     private static int score;
     private final Timer updateTimer;
+    private final SoundStream stream = new SoundStream();
     private final Set<com.gdx.kaps.level.grid.Color> colors;
     private static final List<EffectAnim> effects = new ArrayList<>();
     private final Grid grid;
@@ -70,11 +71,8 @@ public class Level implements Animated {
         spawnNewGelule();
     }
 
-    public static void addParticle(GridObject o) {
-        particles.add(o);
-    }
-
     // getters
+
     public int gridWidth() {
         return grid.width();
     }
@@ -129,14 +127,14 @@ public class Level implements Animated {
 
     public void moveGeluleLeft() {
         doIfPresent(gelule -> {
-            if (!gelule.moveLeftIfPossible(grid)) play("cant");
+            if (!gelule.moveLeftIfPossible(grid)) stream.play("cant");
             updatePreview();
         });
     }
 
     public void moveGeluleRight() {
         doIfPresent(gelule -> {
-            if (!gelule.moveRightIfPossible(grid)) play("cant");
+            if (!gelule.moveRightIfPossible(grid)) stream.play("cant");
             updatePreview();
         });
     }
@@ -150,21 +148,21 @@ public class Level implements Animated {
     public void flipGelule() {
         doIfPresent(gelule -> {
             var sound = gelule.flipIfPossible(grid) ? "flip" : "cant";
-            play(sound);
+            stream.play(sound);
             updatePreview();
         });
     }
 
     public void dropGelule() {
         doIfPresent(gelule -> {
-            play("drop");
+            stream.play("drop");
             while (gelule.dipIfPossible(grid));
             acceptGelule();
         });
     }
 
     public void togglePause() {
-        if (!paused) play("pause");
+        if (!paused) stream.play("pause");
         paused = !paused;
     }
 
@@ -179,7 +177,7 @@ public class Level implements Animated {
               spawnNewGelule();
           }
         );
-        play("hold");
+        stream.play("hold");
 
         canHold = false;
     }
@@ -208,7 +206,7 @@ public class Level implements Animated {
 
     private void acceptGelule() {
         grid.accept(gelule);
-        play("impact");
+        stream.play("impact");
         preview = null;
         gelule = null;
 
@@ -279,7 +277,7 @@ public class Level implements Animated {
                             else if (!sidekickOfColor(color).map(Sidekick::hasCooldown).orElse(true)) {
                                 particles.add(set);
                             }
-                            play(sound);
+                            stream.play(sound);
                         });
             multiplier++;
         } while (!matches.isEmpty());
@@ -287,7 +285,7 @@ public class Level implements Animated {
 
     public void end() {
         boolean victory = grid.remainingGerms() == 0;
-        play(victory ? "cleared" : "game_over");
+        stream.play(victory ? "cleared" : "game_over");
 
         System.out.println(victory ? "LEVEL CLEARED!" : "GAME OVER");
         try {
@@ -303,6 +301,11 @@ public class Level implements Animated {
     }
 
     // rendering
+
+    public static void addParticle(GridObject o) {
+        particles.add(o);
+    }
+
     public static void addEffect(EffectAnim.EffectType type, int x, int y) {
         effects.add(EffectAnim.onTile(type, x, y));
     }

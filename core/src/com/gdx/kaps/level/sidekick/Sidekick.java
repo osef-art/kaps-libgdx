@@ -1,7 +1,7 @@
 package com.gdx.kaps.level.sidekick;
 
 import com.gdx.kaps.MainScreen;
-import com.gdx.kaps.Sound;
+import com.gdx.kaps.SoundStream;
 import com.gdx.kaps.level.Gauge;
 import com.gdx.kaps.level.Level;
 import com.gdx.kaps.level.grid.Color;
@@ -20,6 +20,7 @@ import static com.gdx.kaps.MainScreen.dim;
 import static com.gdx.kaps.MainScreen.tra25;
 
 public class Sidekick implements Animated, NonStatic {
+    private final SoundStream attacks = new SoundStream();
     private final AnimatedSprite sprite;
     final SidekickRecord type;
     final Gauge gauge;
@@ -83,7 +84,7 @@ public class Sidekick implements Animated, NonStatic {
 
     void trigger(Level level) {
         MainScreen.shake();
-        Sound.play(type.sound());
+        playSound(type.sound());
         type.power().accept(level, type);
     }
 
@@ -93,6 +94,10 @@ public class Sidekick implements Animated, NonStatic {
             reset();
             lvl.updateGrid();
         }
+    }
+
+    public void playSound(String path) {
+        attacks.play(path);
     }
 
     // update

@@ -1,7 +1,7 @@
 package com.gdx.kaps.level.sidekick;
 
 import com.badlogic.gdx.graphics.Color;
-import com.gdx.kaps.Sound;
+import com.gdx.kaps.SoundStream;
 import com.gdx.kaps.level.Gauge;
 import com.gdx.kaps.level.Level;
 import com.gdx.kaps.renderer.Zone;
@@ -41,7 +41,7 @@ class SidekickCooldown extends Sidekick {
     }
 
     void trigger(Level level) {
-        Sound.play(type.sound());
+        playSound(type.sound());
         type.power().accept(level, type);
     }
 

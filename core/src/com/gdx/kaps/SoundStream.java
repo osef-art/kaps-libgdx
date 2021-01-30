@@ -1,13 +1,14 @@
 package com.gdx.kaps;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 
-public class Sound {
+public class SoundStream {
     public enum SoundRecord {
         FIRE("fire", 2),
         FLIP("flip", 3),
@@ -36,13 +37,13 @@ public class Sound {
             return SOUNDS_PATH + name + SoundRecord.randomIndex(name).orElse("") + ".wav";
         }
     }
-    private static com.badlogic.gdx.audio.Sound currentSound;
+    private Sound sound;
 
-    public static void play(String name) {
-        if (currentSound != null) currentSound.dispose();
-        currentSound = Gdx.audio.newSound(
+    public void play(String name) {
+        if (sound != null) sound.dispose();
+        sound = Gdx.audio.newSound(
           Gdx.files.internal(SoundRecord.pathOf(name))
         );
-        currentSound.setVolume(currentSound.play(), 0.15f);
+        sound.setVolume(sound.play(), 0.35f);
     }
 }
