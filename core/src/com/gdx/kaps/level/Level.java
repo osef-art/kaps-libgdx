@@ -380,6 +380,9 @@ public class Level implements Animated {
     private void renderSidekicks() {
         for (int n = 0; n < sidekicks.size(); n++) {
             var sdk = sidekicks.get(n);
+            // gauge
+            sdk.renderGauge(n);
+
             // head
             sdk.render(
               dim.get(Zone.SIDE_PANEL).x + 5,
@@ -387,9 +390,6 @@ public class Level implements Animated {
               dim.sidekickPanelHeight - 10,
               dim.sidekickPanelHeight - 10
             );
-
-            // gauge
-            sdk.renderGauge(n);
         }
     }
 

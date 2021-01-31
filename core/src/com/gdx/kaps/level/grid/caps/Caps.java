@@ -147,8 +147,12 @@ public class Caps extends GridObject {
     }
 
     @Override
-    public void hit(Grid grid) {
+    public void hit() {
         destroyed = true;
+    }
+
+    @Override
+    public void triggerOnDeath(Grid grid) {
         type.power.accept(grid, this);
     }
 

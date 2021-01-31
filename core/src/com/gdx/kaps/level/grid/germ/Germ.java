@@ -110,7 +110,7 @@ public abstract class Germ extends GridObject {
     }
 
     @Override
-    public void hit(Grid grid) {
+    public void hit() {
         health.decrease();
         if (!isDestroyed()) {
             sprite.updatePath(

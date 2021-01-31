@@ -43,6 +43,10 @@ public abstract class GridObject implements GridObjectInterface {
         this.color = color;
     }
 
+    @Override
+    public void triggerOnDeath(Grid grid) {
+    }
+
     public void playSound(String path) {
         attacks.play(path);
     }
@@ -62,7 +66,7 @@ public abstract class GridObject implements GridObjectInterface {
         render(rect.x, rect.y, rect.width, rect.height, alpha);
     }
 
-    public void render(float x, float y, float width, float height, float alpha) {
+    private void render(float x, float y, float width, float height, float alpha) {
         spra.render(sprite, x, y, width, height, alpha);
     }
 }

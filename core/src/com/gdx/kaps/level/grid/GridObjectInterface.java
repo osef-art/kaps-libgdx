@@ -18,12 +18,13 @@ public interface GridObjectInterface extends Animated, NonStatic {
     int mana();
 
     boolean isGerm();
-
     boolean isDestroyed();
     boolean canDip(Grid grid);
 
+    void triggerOnDeath(Grid grid);
     void dipIfPossible(Grid grid);
-    void hit(Grid grid);
+    void paint(Color color);
+    void hit();
 
     default void render() {
         render(x(), y());

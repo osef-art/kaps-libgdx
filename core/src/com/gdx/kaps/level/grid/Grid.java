@@ -243,7 +243,7 @@ public class Grid implements Animated {
 
     private void hit(GridObject o, int damage, Runnable action) {
         for (int i = 0; i < damage; i++) {
-            o.hit(this);
+            o.hit();
             action.run();
             Level.increaseScore(o.points());
 
@@ -252,13 +252,14 @@ public class Grid implements Animated {
     }
 
     /**
-     * Pops a obj depending on its inner indexes.
-     * @param obj the obj to pop.
+     * Pops a o depending on its inner indexes.
+     * @param o the o to pop.
      */
-    private void pop(GridObject obj) {
-        obj.linked().flatMap(lk -> get(lk.x(), lk.y())).ifPresent(this::unlink);
-        popping.add(EffectAnim.ofPopping(obj));
-        remove(obj.x(), obj.y());
+    private void pop(GridObject o) {
+        o.linked().flatMap(lk -> get(lk.x(), lk.y())).ifPresent(this::unlink);
+        popping.add(EffectAnim.ofPopping(o));
+        remove(o.x(), o.y());
+        o.triggerOnDeath(this);
     }
 
     public void paint(int x, int y, com.gdx.kaps.level.grid.Color color) {
