@@ -247,7 +247,10 @@ public class Grid implements Animated {
             action.run();
             Level.increaseScore(o.points());
 
-            if (o.isDestroyed()) pop(o);
+            if (o.isDestroyed()) {
+                pop(o);
+                o.triggerOnDeath(this);
+            }
         }
     }
 
@@ -259,7 +262,6 @@ public class Grid implements Animated {
         o.linked().flatMap(lk -> get(lk.x(), lk.y())).ifPresent(this::unlink);
         popping.add(EffectAnim.ofPopping(o));
         remove(o.x(), o.y());
-        o.triggerOnDeath(this);
     }
 
     public void paint(int x, int y, com.gdx.kaps.level.grid.Color color) {

@@ -38,7 +38,7 @@ public class Level implements Animated {
     private final Set<com.gdx.kaps.level.grid.Color> colors;
     private static final List<EffectAnim> effects = new ArrayList<>();
     private final Grid grid;
-    private boolean paused;
+    private boolean paused = true;
     private boolean canHold;
     private PreviewGelule preview;
     private final Gelule[] next = new Gelule[2];
@@ -400,6 +400,40 @@ public class Level implements Animated {
         effects.forEach(EffectAnim::render);
     }
 
+    private void renderPauseScreen() {
+        if (!paused) return;
+        // fond
+        sra.drawRect(dim.get(Zone.GRID_PANEL), new Color(0, 0.1f, 0.2f, 0.7f));
+
+        for (int n = 0; n < sidekicks.size(); n++) {
+            var sdk = sidekicks.get(n);
+
+            sra.drawRect(
+              0, dim.gridMargin * 2 + n * (dim.gridMargin + 150),
+              dim.get(Zone.GRID_PANEL).width, 150,
+              sdk.color().value(0.3f)
+            );
+            tra25.drawText(sdk.name(), 10, dim.gridMargin * 2 + n * (dim.gridMargin + 150) + 10);
+
+            // head
+            sdk.render(10, dim.gridMargin * 2 + n * (dim.gridMargin + 150) + 45, 75, 75);
+
+            for (int i = 0; i < sdk.stats().size(); i++) {
+                var attr = sdk.stats().get(i);
+                // attribute
+                tra15.drawText(attr.getKey().toUpperCase(), 100, dim.gridMargin * 2 + 55 + n * (dim.gridMargin + 150) + i * 20);
+                // points
+                for (int p = 0; p < 4; p++) {
+                    sra.drawCircle(
+                      210 + 20 * p,
+                      dim.gridMargin * 2 + 60 + n * (dim.gridMargin + 150) + i * 20,
+                      5, p < attr.getValue() ? Color.WHITE : new Color(1, 1, 1, 0.3f)
+                    );
+                }
+            }
+        }
+    }
+
     @Override
     public void render() {
         renderBackGround();
@@ -412,6 +446,7 @@ public class Level implements Animated {
 
         next[0].render(dim.get(Zone.NEXT_GELULE));
         Optional.ofNullable(hold).ifPresent(hold -> hold.render(dim.get(Zone.HOLD_GELULE)));
+        renderPauseScreen();
 
         renderEffects();
         particles.render();

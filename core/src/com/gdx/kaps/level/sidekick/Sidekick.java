@@ -10,10 +10,7 @@ import com.gdx.kaps.renderer.AnimatedSprite;
 import com.gdx.kaps.renderer.NonStatic;
 import com.gdx.kaps.renderer.Zone;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.gdx.kaps.MainScreen.dim;
@@ -131,5 +128,13 @@ public class Sidekick implements Animated, NonStatic {
           dim.get(Zone.SIDE_PANEL).x + 10 + dim.sidekickPanelHeight - 10,
           dim.gridMargin * (6 + n) + dim.get(Zone.NEXT_BOX).height * (2 + 0.5f * n) + 10
         );
+    }
+
+    public List<Map.Entry<String, Integer>> stats() {
+        return type.statList();
+    }
+
+    public String name() {
+        return type.toString();
     }
 }

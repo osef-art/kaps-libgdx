@@ -21,13 +21,12 @@ public class Dimensions {
         gridMargin = map.get(Zone.WINDOW).width / 20;
 
         // grid
-        map.put(Zone.GRID_PANEL, new Rectangle(0, 0, map.get(Zone.WINDOW).width*2/3, map.get(Zone.WINDOW).height));
+        map.put(Zone.GRID_PANEL, new Rectangle(0, 0, map.get(Zone.WINDOW).width*2/3, map.get(Zone.WINDOW).height - 100));
         map.put(Zone.GRID, new Rectangle(
           gridMargin, gridMargin,
           map.get(Zone.GRID_PANEL).width - 2 * gridMargin,
           ((map.get(Zone.GRID_PANEL).width - 2 * gridMargin) / grid.width()) * grid.height()
         ));
-        map.get(Zone.GRID_PANEL).height = map.get(Zone.GRID).height + 2* gridMargin;
 
         // tiles
         tileSize = map.get(Zone.GRID).width / grid.width();
@@ -45,7 +44,7 @@ public class Dimensions {
 
         // side panel
         map.put(Zone.SIDE_PANEL, new Rectangle(map.get(Zone.GRID_PANEL).width, 0, map.get(Zone.WINDOW).width - map.get(Zone.GRID_PANEL).width, map.get(Zone.WINDOW).height));
-        map.put(Zone.BOTTOM_PANEL, new Rectangle(0, map.get(Zone.WINDOW).height - 100, map.get(Zone.WINDOW).width, 100));
+        map.put(Zone.BOTTOM_PANEL, new Rectangle(0, map.get(Zone.GRID_PANEL).height, map.get(Zone.WINDOW).width, 100));
         sidePadding = map.get(Zone.SIDE_PANEL).width / 10;
 
         map.put(Zone.NEXT_BOX, new Rectangle(map.get(Zone.SIDE_PANEL).x + sidePadding, gridMargin, map.get(Zone.SIDE_PANEL).width - 2 * sidePadding, map.get(Zone.SIDE_PANEL).width - 2 * sidePadding));

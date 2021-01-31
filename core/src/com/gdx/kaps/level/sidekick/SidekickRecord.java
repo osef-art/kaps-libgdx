@@ -5,10 +5,11 @@ import com.gdx.kaps.level.grid.Color;
 import com.gdx.kaps.level.grid.Grid;
 import com.gdx.kaps.level.grid.caps.Caps;
 import com.gdx.kaps.level.grid.caps.EffectAnim;
+import com.gdx.kaps.level.grid.caps.EffectAnim.EffectType;
 import com.gdx.kaps.level.grid.caps.Gelule;
 import com.gdx.kaps.renderer.Zone;
 
-import java.util.Collections;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.stream.IntStream;
 
@@ -18,30 +19,78 @@ import static com.gdx.kaps.level.grid.caps.EffectAnim.EffectType.*;
 import static java.util.stream.Collectors.toList;
 
 public enum SidekickRecord {
-    SEAN("Sean", Color.COLOR_1, "fire", FIRE_FX, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::hitRandomTileAndAdjacents, sdk), 20),
-    ZYRAME("Zyrame", Color.COLOR_2, "slice", SLICE_FX, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::hitTwoRandomGerms, sdk), 20, 2),
-    RED("Red", Color.COLOR_3, "slice", SLICE_FX, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::sliceRandomColumn, sdk), 20, 2),
-    MIMAPS("Mimaps", Color.COLOR_4, "fire", FIRE_FX, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::hitThreeRandomTiles, sdk), 15, 2),
-    PAINT("Paint", Color.COLOR_5, "gen", PAINT_FX, SidekickRecord::repaintFiveCaps, 10),
-    XERETH("Xereth", Color.COLOR_6, "slice", SLICE_FX, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::sliceRandomDiagonals, sdk), 25),
-    BOMBER("Bomb", Color.COLOR_7, "color", CORE_FX, SidekickRecord::generateBombedGelule, -12),
-    JIM("Jim", Color.COLOR_10, "slice", SLICE_FX, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::sliceRandomLine, sdk), 20),
-    COLOR("Color", Color.COLOR_11,"color", CORE_FX, SidekickRecord::generateSingleColoredGelule, -4),
-    SNIPER("Punch", Color.COLOR_12,"paint", CORE_FX, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::hitRandomGerm, sdk), 15, 3),
+    SEAN("Sean", Color.COLOR_1, "fire", FIRE_FX, Target.RANDOM_GRID_OBJECT, 5, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::hitRandomTileAndAdjacents, sdk), 20, 2),
+    ZYRAME("Zyrame", Color.COLOR_2, "slice", SLICE_FX, Target.RANDOM_GERM, 2, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::hitTwoRandomGerms, sdk), 20, 2),
+    RED("Red", Color.COLOR_3, "slice", SLICE_FX, Target.RANDOM_GRID_OBJECT, 10, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::sliceRandomColumn, sdk), 20, 2),
+    MIMAPS("Mimaps", Color.COLOR_4, "fire", FIRE_FX, Target.RANDOM_GRID_OBJECT, 3, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::hitThreeRandomTiles, sdk), 15, 2),
+    PAINT("Paint", Color.COLOR_5, "gen", PAINT_FX, Target.RANDOM_CAPS, 5, SidekickRecord::repaintFiveCaps, 10, 0),
+    XERETH("Xereth", Color.COLOR_6, "slice", SLICE_FX, Target.RANDOM_GRID_OBJECT, 11, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::sliceRandomDiagonals, sdk), 25),
+    BOMBER("Bomb", Color.COLOR_7, "color", CORE_FX, Target.TARGETED, 9, SidekickRecord::generateBombedGelule, -13),
+    JIM("Jim", Color.COLOR_10, "slice", SLICE_FX, Target.RANDOM_GRID_OBJECT, 6, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::sliceRandomLine, sdk), 20),
+    COLOR("Color", Color.COLOR_11,"color", CORE_FX, Target.TARGETED, 0, SidekickRecord::generateSingleColoredGelule, -4, 0),
+    SNIPER("Punch", Color.COLOR_12,"paint", CORE_FX, Target.RANDOM_GERM, 1, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::hitRandomGerm, sdk), 15, 3),
     // TODO: sidekick that generates a single Caps ?
     ;
 
+    private enum Target {
+        RANDOM_TILE,
+        RANDOM_CAPS,
+        RANDOM_GRID_OBJECT,
+        RANDOM_GERM,
+        TARGETED
+    }
+    public static class Stats {
+        private final LinkedHashMap<String, Integer> attribute = new LinkedHashMap<>();
+
+        public Stats(int damage, int maxCaps, Target target, int mana) {
+            int amount;
+            switch (maxCaps) {
+                case 0:
+                    amount = 0;
+                    break;
+                case 1:
+                    amount = 1;
+                    break;
+                case 2:
+                case 3:
+                case 4:
+                    amount = 2;
+                    break;
+                case 5:
+                case 6:
+                case 7:
+                    amount = 3;
+                    break;
+                default:
+                    amount = 4;
+            }
+            attribute.put("damage", damage);
+            attribute.put("amount", amount);
+            attribute.put("precision", target.ordinal());
+            attribute.put("frequency", (mana  < 0) ? (mana + 16) / 3 : (30 - mana) / 5);
+
+            if (attribute.get("damage") < 0 || 4 < attribute.get("damage"))
+                throw new IllegalStateException("Invalid damage value: " + damage);
+            if (maxCaps < 0 || 4 < attribute.get("amount"))
+                throw new IllegalStateException("Invalid amount value: " + amount);
+            if (4 < attribute.get("precision"))
+                throw new IllegalStateException("Invalid precision value: " + attribute.get("precision"));
+            if (attribute.get("frequency") < 1 || 4 < attribute.get("frequency"))
+                throw new IllegalStateException("Invalid frequency value: " + attribute.get("frequency"));
+        }
+    }
     private final BiConsumer<Level, SidekickRecord> power;
-    private final EffectAnim.EffectType effect;
+    private final EffectType effect;
     private final Color type;
+    private final Stats stats;
     private final String name;
     private final String sound;
     private final int cooldown;
     private final int maxMana;
     private final int damage;
 
-    SidekickRecord(String name, Color type, String soundName, EffectAnim.EffectType effect, BiConsumer<Level, SidekickRecord> power, int mana) {
-        this(name, type, soundName, effect, power, mana, 1);
+    SidekickRecord(String name, Color type, String soundName, EffectType effect, Target target, int maxCaps, BiConsumer<Level, SidekickRecord> power, int mana) {
+        this(name, type, soundName, effect, target, maxCaps, power, mana, 1);
     }
 
     /**
@@ -55,26 +104,33 @@ public enum SidekickRecord {
      *             if the value is negative, stands for the number of turns (cooldown) until triggering.
      * @param dmg the number of damage
      */
-    SidekickRecord(String name, Color color, String soundName, EffectAnim.EffectType effect, BiConsumer<Level, SidekickRecord> power, int mana, int dmg) {
+    SidekickRecord(String name, Color color, String soundName, EffectType effect, Target target, int maxCaps, BiConsumer<Level, SidekickRecord> power, int mana, int dmg) {
         this.effect = effect;
         this.power = power;
         this.name = name;
         this.type = color;
-        maxMana = Math.max(mana, 0);
-        cooldown = -Math.min(mana, 0);
         sound = soundName;
         damage = dmg;
+        maxMana = Math.max(mana, 0);
+        cooldown = -Math.min(mana, 0);
+        stats = new Stats(dmg, maxCaps, target, mana);
+        System.out.println(name);
+        System.out.println(stats);
     }
 
     public static SidekickRecord ofName(String sdkName) {
         return valueOf(sdkName.toUpperCase());
     }
 
+    public List<Map.Entry<String, Integer>> statList() {
+        return new ArrayList<>(stats.attribute.entrySet());
+    }
+
     public BiConsumer<Level, SidekickRecord> power() {
         return power;
     }
 
-    public EffectAnim.EffectType effect() {
+    public EffectType effect() {
         return effect;
     }
 
