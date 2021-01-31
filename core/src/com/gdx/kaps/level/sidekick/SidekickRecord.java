@@ -40,7 +40,8 @@ public enum SidekickRecord {
         TARGETED
     }
     public static class Stats {
-        private final LinkedHashMap<String, Integer> attribute = new LinkedHashMap<>();
+        private final LinkedHashMap<String, Integer> attributes = new LinkedHashMap<>();
+        private final int stars;
 
         public Stats(int damage, int maxCaps, Target target, int mana) {
             int amount;
@@ -64,19 +65,33 @@ public enum SidekickRecord {
                 default:
                     amount = 4;
             }
-            attribute.put("damage", damage);
-            attribute.put("amount", amount);
-            attribute.put("precision", target.ordinal());
-            attribute.put("frequency", (mana  < 0) ? (mana + 16) / 3 : (30 - mana) / 5);
+            attributes.put("damage", damage);
+            attributes.put("amount", amount);
+            attributes.put("precision", target.ordinal());
+            attributes.put("frequency", (mana  < 0) ? (mana + 16) / 3 : (30 - mana) / 5);
 
-            if (attribute.get("damage") < 0 || 4 < attribute.get("damage"))
+            if (attributes.get("damage") < 0 || 4 < attributes.get("damage"))
                 throw new IllegalStateException("Invalid damage value: " + damage);
-            if (maxCaps < 0 || 4 < attribute.get("amount"))
+            if (maxCaps < 0 || 4 < attributes.get("amount"))
                 throw new IllegalStateException("Invalid amount value: " + amount);
-            if (4 < attribute.get("precision"))
-                throw new IllegalStateException("Invalid precision value: " + attribute.get("precision"));
-            if (attribute.get("frequency") < 1 || 4 < attribute.get("frequency"))
-                throw new IllegalStateException("Invalid frequency value: " + attribute.get("frequency"));
+            if (4 < attributes.get("precision"))
+                throw new IllegalStateException("Invalid precision value: " + attributes.get("precision"));
+            if (attributes.get("frequency") < 1 || 4 < attributes.get("frequency"))
+                throw new IllegalStateException("Invalid frequency value: " + attributes.get("frequency"));
+
+            int points = attributes.values().stream().reduce(0, Integer::sum);
+            stars = (points - 4) / 2;
+
+            if (stars < 1 || 3 < stars)
+                throw new IllegalStateException("Invalid number of attributes: " + points + " (" + stars + " stars)");
+        }
+
+        public ArrayList<Map.Entry<String, Integer>> list() {
+            return new ArrayList<>(attributes.entrySet());
+        }
+
+        public int stars() {
+            return stars;
         }
     }
     private final BiConsumer<Level, SidekickRecord> power;
@@ -114,16 +129,10 @@ public enum SidekickRecord {
         maxMana = Math.max(mana, 0);
         cooldown = -Math.min(mana, 0);
         stats = new Stats(dmg, maxCaps, target, mana);
-        System.out.println(name);
-        System.out.println(stats);
     }
 
     public static SidekickRecord ofName(String sdkName) {
         return valueOf(sdkName.toUpperCase());
-    }
-
-    public List<Map.Entry<String, Integer>> statList() {
-        return new ArrayList<>(stats.attribute.entrySet());
     }
 
     public BiConsumer<Level, SidekickRecord> power() {
@@ -148,6 +157,10 @@ public enum SidekickRecord {
 
     public Color color() {
         return type;
+    }
+
+    public Stats stats() {
+        return stats;
     }
 
     public String sound() {

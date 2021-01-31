@@ -417,9 +417,16 @@ public class Level implements Animated {
 
             // head
             sdk.render(10, dim.gridMargin * 2 + n * (dim.gridMargin + 150) + 45, 75, 75);
+            for (int s = 0; s < 3; s++) {
+                sra.drawRect(
+                  20 * (s + 1),
+                  dim.gridMargin * 2 + n * (dim.gridMargin + 150) + 55 + 75, 15, 15,
+                  s < sdk.stats().stars() ? Color.WHITE : new Color(1, 1, 1, 0.3f)
+                );
+            }
 
-            for (int i = 0; i < sdk.stats().size(); i++) {
-                var attr = sdk.stats().get(i);
+            for (int i = 0; i < sdk.stats().list().size(); i++) {
+                var attr = sdk.stats().list().get(i);
                 // attribute
                 tra15.drawText(attr.getKey().toUpperCase(), 100, dim.gridMargin * 2 + 55 + n * (dim.gridMargin + 150) + i * 20);
                 // points

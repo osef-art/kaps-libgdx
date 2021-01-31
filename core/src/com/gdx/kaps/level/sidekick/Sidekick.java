@@ -130,8 +130,8 @@ public class Sidekick implements Animated, NonStatic {
         );
     }
 
-    public List<Map.Entry<String, Integer>> stats() {
-        return type.statList();
+    public SidekickRecord.Stats stats() {
+        return type.stats();
     }
 
     public String name() {
