@@ -56,6 +56,10 @@ public class Sidekick implements Animated, NonStatic {
         return type.color();
     }
 
+    public String description() {
+        return type.usage();
+    }
+
     // predicates
 
     boolean isReady() {

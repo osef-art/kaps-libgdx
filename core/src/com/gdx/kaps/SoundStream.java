@@ -43,6 +43,6 @@ public class SoundStream {
         sound = Gdx.audio.newSound(
           Gdx.files.internal(SoundRecord.pathOf(name))
         );
-        sound.setVolume(sound.play(), 0.15f);
+        sound.setVolume(sound.play(), 0.05f);
     }
 }

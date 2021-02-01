@@ -405,39 +405,52 @@ public class Level implements Animated {
         // fond
         sra.drawRect(dim.get(Zone.GRID_PANEL), new Color(0, 0.1f, 0.2f, 0.7f));
 
+        int panelHeight = 200;
         for (int n = 0; n < sidekicks.size(); n++) {
             var sdk = sidekicks.get(n);
 
+            // panel
             sra.drawRect(
-              0, dim.gridMargin * 2 + n * (dim.gridMargin + 150),
-              dim.get(Zone.GRID_PANEL).width, 150,
+              0, dim.gridMargin * 2 + n * (dim.gridMargin + panelHeight),
+              dim.get(Zone.GRID_PANEL).width, panelHeight,
               sdk.color().value(0.3f)
             );
-            tra25.drawText(sdk.name(), 10, dim.gridMargin * 2 + n * (dim.gridMargin + 150) + 10);
+            tra25.drawText(sdk.name(), 10, dim.gridMargin * 2 + n * (dim.gridMargin + panelHeight) + 10);
 
-            // head
-            sdk.render(10, dim.gridMargin * 2 + n * (dim.gridMargin + 150) + 45, 75, 75);
+            // head & stars
+            sdk.render(10, dim.gridMargin * 2 + n * (dim.gridMargin + panelHeight) + 45, 75, 75);
             for (int s = 0; s < 3; s++) {
+                // TODO: draw real stars (sprites ?)
                 sra.drawRect(
                   20 * (s + 1),
-                  dim.gridMargin * 2 + n * (dim.gridMargin + 150) + 55 + 75, 15, 15,
+                  dim.gridMargin * 2 + n * (dim.gridMargin + panelHeight) + 55 + 75, 15, 15,
                   s < sdk.stats().stars() ? Color.WHITE : new Color(1, 1, 1, 0.3f)
                 );
             }
 
+            // stats
             for (int i = 0; i < sdk.stats().list().size(); i++) {
                 var attr = sdk.stats().list().get(i);
                 // attribute
-                tra15.drawText(attr.getKey().toUpperCase(), 100, dim.gridMargin * 2 + 55 + n * (dim.gridMargin + 150) + i * 20);
+                tra15.drawText(attr.getKey().toUpperCase(), 100, dim.gridMargin * 2 + 55 + n * (dim.gridMargin + panelHeight) + i * 20);
                 // points
                 for (int p = 0; p < 4; p++) {
                     sra.drawCircle(
                       210 + 20 * p,
-                      dim.gridMargin * 2 + 60 + n * (dim.gridMargin + 150) + i * 20,
+                      dim.gridMargin * 2 + 60 + n * (dim.gridMargin + panelHeight) + i * 20,
                       5, p < attr.getValue() ? Color.WHITE : new Color(1, 1, 1, 0.3f)
                     );
                 }
             }
+
+            // description
+            tra15.drawText(sdk.description(), 10, dim.gridMargin * 2 + n * (dim.gridMargin + panelHeight) + 55 + 75 + 25);
+
+            tra25.drawText(
+              "Press 'P' to continue",
+              0, dim.get(Zone.BOTTOM_PANEL).y - 100,
+              dim.get(Zone.GRID_PANEL).width, 100
+            );
         }
     }
 

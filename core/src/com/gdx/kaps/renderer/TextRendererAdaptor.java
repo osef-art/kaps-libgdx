@@ -3,6 +3,7 @@ package com.gdx.kaps.renderer;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.math.Rectangle;
@@ -34,6 +35,12 @@ public class TextRendererAdaptor implements RendererAdaptor {
 
     public void drawText(String txt, float x, float y, float width, float height) {
         spra.renderText(txt, font, x, y, width, height - fontSize * 1.25f);
+    }
+
+    public String stringBoxedIn(String str, float width) {
+        var glyph = new GlyphLayout(font, str);
+        System.out.println(glyph);
+        return null;
     }
 
     @Override
