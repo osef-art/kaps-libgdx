@@ -7,6 +7,7 @@ import com.gdx.kaps.level.grid.GridObject;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 
+import static com.gdx.kaps.MainScreen.shake;
 import static com.gdx.kaps.level.grid.caps.EffectAnim.EffectType.FIRE_FX;
 import static java.util.Objects.requireNonNull;
 
@@ -37,6 +38,7 @@ public class Caps extends GridObject {
             grid.hit(caps.x() + 1, caps.y() - 1, FIRE_FX);
             grid.hit(caps.x() + 1, caps.y(), FIRE_FX);
             grid.hit(caps.x() + 1, caps.y() + 1, FIRE_FX);
+            shake();
             caps.playSound("fire");
         }
     }

@@ -25,13 +25,12 @@ public class MainScreen extends ApplicationAdapter {
 	private Vector2 cameraPos;
 	private Level level;
 
-	// IMPL: different sound streams for: sidekicks, grid (pop)
 	public static OrthographicCamera camera;
 	public static SpriteRendererAdaptor spra;
 	public static TextRendererAdaptor tra25;
 	public static TextRendererAdaptor tra15;
 	public static ShapeRendererAdaptor sra;
-	//IMPL: move to Level
+	// IMPL: move to Level
 	public static Dimensions dim;
 	private static Vector2 shaking;
 	private static Timer timer;
@@ -48,10 +47,10 @@ public class MainScreen extends ApplicationAdapter {
 		camera.setToOrtho(true);
 		cameraPos = new Vector2(camera.position.x, camera.position.y);
 
-		spra = new SpriteRendererAdaptor();
-		sra = new ShapeRendererAdaptor();
 		tra25 = new TextRendererAdaptor(25, Color.WHITE);
 		tra15 = new TextRendererAdaptor(15, Color.WHITE);
+		spra = new SpriteRendererAdaptor();
+		sra = new ShapeRendererAdaptor();
 
 		level = new Level(
 			Path.of("android/assets/levels/level" + new Random().nextInt(21)),

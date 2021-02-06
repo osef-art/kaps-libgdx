@@ -269,13 +269,19 @@ public class Level implements Animated {
             matches = grid.hitMatches()
                         .peek((color, set) -> {
                             var sound = "plop0";
-                            if (set.size() > MIN_MATCH_RANGE) {
+                            if (!sidekickOfColor(color).map(Sidekick::hasCooldown).orElse(true)) {
                                 particles.add(set);
+                                if (set.size() > MIN_MATCH_RANGE) {
+                                    for (int i = 0; i < set.size() - MIN_MATCH_RANGE; i++) {
+                                        getRandomFrom(set).ifPresent(particles::add);
+                                    }
+                                }
+                            }
+                            else if (set.size() > MIN_MATCH_RANGE) {
+                                particles.add(set);
+                                System.out.println(set);
                                 sidekickOfColor(color).ifPresent(Sidekick::decreaseCooldown);
                                 sound = "match_five";
-                            }
-                            else if (!sidekickOfColor(color).map(Sidekick::hasCooldown).orElse(true)) {
-                                particles.add(set);
                             }
                             stream.play(sound);
                         });
@@ -444,7 +450,9 @@ public class Level implements Animated {
             }
 
             // description
-            tra15.drawText(sdk.description(), 10, dim.gridMargin * 2 + n * (dim.gridMargin + panelHeight) + 55 + 75 + 25);
+            for (int i = 0; i < sdk.description().length; i++) {
+                tra15.drawText(sdk.description()[i], 10, dim.gridMargin * 2 + n * (dim.gridMargin + panelHeight) + 55 + 75 + 25 + i * 20);
+            }
 
             tra25.drawText(
               "Press 'P' to continue",

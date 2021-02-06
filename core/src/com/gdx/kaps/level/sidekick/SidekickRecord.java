@@ -21,18 +21,16 @@ import static java.util.stream.Collectors.toList;
 public enum SidekickRecord {
     SEAN("Sean", "Hits a random object and adjacent tiles.", Color.COLOR_1, "fire", FIRE_FX, Target.RANDOM_PATTERN, 5, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::hitRandomTileAndAdjacents, sdk), 20, 2),
     ZYRAME("Zyrame", "Slices two random germs.", Color.COLOR_2, "slice", SLICE_FX, Target.RANDOM_GERM, 2, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::hitTwoRandomGerms, sdk), 20, 2),
-    RED("Red", "Slices a random object and all tiles on the same column.", Color.COLOR_3, "slice", SLICE_FX, Target.RANDOM_PATTERN, 10, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::sliceRandomColumn, sdk), 20, 2),
+    RED("Red", "Slices a random object and all tiles on the same column.", Color.COLOR_3, "slice", SLICE_FX, Target.RANDOM_PATTERN, 10, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::sliceRandomColumn, sdk), 25, 2),
     MIMAPS("Mimaps", "Hits 3 random objects.", Color.COLOR_4, "fire", FIRE_FX, Target.RANDOM_OBJECT, 3, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::hitThreeRandomTiles, sdk), 15, 2),
-    PAINT("Paint", "Paint 5 random caps.", Color.COLOR_5, "gen", PAINT_FX, Target.RANDOM_OBJECT, 5, SidekickRecord::repaintFiveCaps, 10, 0),
+    PAINTER("Paint", "Paint 5 random caps.", Color.COLOR_5, "gen", PAINT_FX, Target.RANDOM_OBJECT, 5, SidekickRecord::repaintFiveCaps, 10, 0),
     XERETH("Xereth", "Slices a random object and all tiles on the same diagonals.", Color.COLOR_6, "slice", SLICE_FX, Target.RANDOM_PATTERN, 11, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::sliceRandomDiagonals, sdk), 25),
     BOMBER("Bomber", "Generates an explosive gelule.", Color.COLOR_7, "color", CORE_FX, Target.TARGETED, 9, SidekickRecord::generateBombedGelule, -13),
     JIM("Jim", "Slices a random object and all tiles on the same line.", Color.COLOR_10, "slice", SLICE_FX, Target.RANDOM_PATTERN, 6, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::sliceRandomLine, sdk), 20),
-    COLOR("Color", "Generates a gelule with both caps of same color.", Color.COLOR_11,"color", CORE_FX, Target.TARGETED, 0, SidekickRecord::generateSingleColoredGelule, -4, 0),
+    UNICOLOR("Color", "Generates a gelule with both caps of same color.", Color.COLOR_11,"color", CORE_FX, Target.TARGETED, 0, SidekickRecord::generateSingleColoredGelule, -4, 0),
     SNIPER("Sniper", "Shoots a random germ.", Color.COLOR_12,"paint", CORE_FX, Target.RANDOM_GERM, 1, (lvl, sdk) -> lvl.applyToGrid(SidekickRecord::hitRandomGerm, sdk), 15, 3),
-    // TODO: description of sidekicks
     // TODO: sidekick that generates a single Caps ?
     ;
-
     private enum Target {
         RANDOM_TILE,
         RANDOM_OBJECT,
@@ -81,7 +79,7 @@ public enum SidekickRecord {
                 throw new IllegalStateException("Invalid frequency value: " + attributes.get("frequency"));
 
             int points = attributes.values().stream().reduce(0, Integer::sum);
-            stars = (points - 4) / 2;
+            stars = points - 7;
 
             if (stars < 1 || 3 < stars)
                 throw new IllegalStateException("Invalid number of attributes: " + points + " (" + stars + " stars)");
@@ -95,6 +93,7 @@ public enum SidekickRecord {
             return stars;
         }
     }
+    private String[] usageLines;
     private final BiConsumer<Level, SidekickRecord> power;
     private final EffectType effect;
     private final Color type;
@@ -122,16 +121,15 @@ public enum SidekickRecord {
      * @param dmg the number of damage
      */
     SidekickRecord(String name, String usage, Color color, String soundName, EffectType effect, Target target, int maxCaps, BiConsumer<Level, SidekickRecord> power, int mana, int dmg) {
-        this.effect = effect;
-        this.power = power;
+        stats = new Stats(dmg, maxCaps, target, mana);this.effect = effect;
+        cooldown = -Math.min(mana, 0);
+        maxMana = Math.max(mana, 0);
+        this.sound = soundName;
         this.usage = usage;
+        this.power = power;
         this.type = color;
         this.name = name;
         damage = dmg;
-        sound = soundName;
-        maxMana = Math.max(mana, 0);
-        cooldown = -Math.min(mana, 0);
-        stats = new Stats(dmg, maxCaps, target, mana);
     }
 
     public static SidekickRecord ofName(String sdkName) {
@@ -177,6 +175,14 @@ public enum SidekickRecord {
     @Override
     public String toString() {
         return name;
+    }
+
+    public String[] usageLines() {
+        return usageLines;
+    }
+
+    public void setUsageLines(String[] lines) {
+        usageLines = lines;
     }
 
     // powers

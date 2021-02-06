@@ -6,6 +6,8 @@ import com.gdx.kaps.level.grid.GridObject;
 
 import java.util.EnumMap;
 
+import static com.gdx.kaps.MainScreen.tra25;
+
 public class Dimensions {
     private final EnumMap<Zone, Rectangle> map = new EnumMap<>(Zone.class);
     private final Rectangle[][] tiles;
@@ -56,6 +58,7 @@ public class Dimensions {
         map.put(Zone.HOLD_GELULE, new Rectangle(map.get(Zone.HOLD_BOX).x + boxPadding, map.get(Zone.HOLD_BOX).y + map.get(Zone.HOLD_BOX).height/2 - map.get(Zone.NEXT_GELULE).height/2, map.get(Zone.HOLD_BOX).width - 2 * boxPadding, (map.get(Zone.HOLD_BOX).width - 2 * boxPadding) / 2));
 
         sidekickPanelHeight = map.get(Zone.NEXT_BOX).height / 2;
+        tra25.formatSidekicksDesc(map.get(Zone.GRID_PANEL).width);
     }
 
     public Rectangle get(Zone zone) {
