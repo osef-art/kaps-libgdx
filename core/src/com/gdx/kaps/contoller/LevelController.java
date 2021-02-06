@@ -26,9 +26,14 @@ public class LevelController implements InputProcessor {
         moveSpeed.reset();
         pressed.put(keycode, true);
 
+        // GAME
         switch (keycode) {
             case 44: // P
                 level.togglePause();
+                break;
+            case 66: // ENTER
+            case 62: // SPACE
+                if (level.isPaused()) level.togglePause();
                 break;
             case 45: // Q
                 System.exit(0);

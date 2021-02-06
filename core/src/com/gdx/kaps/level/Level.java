@@ -271,6 +271,7 @@ public class Level implements Animated {
                             var sound = "plop0";
                             if (!sidekickOfColor(color).map(Sidekick::hasCooldown).orElse(true)) {
                                 particles.add(set);
+                                // bonus particles
                                 if (set.size() > MIN_MATCH_RANGE) {
                                     for (int i = 0; i < set.size() - MIN_MATCH_RANGE; i++) {
                                         getRandomFrom(set).ifPresent(particles::add);
@@ -279,7 +280,6 @@ public class Level implements Animated {
                             }
                             else if (set.size() > MIN_MATCH_RANGE) {
                                 particles.add(set);
-                                System.out.println(set);
                                 sidekickOfColor(color).ifPresent(Sidekick::decreaseCooldown);
                                 sound = "match_five";
                             }
@@ -347,13 +347,13 @@ public class Level implements Animated {
           dim.get(Zone.NEXT_BOX),
           new Color(0.45f, 0.5f, 0.6f, 1)
         );
-        tra25.drawText("NEXT", dim.get(Zone.NEXT_BOX).x, dim.get(Zone.NEXT_BOX).y + dim.get(Zone.NEXT_BOX).height + 10);
+        tra25.drawShadedText("NEXT", dim.get(Zone.NEXT_BOX).x, dim.get(Zone.NEXT_BOX).y + dim.get(Zone.NEXT_BOX).height + 10);
 
         sra.drawRect(
           dim.get(Zone.HOLD_BOX),
           new Color(0.45f, 0.5f, 0.6f, 1)
         );
-        tra25.drawText("HOLD", dim.get(Zone.HOLD_BOX).x, dim.get(Zone.HOLD_BOX).y + dim.get(Zone.HOLD_BOX).height + 10);
+        tra25.drawShadedText("HOLD", dim.get(Zone.HOLD_BOX).x, dim.get(Zone.HOLD_BOX).y + dim.get(Zone.HOLD_BOX).height + 10);
 
         for (int n = 0; n < sidekicks.size(); n++) {
             // fond
@@ -374,8 +374,8 @@ public class Level implements Animated {
           sidekicks.get(0).color().value()
         );
 
-        tra25.drawText(score + "", dim.get(Zone.BOTTOM_PANEL));
-        tra25.drawText( "score:",
+        tra25.drawShadedText(score + "", dim.get(Zone.BOTTOM_PANEL));
+        tra15.drawText( "SCORE:",
           dim.get(Zone.BOTTOM_PANEL).x,
           dim.get(Zone.BOTTOM_PANEL).y,
           dim.get(Zone.BOTTOM_PANEL).width,
@@ -421,7 +421,7 @@ public class Level implements Animated {
               dim.get(Zone.GRID_PANEL).width, panelHeight,
               sdk.color().value(0.3f)
             );
-            tra25.drawText(sdk.name(), 10, dim.gridMargin * 2 + n * (dim.gridMargin + panelHeight) + 10);
+            tra25.drawShadedText(sdk.name(), 10, dim.gridMargin * 2 + n * (dim.gridMargin + panelHeight) + 10);
 
             // head & stars
             sdk.render(10, dim.gridMargin * 2 + n * (dim.gridMargin + panelHeight) + 45, 75, 75);
@@ -454,7 +454,7 @@ public class Level implements Animated {
                 tra15.drawText(sdk.description()[i], 10, dim.gridMargin * 2 + n * (dim.gridMargin + panelHeight) + 55 + 75 + 25 + i * 20);
             }
 
-            tra25.drawText(
+            tra25.drawShadedText(
               "Press 'P' to continue",
               0, dim.get(Zone.BOTTOM_PANEL).y - 100,
               dim.get(Zone.GRID_PANEL).width, 100

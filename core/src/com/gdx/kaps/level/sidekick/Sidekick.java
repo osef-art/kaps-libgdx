@@ -126,7 +126,7 @@ public class Sidekick implements Animated, NonStatic {
           color().value()
         );
 
-        tra25.drawText(
+        tra25.drawShadedText(
           gauge.value() + "",
           dim.get(Zone.SIDE_PANEL).x + 10 + dim.sidekickPanelHeight - 10,
           dim.gridMargin * (6 + n) + dim.get(Zone.NEXT_BOX).height * (2 + 0.5f * n) + 10

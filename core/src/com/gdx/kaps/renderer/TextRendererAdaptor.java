@@ -16,6 +16,7 @@ import static com.gdx.kaps.MainScreen.spra;
 import static java.util.Arrays.*;
 
 public class TextRendererAdaptor implements RendererAdaptor {
+    private final BitmapFont shade;
     private final BitmapFont font;
     private final float fontSize;
 
@@ -27,19 +28,31 @@ public class TextRendererAdaptor implements RendererAdaptor {
         parameter.size = size;
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("android/assets/fonts/Gotham.ttf"));
         font = generator.generateFont(parameter);
+        shade = generator.generateFont(parameter);
+        shade.setColor(0, 0, 0, 0.25f);
         generator.dispose();
     }
 
-    public void drawText(String text, float x, float y) {
-        spra.renderText(text, font, x, y);
-    }
-
-    public void drawText(String txt, Rectangle rect) {
-        drawText(txt, rect.x, rect.y, rect.width, rect.height);
+    public void drawText(String txt, float x, float y) {
+        spra.renderText(txt, font, x, y);
     }
 
     public void drawText(String txt, float x, float y, float width, float height) {
         spra.renderText(txt, font, x, y, width, height - fontSize * 1.25f);
+    }
+
+    public void drawShadedText(String txt, float x, float y) {
+        spra.renderText(txt, shade, x, y + fontSize * 0.2f);
+        drawText(txt, x, y);
+    }
+
+    public void drawShadedText(String txt, float x, float y, float width, float height) {
+        spra.renderText(txt, shade, x, y + fontSize * 0.2f, width, height - fontSize * 1.25f);
+        drawText(txt, x, y, width, height);
+    }
+
+    public void drawShadedText(String txt, Rectangle rect) {
+        drawShadedText(txt, rect.x, rect.y, rect.width, rect.height);
     }
 
     private String[] stringBoxedIn(String str, float width) {
@@ -63,12 +76,12 @@ public class TextRendererAdaptor implements RendererAdaptor {
         return lines.toArray(new String[0]);
     }
 
+    public void formatSidekicksDesc(float width) {
+        stream(SidekickRecord.values()).forEach(sdk -> sdk.setUsageLines(stringBoxedIn(sdk.usage(), width)));
+    }
+
     @Override
     public void dispose() {
         font.dispose();
-    }
-
-    public void formatSidekicksDesc(float width) {
-        stream(SidekickRecord.values()).forEach(sdk -> sdk.setUsageLines(stringBoxedIn(sdk.usage(), width)));
     }
 }

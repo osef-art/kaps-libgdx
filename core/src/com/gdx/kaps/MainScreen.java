@@ -27,6 +27,7 @@ public class MainScreen extends ApplicationAdapter {
 
 	public static OrthographicCamera camera;
 	public static SpriteRendererAdaptor spra;
+	public static TextRendererAdaptor tra35;
 	public static TextRendererAdaptor tra25;
 	public static TextRendererAdaptor tra15;
 	public static ShapeRendererAdaptor sra;
@@ -47,6 +48,7 @@ public class MainScreen extends ApplicationAdapter {
 		camera.setToOrtho(true);
 		cameraPos = new Vector2(camera.position.x, camera.position.y);
 
+		tra35 = new TextRendererAdaptor(35, Color.WHITE);
 		tra25 = new TextRendererAdaptor(25, Color.WHITE);
 		tra15 = new TextRendererAdaptor(15, Color.WHITE);
 		spra = new SpriteRendererAdaptor();

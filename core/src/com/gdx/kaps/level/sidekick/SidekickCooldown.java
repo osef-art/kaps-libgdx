@@ -72,7 +72,7 @@ class SidekickCooldown extends Sidekick {
           true
         );
 
-        tra25.drawText(
+        tra25.drawShadedText(
           cooldown.value() + "",
           dim.get(Zone.SIDE_PANEL).x + dim.sidekickPanelHeight + 5,
           dim.gridMargin * (6 + n) + dim.get(Zone.NEXT_BOX).height * (2 + 0.5f * n) + 10,
