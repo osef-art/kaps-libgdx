@@ -5,6 +5,7 @@ import com.gdx.kaps.level.grid.Grid;
 import static com.gdx.kaps.MainScreen.dim;
 
 public class ControllableGelule extends Gelule {
+    private boolean accepted;
     private final Grid grid;
     private Gelule preview;
 
@@ -31,6 +32,14 @@ public class ControllableGelule extends Gelule {
     public void updatePreview() {
         preview = new Gelule(this);
         while (preview.dipIfPossible(grid));
+    }
+
+    public boolean isAccepted() {
+        return accepted;
+    }
+
+    public void setAccepted() {
+        accepted = true;
     }
 
     @Override

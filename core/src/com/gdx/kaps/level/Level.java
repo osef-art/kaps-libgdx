@@ -5,7 +5,10 @@ import com.gdx.kaps.SoundStream;
 import com.gdx.kaps.level.grid.Grid;
 import com.gdx.kaps.level.grid.GridObject;
 import com.gdx.kaps.level.grid.Particles;
-import com.gdx.kaps.level.grid.caps.*;
+import com.gdx.kaps.level.grid.caps.Caps;
+import com.gdx.kaps.level.grid.caps.ControllableGelule;
+import com.gdx.kaps.level.grid.caps.EffectAnim;
+import com.gdx.kaps.level.grid.caps.Gelule;
 import com.gdx.kaps.level.sidekick.Sidekick;
 import com.gdx.kaps.level.sidekick.SidekickRecord;
 import com.gdx.kaps.renderer.Animated;
@@ -16,7 +19,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -43,7 +45,7 @@ public class Level implements Animated {
     private boolean canHold;
     private final List<Caps> fallingCaps = new ArrayList<>();
     private final List<ControllableGelule> gelules = new ArrayList<>();
-    private final Gelule[] next = new Gelule[2];
+    private final Gelule[] next = new Gelule[3];
     private Gelule hold;
 
     public Level(Path filePath, Set<Sidekick> sdks) {
@@ -105,7 +107,7 @@ public class Level implements Animated {
     private boolean isOver() {
         boolean defeat = gelules.stream()
                            .map(g -> !g.isAtValidEmplacement(grid))
-                           .reduce((b1, b2) -> b1 && b2)
+                           .reduce((b1, b2) -> b1 || b2)
                            .orElse(false);
         boolean victory = grid.remainingGerms() <= 0;
         boolean noMoreAnims = !grid.hasPoppingCaps();
@@ -117,44 +119,42 @@ public class Level implements Animated {
     }
 
     // control
-    private void doIfPresent(Consumer<ControllableGelule> action) {
-        if (gelules.isEmpty()) return;
-        action.accept(gelules.get(0));
-    }
 
     public void moveGeluleLeft() {
-        doIfPresent(gelule -> {
-            if (!gelule.moveLeftIfPossible(grid)) stream.play("cant");
-            gelule.updatePreview();
+        gelules.forEach(g -> {
+            if (!g.moveLeftIfPossible(grid)) stream.play("cant");
+            g.updatePreview();
         });
     }
 
     public void moveGeluleRight() {
-        doIfPresent(gelule -> {
-            if (!gelule.moveRightIfPossible(grid)) stream.play("cant");
-            gelule.updatePreview();
+        gelules.forEach(g -> {
+            if (!g.moveRightIfPossible(grid)) stream.play("cant");
+            g.updatePreview();
         });
     }
 
     public void dipGelule() {
-        doIfPresent(gelule -> {
-            if (!gelule.dipIfPossible(grid)) acceptGelule(gelule);
+        gelules.forEach(g -> {
+            if (!g.dipIfPossible(grid)) acceptGelule(g);
         });
+        gelules.removeIf(ControllableGelule::isAccepted);
     }
 
     public void flipGelule() {
-        doIfPresent(gelule -> {
-            stream.play(gelule.flipIfPossible(grid) ? "flip" : "cant");
-            gelule.updatePreview();
+        gelules.forEach(g -> {
+            stream.play(g.flipIfPossible(grid) ? "flip" : "cant");
+            g.updatePreview();
         });
     }
 
     public void dropGelule() {
-        doIfPresent(gelule -> {
+        gelules.forEach(g -> {
             stream.play("drop");
-            while (gelule.dipIfPossible(grid));
-            acceptGelule(gelule);
+            while (g.dipIfPossible(grid));
+            acceptGelule(g);
         });
+        gelules.removeIf(ControllableGelule::isAccepted);
     }
 
     public void togglePause() {
@@ -202,14 +202,10 @@ public class Level implements Animated {
 
     private void acceptGelule(ControllableGelule gelule) {
         grid.accept(gelule);
-        gelules.remove(gelule);
+        gelule.setAccepted();
         stream.play("impact");
 
         updateGrid();
-        triggerSidekicks();
-        decreaseCooldowns();
-        speedUp();
-        spawnNewGelule();
     }
 
     private boolean capsCantDip(Caps caps) {
@@ -255,6 +251,14 @@ public class Level implements Animated {
             dipGelule();
             fallingCaps.removeIf(this::capsCantDip);
         }
+
+        if (gelules.isEmpty()) {
+            triggerSidekicks();
+            decreaseCooldowns();
+            speedUp();
+            spawnNewGelule();
+        }
+
         grid.update();
         particles.update();
         sidekicks.forEach(Animated::update);
