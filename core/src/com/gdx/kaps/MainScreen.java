@@ -55,7 +55,7 @@ public class MainScreen extends ApplicationAdapter {
 		sra = new ShapeRendererAdaptor();
 
 		level = new Level(
-			Path.of("android/assets/levels/level" + 0), //TEST: new Random().nextInt(21)),
+			Path.of("android/assets/levels/level" + new Random().nextInt(21)),
 			Sidekick.randomSetOf(2, sidekicks)
 		);
 		camera.translate(0, dim.get(Zone.WINDOW).height);

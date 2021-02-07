@@ -1,6 +1,8 @@
 package com.gdx.kaps.level;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.gdx.kaps.SoundStream;
 import com.gdx.kaps.level.grid.Grid;
 import com.gdx.kaps.level.grid.GridObject;
@@ -30,11 +32,13 @@ public class Level implements Animated {
     private boolean paused = true;
     private int updateSpeed = 1_000_000_000;
     private final Timer updateTimer;
+    private final Timer fallingCapsTimer;
     public final static int MIN_MATCH_RANGE = 4;
     private static List<Sidekick> sidekicks;
     private static int multiplier = 1;
     private static int score;
     // render
+    private final Sprite starSprite = new Sprite(new Texture("android/assets/img/icons/star.png"));
     private final SoundStream stream = new SoundStream();
     private static final List<EffectAnim> effects = new ArrayList<>();
     private static Particles particles;
@@ -68,8 +72,10 @@ public class Level implements Animated {
         for (int i = 0; i < next.length; i++) {
             next[i] = new Gelule(this);
         }
+        fallingCapsTimer = new Timer(updateSpeed);
         updateTimer = new Timer(updateSpeed);
         particles = new Particles(sidekicks);
+        starSprite.flip(false, true);
         spawnNewGelule();
     }
 
@@ -120,41 +126,63 @@ public class Level implements Animated {
 
     // control
 
+    public void moveGeluleLeft(ControllableGelule g) {
+        if (!g.moveLeftIfPossible(grid)) stream.play("cant");
+        g.updatePreview();
+    }
+
+    public void moveGeluleRight(ControllableGelule g) {
+        if (!g.moveRightIfPossible(grid)) stream.play("cant");
+        g.updatePreview();
+    }
+
+    public void dipGelule(ControllableGelule g) {
+        if (!g.dipIfPossible(grid)) acceptGelule(g);
+    }
+
+    public void flipGelule(ControllableGelule g) {
+        stream.play(g.flipIfPossible(grid) ? "flip" : "cant");
+        g.updatePreview();
+    }
+
+    public void dropGelule(ControllableGelule g) {
+        stream.play("drop");
+        while (g.dipIfPossible(grid));
+        acceptGelule(g);
+        gelules.removeIf(ControllableGelule::isAccepted);
+    }
+
+    public void dipCaps(Caps caps) {
+        caps.dipIfPossible(grid);
+        if (!caps.canDip(grid)) {
+            grid.accept(caps);
+            stream.play("light_impact");
+        }
+    }
+
     public void moveGeluleLeft() {
-        gelules.forEach(g -> {
-            if (!g.moveLeftIfPossible(grid)) stream.play("cant");
-            g.updatePreview();
-        });
+        if (gelules.isEmpty()) return;
+        moveGeluleLeft(gelules.get(0));
     }
 
     public void moveGeluleRight() {
-        gelules.forEach(g -> {
-            if (!g.moveRightIfPossible(grid)) stream.play("cant");
-            g.updatePreview();
-        });
+        if (gelules.isEmpty()) return;
+        moveGeluleRight(gelules.get(0));
     }
 
     public void dipGelule() {
-        gelules.forEach(g -> {
-            if (!g.dipIfPossible(grid)) acceptGelule(g);
-        });
-        gelules.removeIf(ControllableGelule::isAccepted);
+        if (gelules.isEmpty()) return;
+        dipGelule(gelules.get(0));
     }
 
     public void flipGelule() {
-        gelules.forEach(g -> {
-            stream.play(g.flipIfPossible(grid) ? "flip" : "cant");
-            g.updatePreview();
-        });
+        if (gelules.isEmpty()) return;
+        flipGelule(gelules.get(0));
     }
 
     public void dropGelule() {
-        gelules.forEach(g -> {
-            stream.play("drop");
-            while (g.dipIfPossible(grid));
-            acceptGelule(g);
-        });
-        gelules.removeIf(ControllableGelule::isAccepted);
+        if (gelules.isEmpty()) return;
+        dropGelule(gelules.get(0));
     }
 
     public void togglePause() {
@@ -208,15 +236,6 @@ public class Level implements Animated {
         updateGrid();
     }
 
-    private boolean capsCantDip(Caps caps) {
-        caps.dipIfPossible(grid);
-        if (caps.canDip(grid)) return false;
-        grid.accept(caps);
-        stream.play("impact");
-        updateGrid();
-        return true;
-    }
-
     private void triggerSidekicks() {
         // TODO: animation focus when sidekicks are triggered
         sidekicks.forEach(sdk -> sdk.triggerIfReady(this));
@@ -236,6 +255,8 @@ public class Level implements Animated {
         updateSpeed *= 0.996;
         updateTimer.updateLimit(updateSpeed);
         updateTimer.reset();
+        fallingCapsTimer.updateLimit(updateSpeed/2);
+        fallingCapsTimer.reset();
     }
 
     public void addFallingCaps(Caps caps) {
@@ -248,8 +269,13 @@ public class Level implements Animated {
         if (paused) return;
         // FIXME: update on pause (récup remaining time)
         if (updateTimer.resetIfExceeds()) {
-            dipGelule();
-            fallingCaps.removeIf(this::capsCantDip);
+            gelules.forEach(this::dipGelule);
+            gelules.removeIf(ControllableGelule::isAccepted);
+        }
+        if (fallingCapsTimer.resetIfExceeds()) {
+            fallingCaps.forEach(this::dipCaps);
+            fallingCaps.removeIf(c -> !c.canDip(grid));
+            updateGrid();
         }
 
         if (gelules.isEmpty()) {
@@ -297,6 +323,7 @@ public class Level implements Animated {
                         });
             multiplier++;
         } while (!matches.isEmpty());
+        gelules.forEach(ControllableGelule::updatePreview);
     }
 
     public void end() {
@@ -437,10 +464,12 @@ public class Level implements Animated {
             sdk.render(10, dim.gridMargin * 2 + n * (dim.gridMargin + panelHeight) + 45, 75, 75);
             for (int s = 0; s < 3; s++) {
                 // TODO: draw real stars (sprites ?)
-                sra.drawRect(
+                spra.render(
+                  starSprite,
                   20 * (s + 1),
-                  dim.gridMargin * 2 + n * (dim.gridMargin + panelHeight) + 55 + 75, 15, 15,
-                  s < sdk.stats().stars() ? Color.WHITE : new Color(1, 1, 1, 0.3f)
+                  dim.gridMargin * 2 + n * (dim.gridMargin + panelHeight) + 55 + 75,
+                  15, 15,
+                  s < sdk.stats().stars() ? 1 : 0.4f
                 );
             }
 

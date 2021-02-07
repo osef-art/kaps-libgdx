@@ -29,14 +29,15 @@ public class SpriteRendererAdaptor implements RendererAdaptor {
         draw(() -> {
             batch.setColor(1,1,1, alpha);
             batch.draw(sprite, x, y, width, height);
+            batch.setColor(1,1,1, 1);
         });
     }
 
-    public void renderText(String text, BitmapFont font, float x, float y) {
+    void renderText(String text, BitmapFont font, float x, float y) {
         draw(() -> font.draw(batch, text, x, y));
     }
 
-    public void renderText(String txt, BitmapFont font, float x, float y, float width, float height) {
+    void renderText(String txt, BitmapFont font, float x, float y, float width, float height) {
         final GlyphLayout layout = new GlyphLayout(font, txt);
         final float fontX = x + (width - layout.width) / 2;
         final float fontY = y + (height + layout.height) / 2;
