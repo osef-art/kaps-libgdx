@@ -58,12 +58,12 @@ public abstract class GridObject implements GridObjectInterface {
         sprite.flip(false, true);
     }
 
-    public void render(float x, float y, float width, float height) {
-        render(x, y, width, height, 1);
-    }
-
     public void render(Rectangle rect, float alpha) {
         render(rect.x, rect.y, rect.width, rect.height, alpha);
+    }
+
+    public void render(float x, float y, float width, float height) {
+        render(x, y, width, height, 1);
     }
 
     private void render(float x, float y, float width, float height, float alpha) {

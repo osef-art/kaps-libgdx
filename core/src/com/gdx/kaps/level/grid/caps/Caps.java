@@ -99,6 +99,11 @@ public class Caps extends GridObject {
     // predicates
 
     @Override
+    public boolean isCaps() {
+        return true;
+    }
+
+    @Override
     public boolean isGerm() {
         return false;
     }
@@ -133,9 +138,10 @@ public class Caps extends GridObject {
         pos().add(look.vector());
     }
 
-    private void moveIfPossible(Look look, Grid grid) {
-        if (!canMove(look, grid)) return;
+    private boolean moveIfPossible(Look look, Grid grid) {
+        if (!canMove(look, grid)) return false;
         move(look);
+        return true;
     }
 
     @Override
@@ -144,8 +150,8 @@ public class Caps extends GridObject {
     }
 
     @Override
-    public void dipIfPossible(Grid grid) {
-        moveIfPossible(Look.DOWN, grid);
+    public boolean dipIfPossible(Grid grid) {
+        return moveIfPossible(Look.DOWN, grid);
     }
 
     @Override

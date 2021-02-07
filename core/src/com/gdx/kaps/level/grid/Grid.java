@@ -3,6 +3,7 @@ package com.gdx.kaps.level.grid;
 import com.badlogic.gdx.Gdx;
 import com.gdx.kaps.level.Level;
 import com.gdx.kaps.level.Matches;
+import com.gdx.kaps.level.grid.caps.Caps;
 import com.gdx.kaps.level.grid.caps.EffectAnim;
 import com.gdx.kaps.level.grid.caps.Gelule;
 import com.gdx.kaps.level.grid.germ.Germ;
@@ -107,27 +108,19 @@ public class Grid implements Animated {
     }
 
     public Optional<GridObject> pickRandomObject() {
-        return getRandomFrom(everyObjectInGrid().collect(toList()));
+        return getRandomFrom(everyObjectInGrid());
     }
 
-    public Optional<GridObject> pickRandomGerm() {
+    public Optional<Germ> pickRandomGerm() {
         return getRandomFrom(everyObjectInGrid()
                                .filter(GridObjectInterface::isGerm)
-                               .collect(toList()));
+                               .map(o -> (Germ) o));
     }
 
-    public Optional<GridObject> pickRandomCaps() {
+    public Optional<Caps> pickRandomCaps() {
         return getRandomFrom(everyObjectInGrid()
-                               .filter(o -> !o.isGerm())
-                               .collect(toList()));
-    }
-
-    public List<Germ> everyGermsWithCooldowns() {
-        return everyObjectInGrid()
-                 .filter(GridObject::isGerm)
-                 .map(o -> (Germ) o)
-                 .filter(Germ::hasCooldown)
-                 .collect(toUnmodifiableList());
+                               .filter(GridObjectInterface::isCaps)
+                               .map(o -> (Caps) o));
     }
 
     public int remainingGerms() {
@@ -271,6 +264,11 @@ public class Grid implements Animated {
         });
     }
 
+    public void contamine(Caps caps) {
+        pop(caps);
+        set(caps.x(), caps.y(), new VirusGerm(caps));
+    }
+
     /**
      * Sets grid element located at (x, y) to an unlinked GridObject.
      * @param obj the element to unlink
@@ -309,7 +307,20 @@ public class Grid implements Animated {
     }
 
     /**
-     * Sets the content of a gelule into the grid using its indexes
+     * Dips the provided object and all the objects in the same color that are under it.
+     * @param obj the object to dip
+     * @return true if at least one object could be dipped, false if not.
+     */
+    private boolean dipColumnIfPossible(GridObject obj) {
+        return everyCapsInGrid()
+                 .filter(c -> c.x() == obj.x() && c.y() <= obj.y())
+                 .map(this::dipIfPossible)
+                 .reduce((bool, bool2) -> bool || bool2)
+                 .orElse(false);
+    }
+
+    /**
+     * Sets the content of a gelule into the grid using its position indexes
      * @param gelule the gelule to add to the grid
      */
     public void accept(Gelule gelule) {
@@ -317,9 +328,13 @@ public class Grid implements Animated {
         gelule.forEach(this::set);
     }
 
-    public void contamine(GridObject caps) {
-        pop(caps);
-        set(caps.x(), caps.y(), new VirusGerm(caps));
+    /**
+     * Sets a caps into the grid using its position indexes
+     * @param caps the caps to add to the grid
+     */
+    public void accept(Caps caps) {
+        requireNonNull(caps);
+        set(caps);
     }
 
     // full grid operations
@@ -327,15 +342,19 @@ public class Grid implements Animated {
     /**
      * Applies gravity on every obj and dips them all until there is no more obj to dip.
      */
-    public void dropAll() {
-        // TODO: drop only linked obj. unlinked will be controllable
-        //  until they hit the floor/another obj. Also, drop unlinked below falling linked.
+    public void dropAll(Level lvl) {
         while (
-          everyObjectInGrid()
-            .map(this::dipIfPossible)
+          everyCapsInGrid()
+            .map(c -> c.linked().isPresent() && dipColumnIfPossible(c))
             .reduce((bool, bool2) -> bool || bool2)
             .orElse(false)
         );
+        everyCapsInGrid()
+          .filter(c -> c.linked().isEmpty() && c.canDip(this))
+          .forEach(c -> {
+              lvl.addFallingCaps(c);
+              remove(c);
+          });
     }
 
     public Matches hitMatches() {
@@ -387,6 +406,30 @@ public class Grid implements Animated {
         return Arrays.stream(columns)
           .flatMap(col -> Arrays.stream(col.tiles))
           .filter(Objects::nonNull);
+    }
+
+    /**
+     * @return a flatmap collecting every caps of each {@link Column} of the grid.
+     */
+    public Stream<Caps> everyCapsInGrid() {
+        return everyObjectInGrid()
+                 .filter(GridObjectInterface::isCaps)
+                 .map(o -> (Caps) o);
+    }
+
+    /**
+     * @return a flatmap collecting every germ of each {@link Column} of the grid.
+     */
+    private Stream<Germ> everyGermInGrid() {
+        return everyObjectInGrid()
+                 .filter(GridObjectInterface::isGerm)
+                 .map(o -> (Germ) o);
+    }
+
+    public List<Germ> everyGermWithCooldown() {
+        return everyGermInGrid()
+                 .filter(Germ::hasCooldown)
+                 .collect(toUnmodifiableList());
     }
 
     @Override

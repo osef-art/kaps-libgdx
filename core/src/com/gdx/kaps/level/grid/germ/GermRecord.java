@@ -3,14 +3,11 @@ package com.gdx.kaps.level.grid.germ;
 import com.gdx.kaps.Utils;
 import com.gdx.kaps.level.Level;
 import com.gdx.kaps.level.grid.Grid;
-import com.gdx.kaps.level.grid.caps.EffectAnim;
-import com.gdx.kaps.level.grid.caps.EffectAnim.EffectType;
 
 import java.util.Objects;
 import java.util.function.BiConsumer;
-import java.util.stream.Collectors;
 
-import static com.gdx.kaps.level.grid.caps.EffectAnim.EffectType.*;
+import static com.gdx.kaps.level.grid.caps.EffectAnim.EffectType.SLICE_FX;
 
 public enum GermRecord {
     BASIC("basic", 8, 1, 1),
@@ -87,13 +84,11 @@ public enum GermRecord {
      * @param grid the affected grid
      */
     private static void hitRandomCaps(Grid grid, Germ germ) {
-        var capsAround = grid.everyObjectInGrid()
-                           .filter(o -> -1 <= germ.x() - o.x() && germ.x() - o.x() <= 1 &&
-                                          -1 <= germ.y() - o.y() && germ.y() - o.y() <= 1
-                           )
-                           //.peek(System.out::println)
-                           .filter(o -> !o.isGerm())
-                           .collect(Collectors.toList());
+        var capsAround = grid.everyCapsInGrid()
+                           .filter(o ->
+                                     -1 <= germ.x() - o.x() && germ.x() - o.x() <= 1 &&
+                                       -1 <= germ.y() - o.y() && germ.y() - o.y() <= 1
+                           );
         Utils.getRandomFrom(capsAround).ifPresent(caps -> grid.hit(caps.x(), caps.y(), SLICE_FX));
     }
 }

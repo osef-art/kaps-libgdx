@@ -4,7 +4,9 @@ import com.badlogic.gdx.graphics.Color;
 import com.gdx.kaps.SoundStream;
 import com.gdx.kaps.level.grid.Grid;
 import com.gdx.kaps.level.grid.GridObject;
+import com.gdx.kaps.level.grid.GridObjectInterface;
 import com.gdx.kaps.level.grid.Particles;
+import com.gdx.kaps.level.grid.caps.Caps;
 import com.gdx.kaps.level.grid.caps.EffectAnim;
 import com.gdx.kaps.level.grid.caps.Gelule;
 import com.gdx.kaps.level.grid.caps.PreviewGelule;
@@ -24,27 +26,31 @@ import java.util.stream.Stream;
 
 import static com.gdx.kaps.MainScreen.*;
 import static com.gdx.kaps.Utils.getRandomFrom;
-import static java.util.stream.Collectors.toList;
 
 public class Level implements Animated {
+    // game
+    private boolean paused = true;
     private int updateSpeed = 1_000_000_000;
+    private final Timer updateTimer;
     public final static int MIN_MATCH_RANGE = 4;
     private static List<Sidekick> sidekicks;
-    private static Particles particles;
     private static int multiplier = 1;
     private static int score;
-    private final Timer updateTimer;
+    // render
     private final SoundStream stream = new SoundStream();
-    private final Set<com.gdx.kaps.level.grid.Color> colors;
     private static final List<EffectAnim> effects = new ArrayList<>();
+    private static Particles particles;
+    // level
     private final Grid grid;
-    private boolean paused = true;
+    private final Set<com.gdx.kaps.level.grid.Color> colors;
+    // gelule
     private boolean canHold;
     private PreviewGelule preview;
+    private final List<Caps> fallingCaps = new ArrayList<>();
     private final Gelule[] next = new Gelule[2];
+    //IMPL: controllableGelule class
     private Gelule gelule;
     private Gelule hold;
-    // TODO: list of controllable Unlinked caps
 
     public Level(Path filePath, Set<Sidekick> sdks) {
         Objects.requireNonNull(sdks);
@@ -99,7 +105,6 @@ public class Level implements Animated {
         return getRandomFrom(
           sidekicks().stream()
             .filter(sdk -> sdk.color() != sidekick.color())
-            .collect(toList())
         ).orElse(sidekicks().get(0));
     }
 
@@ -182,7 +187,6 @@ public class Level implements Animated {
         canHold = false;
     }
 
-
     // operations
     public <T> void applyToGrid(BiConsumer<Grid, ? super T> function, T actor) {
         function.accept(grid, actor);
@@ -225,7 +229,7 @@ public class Level implements Animated {
     private void decreaseCooldowns() {
         sidekicks.forEach(Sidekick::decreaseCooldown);
         triggerSidekicks();
-        grid.everyGermsWithCooldowns()
+        grid.everyGermWithCooldown()
           .forEach(g -> {
               g.decreaseCooldown();
               g.triggerIfReady(this);
@@ -238,12 +242,24 @@ public class Level implements Animated {
         updateTimer.reset();
     }
 
+    public void addFallingCaps(Caps caps) {
+        fallingCaps.add(caps);
+    }
+
     // update
     @Override
     public void update() {
         if (paused) return;
         // FIXME: update on pause (récup remaining time)
-        if (updateTimer.resetIfExceeds()) dipGelule();
+        if (updateTimer.resetIfExceeds()) {
+            dipGelule();
+            fallingCaps.forEach(c -> {
+                if (!c.dipIfPossible(grid)) {
+                    grid.accept(c);
+                    stream.play("impact");
+                }
+            });
+        }
         grid.update();
         particles.update();
         sidekicks.forEach(Animated::update);
@@ -265,7 +281,7 @@ public class Level implements Animated {
     public void updateGrid() {
         Matches matches;
         do {
-            grid.dropAll();
+            grid.dropAll(this);
             matches = grid.hitMatches()
                         .peek((color, set) -> {
                             var sound = "plop0";
@@ -471,6 +487,7 @@ public class Level implements Animated {
             preview.render();
             g.render();
         });
+        fallingCaps.forEach(GridObjectInterface::render);
 
         next[0].render(dim.get(Zone.NEXT_GELULE));
         Optional.ofNullable(hold).ifPresent(hold -> hold.render(dim.get(Zone.HOLD_GELULE)));

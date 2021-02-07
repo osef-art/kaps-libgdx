@@ -30,10 +30,13 @@ public class LevelController implements InputProcessor {
         switch (keycode) {
             case 44: // P
                 level.togglePause();
-                break;
+                return true;
             case 66: // ENTER
             case 62: // SPACE
-                if (level.isPaused()) level.togglePause();
+                if (level.isPaused()) {
+                    level.togglePause();
+                    return true;
+                }
                 break;
             case 45: // Q
                 System.exit(0);

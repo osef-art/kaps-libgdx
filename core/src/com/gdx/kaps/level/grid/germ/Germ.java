@@ -96,6 +96,11 @@ public abstract class Germ extends GridObject {
     }
 
     @Override
+    public boolean isCaps() {
+        return false;
+    }
+
+    @Override
     public boolean isGerm() {
         return true;
     }
@@ -121,7 +126,8 @@ public abstract class Germ extends GridObject {
     }
 
     @Override
-    public void dipIfPossible(Grid grid) {
+    public boolean dipIfPossible(Grid grid) {
+        return false;
     }
 
     void trigger(Level lvl) {

@@ -216,9 +216,7 @@ public enum SidekickRecord {
         for (int i = 0; i < 5; i++) {
             lvl.applyToGrid((grid, sdk) -> getRandomFrom(
               grid.everyObjectInGrid()
-                .filter(obj -> !obj.color().equals(color))
-                .filter(obj -> !obj.isGerm())
-                .collect(toList())
+                .filter(o -> !o.color().equals(color) && o.isCaps())
             ).ifPresent(caps -> grid.paint(caps.x(), caps.y(), color)), sidekick);
         }
     }
