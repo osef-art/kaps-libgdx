@@ -58,7 +58,7 @@ public class Gelule implements Iterable<LinkedCaps> {
         linked.linkTo(main);
     }
 
-    private Gelule(Gelule color, Gelule pos) {
+    Gelule(Gelule color, Gelule pos) {
         requireNonNull(color);
         requireNonNull(pos);
         main = new LinkedCaps(pos.x(), pos.y(), pos.main.look(), color.main.color());
@@ -88,7 +88,7 @@ public class Gelule implements Iterable<LinkedCaps> {
         return new Gelule(this);
     }
 
-    public static Gelule copyColorFrom(Gelule color, Gelule pos) {
+    public static Gelule copyColorOf(Gelule color, Gelule pos) {
         return new Gelule(color, pos);
     }
 

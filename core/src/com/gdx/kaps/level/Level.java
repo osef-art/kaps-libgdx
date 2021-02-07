@@ -4,12 +4,8 @@ import com.badlogic.gdx.graphics.Color;
 import com.gdx.kaps.SoundStream;
 import com.gdx.kaps.level.grid.Grid;
 import com.gdx.kaps.level.grid.GridObject;
-import com.gdx.kaps.level.grid.GridObjectInterface;
 import com.gdx.kaps.level.grid.Particles;
-import com.gdx.kaps.level.grid.caps.Caps;
-import com.gdx.kaps.level.grid.caps.EffectAnim;
-import com.gdx.kaps.level.grid.caps.Gelule;
-import com.gdx.kaps.level.grid.caps.PreviewGelule;
+import com.gdx.kaps.level.grid.caps.*;
 import com.gdx.kaps.level.sidekick.Sidekick;
 import com.gdx.kaps.level.sidekick.SidekickRecord;
 import com.gdx.kaps.renderer.Animated;
@@ -45,11 +41,9 @@ public class Level implements Animated {
     private final Set<com.gdx.kaps.level.grid.Color> colors;
     // gelule
     private boolean canHold;
-    private PreviewGelule preview;
     private final List<Caps> fallingCaps = new ArrayList<>();
+    private final List<ControllableGelule> gelules = new ArrayList<>();
     private final Gelule[] next = new Gelule[2];
-    //IMPL: controllableGelule class
-    private Gelule gelule;
     private Gelule hold;
 
     public Level(Path filePath, Set<Sidekick> sdks) {
@@ -108,13 +102,10 @@ public class Level implements Animated {
         ).orElse(sidekicks().get(0));
     }
 
-    private Optional<Gelule> currentGelule() {
-        return Optional.ofNullable(gelule);
-    }
-
     private boolean isOver() {
-        boolean defeat = currentGelule()
+        boolean defeat = gelules.stream()
                            .map(g -> !g.isAtValidEmplacement(grid))
+                           .reduce((b1, b2) -> b1 && b2)
                            .orElse(false);
         boolean victory = grid.remainingGerms() <= 0;
         boolean noMoreAnims = !grid.hasPoppingCaps();
@@ -126,35 +117,35 @@ public class Level implements Animated {
     }
 
     // control
-    private void doIfPresent(Consumer<Gelule> action) {
-        currentGelule().ifPresent(action);
+    private void doIfPresent(Consumer<ControllableGelule> action) {
+        if (gelules.isEmpty()) return;
+        action.accept(gelules.get(0));
     }
 
     public void moveGeluleLeft() {
         doIfPresent(gelule -> {
             if (!gelule.moveLeftIfPossible(grid)) stream.play("cant");
-            updatePreview();
+            gelule.updatePreview();
         });
     }
 
     public void moveGeluleRight() {
         doIfPresent(gelule -> {
             if (!gelule.moveRightIfPossible(grid)) stream.play("cant");
-            updatePreview();
+            gelule.updatePreview();
         });
     }
 
     public void dipGelule() {
         doIfPresent(gelule -> {
-            if (!gelule.dipIfPossible(grid)) acceptGelule();
+            if (!gelule.dipIfPossible(grid)) acceptGelule(gelule);
         });
     }
 
     public void flipGelule() {
         doIfPresent(gelule -> {
-            var sound = gelule.flipIfPossible(grid) ? "flip" : "cant";
-            stream.play(sound);
-            updatePreview();
+            stream.play(gelule.flipIfPossible(grid) ? "flip" : "cant");
+            gelule.updatePreview();
         });
     }
 
@@ -162,7 +153,7 @@ public class Level implements Animated {
         doIfPresent(gelule -> {
             stream.play("drop");
             while (gelule.dipIfPossible(grid));
-            acceptGelule();
+            acceptGelule(gelule);
         });
     }
 
@@ -174,11 +165,14 @@ public class Level implements Animated {
     public void hold() {
         if (!canHold) return;
         var tmp = Optional.ofNullable(hold);
-        hold = Gelule.copyColorFrom(gelule, new Gelule(this));
+        hold = Gelule.copyColorOf(gelules.get(0), new Gelule(this));
         tmp.ifPresentOrElse(
-          hold -> gelule = Gelule.copyColorFrom(hold, gelule),
+          hold -> {
+              gelules.add(ControllableGelule.copyColorOf(hold, gelules.get(0), grid));
+              gelules.remove(0);
+          },
           () -> {
-              gelule = null;
+              gelules.clear();
               spawnNewGelule();
           }
         );
@@ -198,27 +192,33 @@ public class Level implements Animated {
 
     private void spawnNewGelule() {
         // TODO: find a way to spawn it only when anims are done
-        if (gelule != null || isOver()) return;
-        gelule = next[0].copy();
+        if (!gelules.isEmpty() || isOver()) return;
+        gelules.add(ControllableGelule.of(next[0].copy(), grid));
 
         updateNext();
-        updatePreview();
-
         canHold = true;
         multiplier = 1;
     }
 
-    private void acceptGelule() {
+    private void acceptGelule(ControllableGelule gelule) {
         grid.accept(gelule);
+        gelules.remove(gelule);
         stream.play("impact");
-        preview = null;
-        gelule = null;
 
         updateGrid();
         triggerSidekicks();
         decreaseCooldowns();
         speedUp();
         spawnNewGelule();
+    }
+
+    private boolean capsCantDip(Caps caps) {
+        caps.dipIfPossible(grid);
+        if (caps.canDip(grid)) return false;
+        grid.accept(caps);
+        stream.play("impact");
+        updateGrid();
+        return true;
     }
 
     private void triggerSidekicks() {
@@ -253,12 +253,7 @@ public class Level implements Animated {
         // FIXME: update on pause (récup remaining time)
         if (updateTimer.resetIfExceeds()) {
             dipGelule();
-            fallingCaps.forEach(c -> {
-                if (!c.dipIfPossible(grid)) {
-                    grid.accept(c);
-                    stream.play("impact");
-                }
-            });
+            fallingCaps.removeIf(this::capsCantDip);
         }
         grid.update();
         particles.update();
@@ -271,11 +266,6 @@ public class Level implements Animated {
     private void updateNext() {
         System.arraycopy(next, 1, next, 0, next.length - 1);
         next[next.length - 1] = new Gelule(this);
-    }
-
-    private void updatePreview() {
-        preview = new PreviewGelule(gelule);
-        while (preview.dipIfPossible(grid));
     }
 
     public void updateGrid() {
@@ -483,11 +473,8 @@ public class Level implements Animated {
         renderBackGround();
 
         grid.render();
-        Optional.ofNullable(gelule).ifPresent(g -> {
-            preview.render();
-            g.render();
-        });
-        fallingCaps.forEach(GridObjectInterface::render);
+        gelules.forEach(Gelule::render);
+        fallingCaps.forEach(Caps::render);
 
         next[0].render(dim.get(Zone.NEXT_GELULE));
         Optional.ofNullable(hold).ifPresent(hold -> hold.render(dim.get(Zone.HOLD_GELULE)));
