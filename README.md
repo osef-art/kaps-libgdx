@@ -30,7 +30,7 @@ But make sure not to exceed the grid ! Beware, the game gets faster over time.
 
 
 ## SIDEKICKS 🤜‍🤛
-| Name | | Mana | Damage | Power |  
+| Name | | Mana | Dmg | Power |  
 |---:|:---:|:---:|:---:|:---|   
 | JIM    | ![alt text](android/assets/img/sidekicks/Jim_0.png "Jim")       | 20       | 1 | Slices a random object and all tiles on the same line
 | SEAN   | ![alt text](android/assets/img/sidekicks/Sean_0.png "Sean")     | 20       | 2 | Hits a random object and adjacent tiles  
@@ -58,6 +58,7 @@ But make sure not to exceed the grid ! Beware, the game gets faster over time.
 | Name | | Effect |  
 |---:|:---:|:---|   
 | EXPLOSIVE | ![alt text](android/assets/img/7/caps/bomb_unlinked.png "Basic") | Explodes when destroyed, hitting all tiles around
+| ???       | ? | (Coming soon !)
 
 
 
