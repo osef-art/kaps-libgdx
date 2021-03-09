@@ -6,7 +6,7 @@ get rid of every germ in the grid ! 🧪
 ## HOW TO PLAY 🕹
 
 #### 💊 In-game
-`⬅, ➡` : **move** the capsule left/right  
+`⬅`, `➡` : **move** the capsule left/right  
 `⬆` : **flip** the capsule  
 `⬇` : **dip** the capsule of one row  
 `[SPACEBAR]` : **drop** the capsule at the bottom  
@@ -57,7 +57,7 @@ But make sure not to exceed the grid ! Beware, the game gets faster over time.
 ## SPECIAL CAPSULES ✨💊
 | Name | | Effect |  
 |---:|:---:|:---|   
-| EXPLOSIVE | ![alt text](android/assets/img/7/caps/bomb_unlinked.png "Basic") | Explodes when destroyed, hitting all tiles around
+| EXPLOSIVE | ![alt text](android/assets/img/7/caps/bomb_unlinked.png "Explosive") | Explodes when destroyed, hitting all tiles around
 | ???       | ? | (Coming soon !)
 
 
