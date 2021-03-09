@@ -19,13 +19,13 @@ get rid of every germ in the grid ! 🧪
 ---
 
 ## RULES 📜
-Move falling capsules in the grid and make matches of **4 tiles** of the same color or more 
+Move falling capsules 💊 in the grid and make matches of **4 tiles** of the same color or more 
 to destroy them.  
-Destroy tiles of a sidekick's color to fill its **gauge** and summon it !
+Destroy tiles of a sidekick's color to fill its **mana gauge** and unleash its attack !
 
 ![alt text](android/assets/img/screens/gameplay1.png "Figure 1")
 
-Smash **every germ** of the grid to win !  
+Smash **every germ** 🦠 of the grid to win !  
 But make sure not to exceed the grid ! Beware, the game gets faster over time.
 
 
@@ -45,7 +45,6 @@ But make sure not to exceed the grid ! Beware, the game gets faster over time.
 | ???    | ? | ? | ? | (Coming soon !)
 
 ## GERMS 🦠
-
 | Name | | Cooldown | Power |  
 |---:|:---:|:---:|:---|   
 | BASIC | ![alt text](android/assets/img/1/germs/basic/idle_0.png "Basic") | - | Exists
@@ -53,6 +52,14 @@ But make sure not to exceed the grid ! Beware, the game gets faster over time.
 | VIRUS | ![alt text](android/assets/img/5/germs/virus/idle_0.png "Virus") | 8 | Turns a random tile into a virus
 | THORN | ![alt text](android/assets/img/4/germs/thorn/idle_0.png "Thorn") | 5 | Destroys a random capsule among tiles around
 | ???    | ? | 6 | Turns a random caps into a basic germ, or a random basic germ into a wall (2 HP), or can heal a wall (by 1 HP) (Coming soon !)
+
+
+## SPECIAL CAPSULES ✨💊
+| Name | | Effect |  
+|---:|:---:|:---|   
+| EXPLOSIVE | ![alt text](android/assets/img/7/caps/bomb_unlinked.png "Basic") | Explodes when destroyed, hitting all tiles around
+
+
 
 ### TIPS 💡
 
