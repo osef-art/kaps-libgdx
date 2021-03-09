@@ -42,7 +42,7 @@ But make sure not to exceed the grid ! Beware, the game gets faster over time.
 | SNIPER | ![alt text](android/assets/img/sidekicks/Sniper_0.png "Sniper") | 15       | 3 | Shoots a random germ
 | RED    | ![alt text](android/assets/img/sidekicks/Red_0.png "Red")       | 25       | 2 | Slices a random object and all tiles on the same column
 | XERETH | ![alt text](android/assets/img/sidekicks/Xereth_0.png "Xereth") | 25       | 1 | Slices a random object and all tiles on the same diagonals  
-| ???    | ? | ? | (Coming soon !)
+| ???    | ? | ? | ? | (Coming soon !)
 
 ## GERMS 🦠
 
