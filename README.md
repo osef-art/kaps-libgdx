@@ -30,18 +30,18 @@ But make sure not to exceed the grid ! Beware, the game gets faster over time.
 
 
 ## SIDEKICKS 🤜‍🤛
-| Name | | Damage | Power |  
-|---:|:---:|:---:|:---|   
-| JIM    | ![alt text](android/assets/img/sidekicks/Jim_0.png "Jim")       | 1 | Slices a random object and all tiles on the same line
-| SEAN   | ![alt text](android/assets/img/sidekicks/Sean_0.png "Sean")     | 2 | Hits a random object and adjacent tiles  
-| ZYRAME | ![alt text](android/assets/img/sidekicks/Zyrame_0.png "Zyrame") | 2 | Slices two random germs  
-| PAINT  | ![alt text](android/assets/img/sidekicks/Paint_0.png "Paint")   | 0 | Paint 5 random caps
-| COLOR  | ![alt text](android/assets/img/sidekicks/Color_0.png "Color")   | 0 | Generates a gelule with both caps of same color
-| MIMAPS | ![alt text](android/assets/img/sidekicks/Mimaps_0.png "Mimaps") | 2 | Hits 3 random objects  
-| BOMBER | ![alt text](android/assets/img/sidekicks/Bomber_0.png "Bomber") | 1 | Generates an explosive gelule
-| SNIPER | ![alt text](android/assets/img/sidekicks/Sniper_0.png "Sniper") | 3 | Shoots a random germ
-| RED    | ![alt text](android/assets/img/sidekicks/Red_0.png "Red")       | 2 | Slices a random object and all tiles on the same column
-| XERETH | ![alt text](android/assets/img/sidekicks/Xereth_0.png "Xereth") | 1 | Slices a random object and all tiles on the same diagonals  
+| Name | | Mana | Damage | Power |  
+|---:|:---:|:---:|:---:|:---|   
+| JIM    | ![alt text](android/assets/img/sidekicks/Jim_0.png "Jim")       | 20       | 1 | Slices a random object and all tiles on the same line
+| SEAN   | ![alt text](android/assets/img/sidekicks/Sean_0.png "Sean")     | 20       | 2 | Hits a random object and adjacent tiles  
+| ZYRAME | ![alt text](android/assets/img/sidekicks/Zyrame_0.png "Zyrame") | 20       | 2 | Slices two random germs  
+| PAINT  | ![alt text](android/assets/img/sidekicks/Paint_0.png "Paint")   | 10       | 0 | Paint 5 random caps
+| COLOR  | ![alt text](android/assets/img/sidekicks/Color_0.png "Color")   | 4 turns  | 0 | Generates a gelule with both caps of same color
+| MIMAPS | ![alt text](android/assets/img/sidekicks/Mimaps_0.png "Mimaps") | 15       | 2 | Hits 3 random objects  
+| BOMBER | ![alt text](android/assets/img/sidekicks/Bomber_0.png "Bomber") | 13 turns | 1 | Generates an explosive gelule
+| SNIPER | ![alt text](android/assets/img/sidekicks/Sniper_0.png "Sniper") | 15       | 3 | Shoots a random germ
+| RED    | ![alt text](android/assets/img/sidekicks/Red_0.png "Red")       | 25       | 2 | Slices a random object and all tiles on the same column
+| XERETH | ![alt text](android/assets/img/sidekicks/Xereth_0.png "Xereth") | 25       | 1 | Slices a random object and all tiles on the same diagonals  
 | ???    | ? | ? | (Coming soon !)
 
 ## GERMS 🦠
