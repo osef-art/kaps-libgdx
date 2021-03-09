@@ -463,7 +463,6 @@ public class Level implements Animated {
             // head & stars
             sdk.render(10, dim.gridMargin * 2 + n * (dim.gridMargin + panelHeight) + 45, 75, 75);
             for (int s = 0; s < 3; s++) {
-                // TODO: draw real stars (sprites ?)
                 spra.render(
                   starSprite,
                   20 * (s + 1),

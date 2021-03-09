@@ -343,6 +343,11 @@ public class Grid implements Animated {
      * Applies gravity on every obj and dips them all until there is no more obj to dip.
      */
     public void dropAll(Level lvl) {
+        // IMPL: ok ok new strategy:
+        //  recursively find every falling object, remove them and add it to Level.fallingCaps
+        //  (so grid only have stuff that can't dip)
+        //  then dip it in level and accept them.
+        //  linked -> instant, unlinked -> half
         while (
           everyCapsInGrid()
             .map(c -> c.linked().isPresent() && dipColumnIfPossible(c))
