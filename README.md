@@ -23,7 +23,7 @@ Move falling capsules 💊 in the grid and make matches of **4 tiles** of the sa
 to destroy them.  
 Destroy tiles of a sidekick's color to fill its **mana gauge** and unleash its attack !
 
-![alt text](android/assets/img/screens/gameplay1.png "Figure 1")
+![alt text](android/assets/img/screens/KAPS-clip.gif "Quick gaeplay")
 
 Smash **every germ** 🦠 of the grid to win !  
 But make sure not to exceed the grid ! Beware, the game gets faster over time.
